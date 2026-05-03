@@ -1,0 +1,65 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: school-upload-app
+    container_name: school-upload-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+      - uploads_data:/var/www/html/storage/app/uploads
+      - uploads_temp:/var/www/html/storage/app/temp
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_HOST=mysql
+      - DB_DATABASE=school_upload
+      - DB_USERNAME=school_user
+      - DB_PASSWORD=school_secret
+      - REDIS_HOST=redis
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - school-network
+
+  mysql:
+    image: mysql:8.2
+    container_name: school-upload-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: school_upload
+      MYSQL_ROOT_PASSWORD: root_secret
+      MYSQL_USER: school_user
+      MYSQL_PASSWORD: school_secret
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - school-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: school-upload-redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - school-network
+
+volumes:
+  mysql_data:
+  redis_data:
+  uploads_data:
+  uploads_temp:
+
+networks:
+  school-network:
+    driver: bridge

@@ -1,0 +1,55 @@
+@extends('layouts.app')
+
+@section('title', 'แก้ไขนักเรียน')
+
+@section('content')
+<div class="max-w-2xl mx-auto">
+    <div class="mb-6">
+        <a href="{{ route('teacher.students.show', $student) }}" class="text-indigo-600 hover:underline">← กลับ</a>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <h1 class="text-xl font-bold mb-6">แก้ไขนักเรียน</h1>
+
+        <form action="{{ route('teacher.students.update', $student) }}" method="POST">
+            @csrf
+            @method('PUT')
+
+            <div class="mb-4">
+                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">ชื่อนักเรียน</label>
+                <input type="text" name="name" id="name" value="{{ old('name', $student->name) }}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 @error('name') border-red-500 @enderror"
+                    required>
+                @error('name')
+                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="mb-4">
+                <label for="classroom_id" class="block text-sm font-medium text-gray-700 mb-1">ห้องเรียน</label>
+                <select name="classroom_id" id="classroom_id" 
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 @error('classroom_id') border-red-500 @enderror"
+                    required>
+                    @foreach($classrooms as $classroom)
+                        <option value="{{ $classroom->id }}" {{ $student->classroom_id == $classroom->id ? 'selected' : '' }}>
+                            {{ $classroom->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('classroom_id')
+                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="flex justify-end space-x-3">
+                <a href="{{ route('teacher.students.show', $student) }}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                    ยกเลิก
+                </a>
+                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                    บันทึก
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection
