@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+    <link rel="icon" type="image/svg+xml" href="<?php echo e(asset('favicon.svg')); ?>">
     <title><?php echo $__env->yieldContent('title', 'ระบบ Upload รูป/วีดีโอ'); ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -60,6 +61,8 @@
             </p>
         </div>
     </footer>
+
+    <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 </html>
 <?php /**PATH /var/www/html/resources/views/layouts/app.blade.php ENDPATH**/ ?>

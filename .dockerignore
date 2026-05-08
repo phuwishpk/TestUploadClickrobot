@@ -1,0 +1,10 @@
+vendor/
+node_modules/
+.git/
+.env
+.env.*
+storage/logs/
+storage/framework/
+storage/app/private/
+storage/app/public/
+bootstrap/cache/

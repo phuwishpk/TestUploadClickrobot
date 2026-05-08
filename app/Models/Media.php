@@ -44,18 +44,7 @@ class Media extends Model
 
     public function getUrlAttribute(): string
     {
-        $disk = config('filesystems.default', 'uploads');
-        $storageDisk = config('filesystems.disks.' . $disk);
-
-        if (in_array($disk, ['r2', 's3'])) {
-            return \Storage::disk($disk)->url($this->path);
-        }
-
-        if ($storageDisk && isset($storageDisk['url'])) {
-            return $storageDisk['url'] . '/' . $this->path;
-        }
-
-        return asset('storage/app/uploads/' . $this->path);
+        return '/uploads/' . $this->path;
     }
 
     public function getIsImageAttribute(): bool
