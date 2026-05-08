@@ -21,6 +21,11 @@ class Student extends Model
         return $this->belongsTo(Classroom::class);
     }
 
+    public function classrooms()
+    {
+        return $this->belongsToMany(Classroom::class)->withTimestamps();
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -41,10 +46,23 @@ class Student extends Model
         return $this->hasMany(Media::class);
     }
 
-    public static function generateCode(): string
+    public static function generateCode(int $classroomId = null): string
     {
-        $lastStudent = self::orderBy('id', 'desc')->first();
-        $nextNumber = $lastStudent ? ((int) substr($lastStudent->code, 2) + 1) : 1;
+        $query = self::query();
+        
+        if ($classroomId) {
+            $query->where('classroom_id', $classroomId);
+        }
+        
+        $lastStudent = $query->orderBy('id', 'desc')->first();
+        
+        if ($lastStudent) {
+            preg_match('/\d+/', $lastStudent->code, $matches);
+            $nextNumber = $matches ? ((int) $matches[0] + 1) : 1;
+        } else {
+            $nextNumber = 1;
+        }
+        
         return 'นร' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
     }
 
@@ -54,7 +72,7 @@ class Student extends Model
 
         static::creating(function ($student) {
             if (empty($student->code)) {
-                $student->code = self::generateCode();
+                $student->code = self::generateCode($student->classroom_id);
             }
         });
     }

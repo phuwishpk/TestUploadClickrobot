@@ -26,17 +26,18 @@
             </div>
 
             <div class="mb-4">
-                <label for="classroom_id" class="block text-sm font-medium text-gray-700 mb-1">ห้องเรียน</label>
-                <select name="classroom_id" id="classroom_id" 
-                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 @error('classroom_id') border-red-500 @enderror"
+                <label for="classroom_ids" class="block text-sm font-medium text-gray-700 mb-1">ห้องเรียน (เลือกได้หลายห้อง)</label>
+                <select name="classroom_ids[]" id="classroom_ids" multiple
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 @error('classroom_ids') border-red-500 @enderror"
                     required>
                     @foreach($classrooms as $classroom)
-                        <option value="{{ $classroom->id }}" {{ $student->classroom_id == $classroom->id ? 'selected' : '' }}>
+                        <option value="{{ $classroom->id }}" {{ in_array($classroom->id, old('classroom_ids', $selectedClassrooms)) ? 'selected' : '' }}>
                             {{ $classroom->name }}
                         </option>
                     @endforeach
                 </select>
-                @error('classroom_id')
+                <p class="mt-1 text-xs text-gray-500">กด Ctrl/Cmd เพื่อเลือกหลายห้อง</p>
+                @error('classroom_ids')
                     <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                 @enderror
             </div>

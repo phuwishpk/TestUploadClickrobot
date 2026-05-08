@@ -79,7 +79,8 @@ class MediaController extends Controller
         foreach ($validated['student_ids'] as $studentId) {
             $student = Student::findOrFail($studentId);
             
-            if ($student->classroom_id !== $classroom->id) {
+            // ตรวจสอบว่านักเรียนอยู่ใน classroom ที่เลือก (ผ่าน pivot table)
+            if (!$student->classrooms()->where('classrooms.id', $classroom->id)->exists()) {
                 continue;
             }
             

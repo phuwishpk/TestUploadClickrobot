@@ -7,7 +7,7 @@
 </div>
 
 <div class="bg-white rounded-lg shadow p-6">
-    <form action="<?php echo e(route('teacher.upload.store')); ?>" method="POST" enctype="multipart/form-data">
+    <form id="upload_form" enctype="multipart/form-data">
         <?php echo csrf_field(); ?>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -68,9 +68,27 @@ unset($__errorArgs, $__bag); ?>"
             <div id="file_preview" class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4"></div>
         </div>
 
+        <!-- Progress Section -->
+        <div id="upload_progress_section" class="hidden mb-6">
+            <div class="bg-gray-50 rounded-lg p-4">
+                <div class="flex justify-between items-center mb-2">
+                    <span id="upload_status_text" class="text-sm font-medium text-gray-700">กำลังอัปโหลด...</span>
+                    <span id="upload_percentage" class="text-sm font-bold text-indigo-600">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                    <div id="upload_progress_bar" class="bg-indigo-600 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <div id="file_status_container" class="mt-3 space-y-2"></div>
+            </div>
+        </div>
+
         <div class="flex justify-end">
-            <button type="submit" class="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition">
-                อัปโหลดไฟล์
+            <button type="submit" id="upload_btn" class="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition flex items-center gap-2">
+                <span>อัปโหลดไฟล์</span>
+                <svg id="upload_spinner" class="hidden animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
             </button>
         </div>
     </form>
@@ -141,6 +159,130 @@ dropZone.addEventListener('drop', e => {
     const input = document.getElementById('files');
     input.files = e.dataTransfer.files;
     handleFileSelect(input);
+});
+
+// Upload with Progress Bar
+document.getElementById('upload_form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const files = document.getElementById('files').files;
+    const studentIds = document.querySelectorAll('input[name="student_ids[]"]:checked');
+    const classroomId = document.getElementById('classroom_id').value;
+    
+    // Validation
+    if (!classroomId) {
+        alert('กรุณาเลือกห้องเรียน');
+        return;
+    }
+    if (studentIds.length === 0) {
+        alert('กรุณาเลือกนักเรียน');
+        return;
+    }
+    if (files.length === 0) {
+        alert('กรุณาเลือกไฟล์');
+        return;
+    }
+    
+    // Show progress section
+    const progressSection = document.getElementById('upload_progress_section');
+    const progressBar = document.getElementById('upload_progress_bar');
+    const percentage = document.getElementById('upload_percentage');
+    const statusText = document.getElementById('upload_status_text');
+    const fileStatusContainer = document.getElementById('file_status_container');
+    const uploadBtn = document.getElementById('upload_btn');
+    const spinner = document.getElementById('upload_spinner');
+    
+    progressSection.classList.remove('hidden');
+    progressBar.style.width = '0%';
+    percentage.textContent = '0%';
+    statusText.textContent = 'กำลังเตรียมอัปโหลด...';
+    fileStatusContainer.innerHTML = '';
+    uploadBtn.disabled = true;
+    uploadBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    spinner.classList.remove('hidden');
+    
+    // Create file status items
+    Array.from(files).forEach((file, index) => {
+        const fileStatus = document.createElement('div');
+        fileStatus.id = `file_status_${index}`;
+        fileStatus.className = 'flex items-center gap-2 text-sm';
+        fileStatus.innerHTML = `
+            <span class="file-icon w-5 h-5 text-gray-400">⏳</span>
+            <span class="file-name truncate flex-1">${file.name}</span>
+            <span class="file-size text-xs text-gray-400">${(file.size/1024).toFixed(1)} KB</span>
+            <span class="file-status text-xs text-gray-500"></span>
+        `;
+        fileStatusContainer.appendChild(fileStatus);
+    });
+    
+    const xhr = new XMLHttpRequest();
+    const totalFiles = files.length;
+    let uploadedCount = 0;
+    
+    xhr.upload.addEventListener('progress', function(e) {
+        if (e.lengthComputable) {
+            const percentComplete = Math.round((e.loaded / e.total) * 100);
+            progressBar.style.width = percentComplete + '%';
+            percentage.textContent = percentComplete + '%';
+            statusText.textContent = `กำลังอัปโหลด ${uploadedCount + 1}/${totalFiles} ไฟล์`;
+        }
+    });
+    
+    xhr.addEventListener('loadstart', function() {
+        statusText.textContent = 'เริ่มอัปโหลด...';
+    });
+    
+    xhr.addEventListener('load', function() {
+        if (xhr.status === 200) {
+            uploadedCount++;
+            
+            // Mark all files as complete
+            Array.from(files).forEach((file, index) => {
+                const fileStatus = document.getElementById(`file_status_${index}`);
+                if (fileStatus) {
+                    fileStatus.querySelector('.file-icon').textContent = '✅';
+                    fileStatus.querySelector('.file-status').textContent = 'เสร็จสิ้น';
+                    fileStatus.querySelector('.file-status').className = 'file-status text-xs text-green-600';
+                }
+            });
+            
+            progressBar.style.width = '100%';
+            percentage.textContent = '100%';
+            statusText.textContent = 'อัปโหลดเสร็จสิ้น!';
+            
+            setTimeout(() => {
+                window.location.href = '<?php echo e(route("teacher.dashboard")); ?>';
+            }, 1000);
+        } else {
+            // Handle error
+            statusText.textContent = 'เกิดข้อผิดพลาด';
+            statusText.className = 'text-sm font-medium text-red-600';
+            progressBar.className = 'bg-red-600 h-3 rounded-full transition-all duration-300';
+            uploadBtn.disabled = false;
+            uploadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            spinner.classList.add('hidden');
+            
+            try {
+                const response = JSON.parse(xhr.responseText);
+                alert('เกิดข้อผิดพลาด: ' + (response.message || 'ไม่สามารถอัปโหลดได้'));
+            } catch (e) {
+                alert('เกิดข้อผิดพลาดในการอัปโหลด');
+            }
+        }
+    });
+    
+    xhr.addEventListener('error', function() {
+        statusText.textContent = 'เกิดข้อผิดพลาดในการเชื่อมต่อ';
+        statusText.className = 'text-sm font-medium text-red-600';
+        uploadBtn.disabled = false;
+        uploadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        spinner.classList.add('hidden');
+    });
+    
+    xhr.open('POST', '<?php echo e(route("teacher.upload.store")); ?>');
+    xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').content);
+    xhr.send(formData);
 });
 
 // Load students if classroom already selected

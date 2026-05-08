@@ -49,21 +49,24 @@ class MediaCompressor
         
         $dateObj = \Carbon\Carbon::parse($uploadDate);
         $dateStr = $dateObj->format('dmy');
-        $classroomName = preg_replace('/[^a-zA-Z0-9ก-๙]/', '', $classroom->name);
         
-        $folderPath = sprintf('%s/%s', $classroomName . $dateStr, $student->code);
-        $filename = $this->generateFilename($file);
+        // New path structure: CLASS_{id}_{year}_{slug}/STU_{id}_{code}/{date}_{filename}
+        $r2Service = app(R2FolderService::class);
+        $studentFolder = $r2Service->getStudentFolder($classroom, $student);
+        $classFolder = $classroom->folder_slug;
+        
+        $folderPath = sprintf('%s/%s', $classFolder, $studentFolder);
+        $filename = $this->generateFilenameWithDate($dateStr, $file);
         $fullPath = $folderPath . '/' . $filename;
         $absolutePath = $this->uploadsPath . '/' . $fullPath;
         
         // Debug logging
         \Log::info('MediaCompressor Debug', [
-            'classroom_name' => $classroom->name,
-            'classroomName_cleaned' => $classroomName,
+            'classroom_slug' => $classFolder,
+            'student_folder' => $studentFolder,
             'student_code' => $student->code,
             'folderPath' => $folderPath,
-            'absolutePath' => $absolutePath,
-            'path_valid_utf8' => mb_check_encoding($absolutePath, 'UTF-8'),
+            'fullPath' => $fullPath,
         ]);
 
         if ($type === 'image') {
@@ -71,6 +74,15 @@ class MediaCompressor
         }
 
         return $this->compressVideo($file, $absolutePath, $fullPath);
+    }
+
+    protected function generateFilenameWithDate(string $dateStr, UploadedFile $file): string
+    {
+        $timeStr = now()->format('His');
+        $random = substr(md5(uniqid()), 0, 4);
+        $extension = $file->getClientOriginalExtension() ?: $this->getExtensionFromMime($file->getMimeType());
+        
+        return "{$dateStr}_{$timeStr}_{$random}.{$extension}";
     }
 
     protected function determineType(string $mimeType): string
@@ -114,11 +126,10 @@ class MediaCompressor
     {
         $tempFile = $file->getPathname();
         
-        // Create directory using Laravel's Filesystem
+        // Create directory
         $dir = dirname($absolutePath);
         
         if (!is_dir($dir)) {
-            // Create parent directories one by one to handle btrfs quirks
             $parts = explode('/', $dir);
             $current = '';
             foreach ($parts as $i => $part) {
@@ -136,7 +147,6 @@ class MediaCompressor
                 throw new \RuntimeException("Failed to create directory: {$dir}");
             }
             
-            // Ensure www-data owns the directory
             @chown($dir, 'www-data');
             @chgrp($dir, 'www-data');
         }
@@ -144,8 +154,9 @@ class MediaCompressor
         // Read and process image
         $image = $this->imageManager->read($tempFile);
         
-        $maxWidth = 1920;
-        $maxHeight = 1920;
+        // Resize if too large (max 2048px for better quality)
+        $maxWidth = 2048;
+        $maxHeight = 2048;
         
         if ($image->width() > $maxWidth || $image->height() > $maxHeight) {
             $image->resize($maxWidth, $maxHeight, function ($constraint) {
@@ -154,22 +165,23 @@ class MediaCompressor
             });
         }
 
-        $quality = 80;
+        // Convert to WebP for better compression (quality 85 = same visual as 90% JPEG)
+        $webpPath = preg_replace('/\.(jpe?g|png|gif)$/i', '.webp', $absolutePath);
+        $webpRelativePath = preg_replace('/\.(jpe?g|png|gif)$/i', '.webp', $relativePath);
         
-        // Save locally first
-        $image->toJpeg($quality)->save($absolutePath);
-        $size = filesize($absolutePath);
+        $image->toWebp(85)->save($webpPath);
+        $size = filesize($webpPath);
 
         // Upload to R2 if configured
         if ($this->s3Client) {
-            $this->uploadToR2($absolutePath, $relativePath);
+            $this->uploadToR2($webpPath, $webpRelativePath);
         }
 
         return [
             'type' => 'image',
-            'filename' => basename($relativePath),
-            'path' => $relativePath,
-            'mime_type' => 'image/jpeg',
+            'filename' => basename($webpRelativePath),
+            'path' => $webpRelativePath,
+            'mime_type' => 'image/webp',
             'size' => $size,
         ];
     }
@@ -178,11 +190,10 @@ class MediaCompressor
     {
         $tempInput = $file->getPathname();
         
-        // Create directory using Laravel's Filesystem
+        // Create directory
         $dir = dirname($absolutePath);
         
         if (!is_dir($dir)) {
-            // Create parent directories one by one to handle btrfs quirks
             $parts = explode('/', $dir);
             $current = '';
             foreach ($parts as $i => $part) {
@@ -208,12 +219,29 @@ class MediaCompressor
         $tempOutput = '/tmp/' . uniqid() . '.mp4';
 
         if (file_exists($ffmpegPath)) {
-            $command = sprintf(
-                '%s -i %s -vf "scale=min(iw\\,1280):max(ih\\,720),force_original_aspect_ratio=decrease" -c:v libx264 -preset medium -crf 23 -c:a aac -b:a 128k -movflags +faststart -y %s 2>&1',
-                escapeshellcmd($ffmpegPath),
-                escapeshellarg($tempInput),
-                escapeshellarg($tempOutput)
-            );
+            // Get original video info for adaptive compression
+            $originalSize = filesize($tempInput);
+            
+            // Check if video is small enough to skip compression (under 5MB)
+            if ($originalSize < 5 * 1024 * 1024) {
+                // For small videos, just copy with faststart for web optimization
+                $command = sprintf(
+                    '%s -i %s -c:v copy -c:a copy -movflags +faststart -y %s 2>&1',
+                    escapeshellcmd($ffmpegPath),
+                    escapeshellarg($tempInput),
+                    escapeshellarg($tempOutput)
+                );
+            } else {
+                // For larger videos, compress with quality-preserving settings
+                // CRF 20 = high quality (lower = better, 18-23 is perceptually lossless range)
+                // Preset slow = better compression at same quality
+                $command = sprintf(
+                    '%s -i %s -vf "scale=min(iw\\,1920):max(ih\\,1080),force_original_aspect_ratio=decrease" -c:v libx264 -preset slow -crf 20 -c:a aac -b:a 192k -movflags +faststart -y %s 2>&1',
+                    escapeshellcmd($ffmpegPath),
+                    escapeshellarg($tempInput),
+                    escapeshellarg($tempOutput)
+                );
+            }
 
             exec($command, $output, $returnCode);
 
@@ -238,7 +266,7 @@ class MediaCompressor
             'type' => 'video',
             'filename' => basename($relativePath),
             'path' => $relativePath,
-            'mime_type' => $file->getMimeType(),
+            'mime_type' => 'video/mp4',
             'size' => $size,
         ];
     }

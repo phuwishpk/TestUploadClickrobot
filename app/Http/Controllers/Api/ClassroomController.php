@@ -33,6 +33,9 @@ class ClassroomController extends Controller
 
         $classroom->load(['students', 'students.user']);
 
+        // เพิ่ม folder_slug
+        $classroom->folder_slug = $classroom->folder_slug;
+
         return response()->json($classroom);
     }
 

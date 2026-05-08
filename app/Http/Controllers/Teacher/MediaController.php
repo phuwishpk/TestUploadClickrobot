@@ -54,33 +54,53 @@ class MediaController extends Controller
         }
 
         $uploadDate = $validated['upload_date'] ?? now()->format('Y-m-d');
-        $uploadedMedia = [];
+        $uploadedCount = 0;
+        $errors = [];
 
         foreach ($validated['student_ids'] as $studentId) {
             $student = Student::findOrFail($studentId);
             
             foreach ($request->file('files') as $file) {
-                $result = $this->compressor->compress($file, $student, $classroom, $uploadDate);
-                
-                $media = Media::create([
-                    'student_id' => $student->id,
-                    'classroom_id' => $classroom->id,
-                    'type' => $result['type'],
-                    'original_name' => $file->getClientOriginalName(),
-                    'stored_name' => $result['filename'],
-                    'path' => $result['path'],
-                    'mime_type' => $result['mime_type'],
-                    'size' => $result['size'],
-                    'uploaded_by' => $request->user()->id,
-                    'uploaded_date' => $uploadDate,
-                ]);
-
-                $uploadedMedia[] = $media;
+                try {
+                    $result = $this->compressor->compress($file, $student, $classroom, $uploadDate);
+                    
+                    Media::create([
+                        'student_id' => $student->id,
+                        'classroom_id' => $classroom->id,
+                        'type' => $result['type'],
+                        'original_name' => $file->getClientOriginalName(),
+                        'stored_name' => $result['filename'],
+                        'path' => $result['path'],
+                        'mime_type' => $result['mime_type'],
+                        'size' => $result['size'],
+                        'uploaded_by' => $request->user()->id,
+                        'uploaded_date' => $uploadDate,
+                    ]);
+                    
+                    $uploadedCount++;
+                } catch (\Exception $e) {
+                    $errors[] = "ไฟล์ {$file->getClientOriginalName()} สำหรับ {$student->name}: " . $e->getMessage();
+                }
             }
         }
-
-        $count = count($uploadedMedia);
+        
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => $uploadedCount > 0 && empty($errors),
+                'message' => empty($errors) 
+                    ? "อัปโหลดสำเร็จ {$uploadedCount} ไฟล์"
+                    : "อัปโหลดสำเร็จ {$uploadedCount} ไฟล์ มีข้อผิดพลาด " . count($errors) . " รายการ",
+                'count' => $uploadedCount,
+                'errors' => $errors
+            ]);
+        }
+        
+        // For XHR requests, return simple response
+        if ($request->header('X-Requested-With') === 'XMLHttpRequest') {
+            return response($uploadedCount > 0 ? 'success' : 'error', $uploadedCount > 0 ? 200 : 500);
+        }
+        
         return redirect()->route('teacher.upload.create', ['classroom_id' => $classroom->id])
-            ->with('success', "อัปโหลดสำเร็จ {$count} ไฟล์");
+            ->with('success', "อัปโหลดสำเร็จ {$uploadedCount} ไฟล์");
     }
 }

@@ -16,17 +16,31 @@ class StudentController extends Controller
     {
         $user = $request->user();
         $classroomId = $request->get('classroom_id');
+        $search = $request->get('search');
 
-        $query = Student::whereIn('classroom_id', $user->classrooms()->pluck('id'));
+        $teacherClassroomIds = $user->classrooms()->pluck('id');
+
+        $query = Student::whereHas('classrooms', function ($q) use ($teacherClassroomIds) {
+            $q->whereIn('classrooms.id', $teacherClassroomIds);
+        });
 
         if ($classroomId) {
-            $query->where('classroom_id', $classroomId);
+            $query->whereHas('classrooms', function ($q) use ($classroomId) {
+                $q->where('classrooms.id', $classroomId);
+            });
         }
 
-        $students = $query->with(['classroom', 'user', 'parents'])->get();
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('code', 'like', "%{$search}%");
+            });
+        }
+
+        $students = $query->with(['classrooms', 'user', 'parents'])->get();
         $classrooms = $user->classrooms;
 
-        return view('teacher.students.index', compact('students', 'classrooms', 'classroomId'));
+        return view('teacher.students.index', compact('students', 'classrooms', 'classroomId', 'search'));
     }
 
     public function create(Request $request)
@@ -39,22 +53,38 @@ class StudentController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'classroom_id' => 'required|exists:classrooms,id',
+            'classroom_ids' => 'required|array|min:1',
+            'classroom_ids.*' => 'exists:classrooms,id',
             'email' => 'nullable|email|unique:users,email',
             'create_account' => 'boolean',
         ]);
 
-        $classroom = Classroom::findOrFail($validated['classroom_id']);
-        
-        if (!$request->user()->classrooms()->where('id', $classroom->id)->exists()) {
-            abort(403);
+        $classroomIds = $validated['classroom_ids'];
+        $primaryClassroomId = $classroomIds[0];
+
+        // ตรวจสอบว่าครูมีสิทธิ์ในทุก classroom ที่เลือก
+        $userClassroomIds = $request->user()->classrooms()->pluck('id')->toArray();
+        foreach ($classroomIds as $classroomId) {
+            if (!in_array($classroomId, $userClassroomIds)) {
+                abort(403);
+            }
         }
 
         $student = Student::create([
             'name' => $validated['name'],
-            'code' => Student::generateCode(),
-            'classroom_id' => $validated['classroom_id'],
+            'code' => Student::generateCode($primaryClassroomId),
+            'classroom_id' => $primaryClassroomId, // เก็บ classroom แรกเป็น primary
         ]);
+
+        // เพิ่มความสัมพันธ์หลาย classroom
+        $student->classrooms()->attach($classroomIds);
+
+        // สร้างโฟลเดอร์นักเรียนในทุก classroom ที่เลือก
+        $r2Service = app(\App\Services\R2FolderService::class);
+        foreach ($classroomIds as $classroomId) {
+            $classroom = \App\Models\Classroom::find($classroomId);
+            $r2Service->createStudentFolder($classroom, $student);
+        }
 
         if (!empty($validated['create_account']) && !empty($validated['email'])) {
             $user = User::create([
@@ -74,7 +104,7 @@ class StudentController extends Controller
     public function show(Student $student)
     {
         $this->authorize('view', $student);
-        $student->load(['classroom', 'user', 'parents', 'media' => function($q) {
+        $student->load(['classrooms', 'user', 'parents', 'media' => function($q) {
             $q->latest()->limit(20);
         }]);
         return view('teacher.students.show', compact('student'));
@@ -84,7 +114,8 @@ class StudentController extends Controller
     {
         $this->authorize('update', $student);
         $classrooms = auth()->user()->classrooms;
-        return view('teacher.students.edit', compact('student', 'classrooms'));
+        $selectedClassrooms = $student->classrooms()->pluck('id')->toArray();
+        return view('teacher.students.edit', compact('student', 'classrooms', 'selectedClassrooms'));
     }
 
     public function update(Request $request, Student $student)
@@ -93,10 +124,18 @@ class StudentController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'classroom_id' => 'required|exists:classrooms,id',
+            'classroom_ids' => 'required|array|min:1',
+            'classroom_ids.*' => 'exists:classrooms,id',
         ]);
 
-        $student->update($validated);
+        // อัปเดต primary classroom
+        $student->update([
+            'name' => $validated['name'],
+            'classroom_id' => $validated['classroom_ids'][0],
+        ]);
+
+        // อัปเดตความสัมพันธ์หลาย classroom
+        $student->classrooms()->sync($validated['classroom_ids']);
 
         return redirect()->route('teacher.students.show', $student)
             ->with('success', 'อัปเดตข้อมูลนักเรียนสำเร็จ');

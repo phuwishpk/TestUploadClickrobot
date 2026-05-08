@@ -15,14 +15,28 @@ class StudentController extends Controller
     {
         $user = auth()->user();
         $classroomId = $request->get('classroom_id');
+        $search = $request->get('search');
 
-        $query = Student::whereIn('classroom_id', $user->classrooms()->pluck('id'));
+        $teacherClassroomIds = $user->classrooms()->pluck('id');
+
+        $query = Student::whereHas('classrooms', function ($q) use ($teacherClassroomIds) {
+            $q->whereIn('classrooms.id', $teacherClassroomIds);
+        });
 
         if ($classroomId) {
-            $query->where('classroom_id', $classroomId);
+            $query->whereHas('classrooms', function ($q) use ($classroomId) {
+                $q->where('classrooms.id', $classroomId);
+            });
         }
 
-        $students = $query->with(['classroom', 'user', 'parents'])->get();
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('code', 'like', "%{$search}%");
+            });
+        }
+
+        $students = $query->with(['classrooms', 'user', 'parents'])->get();
 
         return response()->json($students);
     }
@@ -31,22 +45,36 @@ class StudentController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'classroom_id' => 'required|exists:classrooms,id',
+            'classroom_ids' => 'required|array|min:1',
+            'classroom_ids.*' => 'exists:classrooms,id',
             'email' => 'nullable|email|unique:users,email',
             'create_account' => 'boolean',
         ]);
 
-        $classroom = Classroom::findOrFail($validated['classroom_id']);
-        
-        if ($classroom->teacher_id !== auth()->id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        $classroomIds = $validated['classroom_ids'];
+
+        // ตรวจสอบว่าครูมีสิทธิ์ในทุก classroom ที่เลือก
+        foreach ($classroomIds as $classroomId) {
+            $classroom = Classroom::find($classroomId);
+            if (!$classroom || $classroom->teacher_id !== auth()->id()) {
+                return response()->json(['message' => 'Unauthorized'], 403);
+            }
         }
 
         $student = Student::create([
             'name' => $validated['name'],
-            'code' => Student::generateCode(),
-            'classroom_id' => $validated['classroom_id'],
+            'code' => Student::generateCode($classroomIds[0]),
+            'classroom_id' => $classroomIds[0],
         ]);
+
+        $student->classrooms()->attach($classroomIds);
+
+        // สร้างโฟลเดอร์นักเรียนในทุก classroom
+        $r2Service = app(\App\Services\R2FolderService::class);
+        foreach ($classroomIds as $classroomId) {
+            $classroom = Classroom::find($classroomId);
+            $r2Service->createStudentFolder($classroom, $student);
+        }
 
         if (!empty($validated['create_account']) && !empty($validated['email'])) {
             $user = User::create([
@@ -59,39 +87,54 @@ class StudentController extends Controller
             $student->update(['user_id' => $user->id]);
         }
 
-        return response()->json($student->load(['classroom', 'user']), 201);
+        return response()->json($student->load(['classrooms', 'user']), 201);
     }
 
     public function show(Student $student)
     {
-        if (!$student->classroom || $student->classroom->teacher_id !== auth()->id()) {
+        $teacherClassroomIds = auth()->user()->classrooms()->pluck('id')->toArray();
+        $studentClassroomIds = $student->classrooms()->pluck('id')->toArray();
+        
+        if (empty(array_intersect($teacherClassroomIds, $studentClassroomIds))) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $student->load(['classroom', 'user', 'parents', 'media']);
+        $student->load(['classrooms', 'user', 'parents', 'media']);
 
         return response()->json($student);
     }
 
     public function update(Request $request, Student $student)
     {
-        if (!$student->classroom || $student->classroom->teacher_id !== auth()->id()) {
+        $teacherClassroomIds = auth()->user()->classrooms()->pluck('id')->toArray();
+        $studentClassroomIds = $student->classrooms()->pluck('id')->toArray();
+        
+        if (empty(array_intersect($teacherClassroomIds, $studentClassroomIds))) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'classroom_id' => 'required|exists:classrooms,id',
+            'classroom_ids' => 'required|array|min:1',
+            'classroom_ids.*' => 'exists:classrooms,id',
         ]);
 
-        $student->update($validated);
+        $student->update([
+            'name' => $validated['name'],
+            'classroom_id' => $validated['classroom_ids'][0],
+        ]);
 
-        return response()->json($student);
+        $student->classrooms()->sync($validated['classroom_ids']);
+
+        return response()->json($student->load(['classrooms']));
     }
 
     public function destroy(Student $student)
     {
-        if (!$student->classroom || $student->classroom->teacher_id !== auth()->id()) {
+        $teacherClassroomIds = auth()->user()->classrooms()->pluck('id')->toArray();
+        $studentClassroomIds = $student->classrooms()->pluck('id')->toArray();
+        
+        if (empty(array_intersect($teacherClassroomIds, $studentClassroomIds))) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 

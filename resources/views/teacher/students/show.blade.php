@@ -13,7 +13,8 @@
             <div class="flex justify-between items-start mb-4">
                 <div>
                     <h1 class="text-xl font-bold">{{ $student->name }}</h1>
-                    <p class="text-gray-500">รหัส: {{ $student->code }} | {{ $student->classroom->name }}</p>
+                    <p class="text-gray-500">รหัส: {{ $student->code }}</p>
+                    <p class="text-gray-500">ห้องเรียน: {{ $student->classrooms->pluck('name')->implode(', ') }}</p>
                 </div>
                 <div>
                     <a href="{{ route('teacher.students.edit', $student) }}" class="text-indigo-600 hover:underline">แก้ไข</a>

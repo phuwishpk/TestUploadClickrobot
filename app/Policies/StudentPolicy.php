@@ -9,16 +9,25 @@ class StudentPolicy
 {
     public function view(User $user, Student $student): bool
     {
-        return $user->classrooms()->where('classrooms.id', $student->classroom_id)->exists();
+        return $user->classrooms()
+            ->whereHas('students', function ($q) use ($student) {
+                $q->where('students.id', $student->id);
+            })->exists();
     }
 
     public function update(User $user, Student $student): bool
     {
-        return $user->classrooms()->where('classrooms.id', $student->classroom_id)->exists();
+        return $user->classrooms()
+            ->whereHas('students', function ($q) use ($student) {
+                $q->where('students.id', $student->id);
+            })->exists();
     }
 
     public function delete(User $user, Student $student): bool
     {
-        return $user->classrooms()->where('classrooms.id', $student->classroom_id)->exists();
+        return $user->classrooms()
+            ->whereHas('students', function ($q) use ($student) {
+                $q->where('students.id', $student->id);
+            })->exists();
     }
 }

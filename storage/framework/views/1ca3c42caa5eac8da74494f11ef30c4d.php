@@ -11,7 +11,8 @@
             <div class="flex justify-between items-start mb-4">
                 <div>
                     <h1 class="text-xl font-bold"><?php echo e($student->name); ?></h1>
-                    <p class="text-gray-500">รหัส: <?php echo e($student->code); ?> | <?php echo e($student->classroom->name); ?></p>
+                    <p class="text-gray-500">รหัส: <?php echo e($student->code); ?></p>
+                    <p class="text-gray-500">ห้องเรียน: <?php echo e($student->classrooms->pluck('name')->implode(', ')); ?></p>
                 </div>
                 <div>
                     <a href="<?php echo e(route('teacher.students.edit', $student)); ?>" class="text-indigo-600 hover:underline">แก้ไข</a>
