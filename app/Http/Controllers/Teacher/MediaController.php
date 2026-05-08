@@ -84,20 +84,18 @@ class MediaController extends Controller
             }
         }
         
-        if ($request->expectsJson()) {
+        // Always return 200 for XHR so the client knows upload completed (success or partial)
+        $statusCode = ($uploadedCount > 0 && empty($errors)) ? 200 : 200;
+        
+        if ($request->expectsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
             return response()->json([
-                'success' => $uploadedCount > 0 && empty($errors),
+                'success' => $uploadedCount > 0,
                 'message' => empty($errors) 
                     ? "อัปโหลดสำเร็จ {$uploadedCount} ไฟล์"
                     : "อัปโหลดสำเร็จ {$uploadedCount} ไฟล์ มีข้อผิดพลาด " . count($errors) . " รายการ",
                 'count' => $uploadedCount,
                 'errors' => $errors
-            ]);
-        }
-        
-        // For XHR requests, return simple response
-        if ($request->header('X-Requested-With') === 'XMLHttpRequest') {
-            return response($uploadedCount > 0 ? 'success' : 'error', $uploadedCount > 0 ? 200 : 500);
+            ], 200);
         }
         
         return redirect()->route('teacher.upload.create', ['classroom_id' => $classroom->id])

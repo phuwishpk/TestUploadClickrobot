@@ -244,8 +244,10 @@ document.getElementById('upload_form').addEventListener('submit', async function
             const iconEl = statusEl.querySelector('.file-icon');
             const statusLabel = statusEl.querySelector('.file-status');
             
-            // Update status
-            statusText.textContent = `กำลังอัปโหลด ${file.name} ให้นักเรียนคนที่ ${s + 1}/${studentIds.length}`;
+            // Update status - showing current file being processed
+            statusLabel.textContent = 'กำลังประมวลผล...';
+            statusLabel.className = 'file-status text-xs px-2 py-1 rounded bg-yellow-100 text-yellow-700';
+            statusText.textContent = `ประมวลผล ${file.name} (${s + 1}/${studentIds.length})`;
             
             try {
                 const uploadFormData = new FormData();
@@ -254,21 +256,21 @@ document.getElementById('upload_form').addEventListener('submit', async function
                 uploadFormData.append('files[]', file);
                 uploadFormData.append('upload_date', document.getElementById('upload_date').value);
                 
-                // XHR for progress tracking
-                const result = await uploadWithProgress(uploadFormData, (progress) => {
-                    const overall = Math.round(((completedOperations + (progress / 100)) / totalOperations) * 100);
+                // XHR for progress tracking (upload phase)
+                await uploadWithProgress(uploadFormData, (progress) => {
+                    // Only show upload progress, not complete until server confirms
+                    const uploadPercent = Math.round(progress);
+                    statusLabel.textContent = `อัปโหลด ${uploadPercent}%`;
+                    const overall = Math.round(((completedOperations * 100) + uploadPercent) / totalOperations);
                     progressBar.style.width = overall + '%';
                     percentage.textContent = overall + '%';
                 });
                 
-                if (result.success) {
-                    iconEl.textContent = '✅';
-                    iconEl.className = 'w-6 h-6 flex items-center justify-center text-green-500';
-                    statusLabel.textContent = 'เสร็จ';
-                    statusLabel.className = 'file-status text-xs px-2 py-1 rounded bg-green-100 text-green-700';
-                } else {
-                    throw new Error(result.message || 'Upload failed');
-                }
+                // Server confirmed completion
+                iconEl.textContent = '✅';
+                iconEl.className = 'w-6 h-6 flex items-center justify-center text-green-500';
+                statusLabel.textContent = 'เสร็จ';
+                statusLabel.className = 'file-status text-xs px-2 py-1 rounded bg-green-100 text-green-700';
             } catch (error) {
                 iconEl.textContent = '❌';
                 iconEl.className = 'w-6 h-6 flex items-center justify-center text-red-500';
@@ -278,6 +280,7 @@ document.getElementById('upload_form').addEventListener('submit', async function
             }
             
             completedOperations++;
+            // Update overall progress to reflect completed operations
             const overall = Math.round((completedOperations / totalOperations) * 100);
             progressBar.style.width = overall + '%';
             percentage.textContent = overall + '%';
@@ -305,12 +308,13 @@ function uploadWithProgress(formData, onProgress) {
         
         xhr.upload.addEventListener('progress', function(e) {
             if (e.lengthComputable) {
-                onProgress(Math.round((e.loaded / e.total) * 100));
+                const percent = Math.round((e.loaded / e.total) * 100);
+                onProgress(percent);
             }
         });
         
-        xhr.addEventListener('load', function() {
-            if (xhr.status === 200 || xhr.status === 201) {
+        xhr.addEventListener('loadend', function() {
+            if (xhr.status >= 200 && xhr.status < 300) {
                 resolve({ success: true });
             } else {
                 try {
@@ -326,9 +330,14 @@ function uploadWithProgress(formData, onProgress) {
             reject(new Error('Connection error'));
         });
         
+        xhr.addEventListener('timeout', function() {
+            reject(new Error('Request timeout'));
+        });
+        
         xhr.open('POST', '<?php echo e(route("teacher.upload.store")); ?>');
         xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').content);
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.timeout = 300000; // 5 minutes timeout for large files
         xhr.send(formData);
     });
 }

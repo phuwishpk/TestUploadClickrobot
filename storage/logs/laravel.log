@@ -1582,3 +1582,9 @@
 [2026-05-09 05:50:51] local.INFO: Uploaded to R2 {"path":"CLASS_1_2569_ม11/STU_9_นร003/090526_054941_fb83.mp4"} 
 [2026-05-09 05:54:46] local.INFO: MediaCompressor Debug {"classroom_slug":"CLASS_1_2569_ม11","student_folder":"STU_9_นร003","student_code":"นร003","folderPath":"CLASS_1_2569_ม11/STU_9_นร003","fullPath":"CLASS_1_2569_ม11/STU_9_นร003/090526_055446_5abf.mp4"} 
 [2026-05-09 05:55:54] local.INFO: Uploaded to R2 {"path":"CLASS_1_2569_ม11/STU_9_นร003/090526_055446_5abf.mp4"} 
+[2026-05-09 06:01:28] local.INFO: Creating student folder {"classroom_id":1,"student_id":10,"folder":"CLASS_1_2569_ม11/STU_10_นร004"} 
+[2026-05-09 06:01:29] local.INFO: R2 folder created {"path":"CLASS_1_2569_ม11/STU_10_นร004"} 
+[2026-05-09 06:01:29] local.INFO: Creating student folder {"classroom_id":2,"student_id":10,"folder":"CLASS_2_2569_ม21/STU_10_นร004"} 
+[2026-05-09 06:01:29] local.INFO: R2 folder created {"path":"CLASS_2_2569_ม21/STU_10_นร004"} 
+[2026-05-09 06:02:39] local.INFO: MediaCompressor Debug {"classroom_slug":"CLASS_2_2569_ม21","student_folder":"STU_10_นร004","student_code":"นร004","folderPath":"CLASS_2_2569_ม21/STU_10_นร004","fullPath":"CLASS_2_2569_ม21/STU_10_นร004/090526_060239_4060.mp4"} 
+[2026-05-09 06:04:04] local.INFO: Uploaded to R2 {"path":"CLASS_2_2569_ม21/STU_10_นร004/090526_060239_4060.mp4"} 
