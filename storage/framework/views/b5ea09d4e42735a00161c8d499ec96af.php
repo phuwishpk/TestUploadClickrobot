@@ -161,13 +161,13 @@ dropZone.addEventListener('drop', e => {
     handleFileSelect(input);
 });
 
-// Upload with Progress Bar
-document.getElementById('upload_form').addEventListener('submit', function(e) {
+// Upload with Progress Bar - Per Student Upload
+document.getElementById('upload_form').addEventListener('submit', async function(e) {
     e.preventDefault();
     
     const formData = new FormData(this);
     const files = document.getElementById('files').files;
-    const studentIds = document.querySelectorAll('input[name="student_ids[]"]:checked');
+    const studentCheckboxes = document.querySelectorAll('input[name="student_ids[]"]:checked');
     const classroomId = document.getElementById('classroom_id').value;
     
     // Validation
@@ -175,7 +175,7 @@ document.getElementById('upload_form').addEventListener('submit', function(e) {
         alert('กรุณาเลือกห้องเรียน');
         return;
     }
-    if (studentIds.length === 0) {
+    if (studentCheckboxes.length === 0) {
         alert('กรุณาเลือกนักเรียน');
         return;
     }
@@ -184,7 +184,11 @@ document.getElementById('upload_form').addEventListener('submit', function(e) {
         return;
     }
     
-    // Show progress section
+    const studentIds = Array.from(studentCheckboxes).map(cb => cb.value);
+    const totalOperations = files.length * studentIds.length;
+    let completedOperations = 0;
+    
+    // UI Elements
     const progressSection = document.getElementById('upload_progress_section');
     const progressBar = document.getElementById('upload_progress_bar');
     const percentage = document.getElementById('upload_percentage');
@@ -202,88 +206,132 @@ document.getElementById('upload_form').addEventListener('submit', function(e) {
     uploadBtn.classList.add('opacity-50', 'cursor-not-allowed');
     spinner.classList.remove('hidden');
     
-    // Create file status items
-    Array.from(files).forEach((file, index) => {
-        const fileStatus = document.createElement('div');
-        fileStatus.id = `file_status_${index}`;
-        fileStatus.className = 'flex items-center gap-2 text-sm';
-        fileStatus.innerHTML = `
-            <span class="file-icon w-5 h-5 text-gray-400">⏳</span>
-            <span class="file-name truncate flex-1">${file.name}</span>
-            <span class="file-size text-xs text-gray-400">${(file.size/1024).toFixed(1)} KB</span>
-            <span class="file-status text-xs text-gray-500"></span>
-        `;
-        fileStatusContainer.appendChild(fileStatus);
+    // Create status items for each student-file combination
+    const statusItems = [];
+    let studentName = '';
+    studentIds.forEach((studentId, studentIdx) => {
+        studentCheckboxes.forEach(cb => {
+            if (cb.value === studentId) {
+                studentName = cb.closest('label').querySelector('span').textContent;
+            }
+        });
+        Array.from(files).forEach((file, fileIdx) => {
+            const itemId = `${studentId}_${fileIdx}`;
+            const statusItem = document.createElement('div');
+            statusItem.id = `status_${itemId}`;
+            statusItem.className = 'flex items-center gap-2 text-sm p-2 bg-white rounded';
+            statusItem.innerHTML = `
+                <span class="file-icon w-6 h-6 flex items-center justify-center text-gray-400">⏳</span>
+                <span class="file-name truncate flex-1 text-xs">${file.name}</span>
+                <span class="file-size text-xs text-gray-400">${(file.size/1024).toFixed(1)} KB</span>
+                <span class="file-status text-xs px-2 py-1 rounded bg-gray-50">รอ...</span>
+            `;
+            fileStatusContainer.appendChild(statusItem);
+            statusItems.push({ id: itemId, studentId, fileIdx, file });
+        });
     });
     
-    const xhr = new XMLHttpRequest();
-    const totalFiles = files.length;
-    let uploadedCount = 0;
+    let hasError = false;
     
-    xhr.upload.addEventListener('progress', function(e) {
-        if (e.lengthComputable) {
-            const percentComplete = Math.round((e.loaded / e.total) * 100);
-            progressBar.style.width = percentComplete + '%';
-            percentage.textContent = percentComplete + '%';
-            statusText.textContent = `กำลังอัปโหลด ${uploadedCount + 1}/${totalFiles} ไฟล์`;
-        }
-    });
-    
-    xhr.addEventListener('loadstart', function() {
-        statusText.textContent = 'เริ่มอัปโหลด...';
-    });
-    
-    xhr.addEventListener('load', function() {
-        if (xhr.status === 200) {
-            uploadedCount++;
+    // Upload files for each student
+    for (let s = 0; s < studentIds.length; s++) {
+        const studentId = studentIds[s];
+        
+        for (let f = 0; f < files.length; f++) {
+            const file = files[f];
+            const itemId = `${studentId}_${f}`;
+            const statusEl = document.getElementById(`status_${itemId}`);
+            const iconEl = statusEl.querySelector('.file-icon');
+            const statusLabel = statusEl.querySelector('.file-status');
             
-            // Mark all files as complete
-            Array.from(files).forEach((file, index) => {
-                const fileStatus = document.getElementById(`file_status_${index}`);
-                if (fileStatus) {
-                    fileStatus.querySelector('.file-icon').textContent = '✅';
-                    fileStatus.querySelector('.file-status').textContent = 'เสร็จสิ้น';
-                    fileStatus.querySelector('.file-status').className = 'file-status text-xs text-green-600';
-                }
-            });
-            
-            progressBar.style.width = '100%';
-            percentage.textContent = '100%';
-            statusText.textContent = 'อัปโหลดเสร็จสิ้น!';
-            
-            setTimeout(() => {
-                window.location.href = '<?php echo e(route("teacher.dashboard")); ?>';
-            }, 1000);
-        } else {
-            // Handle error
-            statusText.textContent = 'เกิดข้อผิดพลาด';
-            statusText.className = 'text-sm font-medium text-red-600';
-            progressBar.className = 'bg-red-600 h-3 rounded-full transition-all duration-300';
-            uploadBtn.disabled = false;
-            uploadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            spinner.classList.add('hidden');
+            // Update status
+            statusText.textContent = `กำลังอัปโหลด ${file.name} ให้นักเรียนคนที่ ${s + 1}/${studentIds.length}`;
             
             try {
-                const response = JSON.parse(xhr.responseText);
-                alert('เกิดข้อผิดพลาด: ' + (response.message || 'ไม่สามารถอัปโหลดได้'));
-            } catch (e) {
-                alert('เกิดข้อผิดพลาดในการอัปโหลด');
+                const uploadFormData = new FormData();
+                uploadFormData.append('classroom_id', classroomId);
+                uploadFormData.append('student_ids[]', studentId);
+                uploadFormData.append('files[]', file);
+                uploadFormData.append('upload_date', document.getElementById('upload_date').value);
+                
+                // XHR for progress tracking
+                const result = await uploadWithProgress(uploadFormData, (progress) => {
+                    const overall = Math.round(((completedOperations + (progress / 100)) / totalOperations) * 100);
+                    progressBar.style.width = overall + '%';
+                    percentage.textContent = overall + '%';
+                });
+                
+                if (result.success) {
+                    iconEl.textContent = '✅';
+                    iconEl.className = 'w-6 h-6 flex items-center justify-center text-green-500';
+                    statusLabel.textContent = 'เสร็จ';
+                    statusLabel.className = 'file-status text-xs px-2 py-1 rounded bg-green-100 text-green-700';
+                } else {
+                    throw new Error(result.message || 'Upload failed');
+                }
+            } catch (error) {
+                iconEl.textContent = '❌';
+                iconEl.className = 'w-6 h-6 flex items-center justify-center text-red-500';
+                statusLabel.textContent = 'ผิดพลาด';
+                statusLabel.className = 'file-status text-xs px-2 py-1 rounded bg-red-100 text-red-700';
+                hasError = true;
             }
+            
+            completedOperations++;
+            const overall = Math.round((completedOperations / totalOperations) * 100);
+            progressBar.style.width = overall + '%';
+            percentage.textContent = overall + '%';
         }
-    });
+    }
     
-    xhr.addEventListener('error', function() {
-        statusText.textContent = 'เกิดข้อผิดพลาดในการเชื่อมต่อ';
-        statusText.className = 'text-sm font-medium text-red-600';
+    if (hasError) {
+        statusText.textContent = 'อัปโหลดเสร็จบางส่วน (มีข้อผิดพลาด)';
+        statusText.className = 'text-sm font-medium text-orange-600';
         uploadBtn.disabled = false;
         uploadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
         spinner.classList.add('hidden');
-    });
-    
-    xhr.open('POST', '<?php echo e(route("teacher.upload.store")); ?>');
-    xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').content);
-    xhr.send(formData);
+    } else {
+        statusText.textContent = 'อัปโหลดเสร็จสิ้น!';
+        statusText.className = 'text-sm font-medium text-green-600';
+        setTimeout(() => {
+            window.location.href = '<?php echo e(route("teacher.dashboard")); ?>';
+        }, 1000);
+    }
 });
+
+function uploadWithProgress(formData, onProgress) {
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        
+        xhr.upload.addEventListener('progress', function(e) {
+            if (e.lengthComputable) {
+                onProgress(Math.round((e.loaded / e.total) * 100));
+            }
+        });
+        
+        xhr.addEventListener('load', function() {
+            if (xhr.status === 200 || xhr.status === 201) {
+                resolve({ success: true });
+            } else {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    reject(new Error(response.message || 'Upload failed'));
+                } catch (e) {
+                    reject(new Error('Upload failed'));
+                }
+            }
+        });
+        
+        xhr.addEventListener('error', function() {
+            reject(new Error('Connection error'));
+        });
+        
+        xhr.open('POST', '<?php echo e(route("teacher.upload.store")); ?>');
+        xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').content);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.send(formData);
+    });
+}
 
 // Load students if classroom already selected
 <?php if($selectedClassroom): ?>
