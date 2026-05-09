@@ -97,6 +97,9 @@ class MediaController extends Controller
                     'thumbnail_path' => $result['thumbnail_path'] ?? null,
                     'mime_type' => $result['mime_type'],
                     'size' => $result['size'],
+                    'original_size' => $result['original_size'] ?? null,
+                    'compression_saved_bytes' => $result['compression_saved_bytes'] ?? null,
+                    'compression_reduction_percent' => $result['compression_reduction_percent'] ?? null,
                     'uploaded_by' => $request->user()->id,
                     'uploaded_date' => $uploadDate,
                 ]);

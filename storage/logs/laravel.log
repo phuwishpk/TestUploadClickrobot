@@ -3084,3 +3084,392 @@ Error opening output files: Invalid argument"}
 #59 /var/www/html/public/index.php(13): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
 #60 {main}
 "} 
+[2026-05-09 16:06:50] local.INFO: Deleted media file {"path":"ม11080526/นร001/1778230677_d31715.jpg","disk":"r2"} 
+[2026-05-09 16:15:01] local.ERROR: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for mysql failed: nodename nor servname provided, or not known (Connection: mysql, SQL: select exists (select 1 from information_schema.tables where table_schema = 'school_upload' and table_name = 'migrations' and table_type in ('BASE TABLE', 'SYSTEM VERSIONED')) as `exists`) {"exception":"[object] (Illuminate\\Database\\QueryException(code: 2002): SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for mysql failed: nodename nor servname provided, or not known (Connection: mysql, SQL: select exists (select 1 from information_schema.tables where table_schema = 'school_upload' and table_name = 'migrations' and table_type in ('BASE TABLE', 'SYSTEM VERSIONED')) as `exists`) at /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php:825)
+[stacktrace]
+#0 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(979): Illuminate\\Database\\Connection->runQueryCallback('select exists (...', Array, Object(Closure))
+#1 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(958): Illuminate\\Database\\Connection->tryAgainIfCausedByLostConnection(Object(Illuminate\\Database\\QueryException), 'select exists (...', Array, Object(Closure))
+#2 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(781): Illuminate\\Database\\Connection->handleQueryException(Object(Illuminate\\Database\\QueryException), 'select exists (...', Array, Object(Closure))
+#3 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(398): Illuminate\\Database\\Connection->run('select exists (...', Array, Object(Closure))
+#4 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(344): Illuminate\\Database\\Connection->select('select exists (...', Array, true)
+#5 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(361): Illuminate\\Database\\Connection->selectOne('select exists (...', Array, true)
+#6 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Schema/MySqlBuilder.php(45): Illuminate\\Database\\Connection->scalar('select exists (...')
+#7 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Migrations/DatabaseMigrationRepository.php(184): Illuminate\\Database\\Schema\\MySqlBuilder->hasTable('migrations')
+#8 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(742): Illuminate\\Database\\Migrations\\DatabaseMigrationRepository->repositoryExists()
+#9 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(165): Illuminate\\Database\\Migrations\\Migrator->repositoryExists()
+#10 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Support/helpers.php(338): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->{closure:Illuminate\\Database\\Console\\Migrations\\MigrateCommand::repositoryExists():165}(1)
+#11 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(165): retry(1, Object(Closure), 0, Object(Closure))
+#12 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(141): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->repositoryExists()
+#13 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(111): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->prepareDatabase()
+#14 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(658): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->{closure:Illuminate\\Database\\Console\\Migrations\\MigrateCommand::runMigrations():110}()
+#15 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(110): Illuminate\\Database\\Migrations\\Migrator->usingConnection(NULL, Object(Closure))
+#16 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(89): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->runMigrations()
+#17 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->handle()
+#18 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#19 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(95): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#20 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#21 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/Container.php(696): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#22 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Console/Command.php(213): Illuminate\\Container\\Container->call(Array)
+#23 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Command/Command.php(341): Illuminate\\Console\\Command->execute(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#24 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Console/Command.php(182): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#25 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Application.php(1117): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#26 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Application.php(356): Symfony\\Component\\Console\\Application->doRunCommand(Object(Illuminate\\Database\\Console\\Migrations\\MigrateCommand), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#27 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Application.php(195): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#28 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#29 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1235): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#30 /Users/phuwish/uploadclickrobot2/artisan(13): Illuminate\\Foundation\\Application->handleCommand(Object(Symfony\\Component\\Console\\Input\\ArgvInput))
+#31 {main}
+
+[previous exception] [object] (PDOException(code: 2002): SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for mysql failed: nodename nor servname provided, or not known at /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php:67)
+[stacktrace]
+#0 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(67): PDO::connect('mysql:host=mysq...', 'school_user', Object(SensitiveParameterValue), Array)
+#1 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(85): Illuminate\\Database\\Connectors\\Connector->createPdoConnection('mysql:host=mysq...', 'school_user', Object(SensitiveParameterValue), Array)
+#2 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(48): Illuminate\\Database\\Connectors\\Connector->tryAgainIfCausedByLostConnection(Object(PDOException), 'mysql:host=mysq...', 'school_user', Object(SensitiveParameterValue), Array)
+#3 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/MySqlConnector.php(24): Illuminate\\Database\\Connectors\\Connector->createConnection('mysql:host=mysq...', Array, Array)
+#4 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/ConnectionFactory.php(185): Illuminate\\Database\\Connectors\\MySqlConnector->connect(Array)
+#5 [internal function]: Illuminate\\Database\\Connectors\\ConnectionFactory->{closure:Illuminate\\Database\\Connectors\\ConnectionFactory::createPdoResolverWithHosts():180}()
+#6 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(1231): call_user_func(Object(Closure))
+#7 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(1267): Illuminate\\Database\\Connection->getPdo()
+#8 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(512): Illuminate\\Database\\Connection->getReadPdo()
+#9 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(407): Illuminate\\Database\\Connection->getPdoForSelect(true)
+#10 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(812): Illuminate\\Database\\Connection->{closure:Illuminate\\Database\\Connection::select():398}('select exists (...', Array)
+#11 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(979): Illuminate\\Database\\Connection->runQueryCallback('select exists (...', Array, Object(Closure))
+#12 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(958): Illuminate\\Database\\Connection->tryAgainIfCausedByLostConnection(Object(Illuminate\\Database\\QueryException), 'select exists (...', Array, Object(Closure))
+#13 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(781): Illuminate\\Database\\Connection->handleQueryException(Object(Illuminate\\Database\\QueryException), 'select exists (...', Array, Object(Closure))
+#14 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(398): Illuminate\\Database\\Connection->run('select exists (...', Array, Object(Closure))
+#15 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(344): Illuminate\\Database\\Connection->select('select exists (...', Array, true)
+#16 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(361): Illuminate\\Database\\Connection->selectOne('select exists (...', Array, true)
+#17 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Schema/MySqlBuilder.php(45): Illuminate\\Database\\Connection->scalar('select exists (...')
+#18 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Migrations/DatabaseMigrationRepository.php(184): Illuminate\\Database\\Schema\\MySqlBuilder->hasTable('migrations')
+#19 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(742): Illuminate\\Database\\Migrations\\DatabaseMigrationRepository->repositoryExists()
+#20 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(165): Illuminate\\Database\\Migrations\\Migrator->repositoryExists()
+#21 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Support/helpers.php(338): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->{closure:Illuminate\\Database\\Console\\Migrations\\MigrateCommand::repositoryExists():165}(1)
+#22 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(165): retry(1, Object(Closure), 0, Object(Closure))
+#23 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(141): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->repositoryExists()
+#24 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(111): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->prepareDatabase()
+#25 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(658): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->{closure:Illuminate\\Database\\Console\\Migrations\\MigrateCommand::runMigrations():110}()
+#26 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(110): Illuminate\\Database\\Migrations\\Migrator->usingConnection(NULL, Object(Closure))
+#27 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(89): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->runMigrations()
+#28 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->handle()
+#29 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#30 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(95): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#31 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#32 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/Container.php(696): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#33 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Console/Command.php(213): Illuminate\\Container\\Container->call(Array)
+#34 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Command/Command.php(341): Illuminate\\Console\\Command->execute(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#35 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Console/Command.php(182): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#36 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Application.php(1117): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#37 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Application.php(356): Symfony\\Component\\Console\\Application->doRunCommand(Object(Illuminate\\Database\\Console\\Migrations\\MigrateCommand), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#38 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Application.php(195): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#39 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#40 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1235): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#41 /Users/phuwish/uploadclickrobot2/artisan(13): Illuminate\\Foundation\\Application->handleCommand(Object(Symfony\\Component\\Console\\Input\\ArgvInput))
+#42 {main}
+
+[previous exception] [object] (PDOException(code: 0): PDO::connect(): php_network_getaddresses: getaddrinfo for mysql failed: nodename nor servname provided, or not known at /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php:67)
+[stacktrace]
+#0 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(67): PDO::connect('mysql:host=mysq...', 'school_user', Object(SensitiveParameterValue), Array)
+#1 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(85): Illuminate\\Database\\Connectors\\Connector->createPdoConnection('mysql:host=mysq...', 'school_user', Object(SensitiveParameterValue), Array)
+#2 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(48): Illuminate\\Database\\Connectors\\Connector->tryAgainIfCausedByLostConnection(Object(PDOException), 'mysql:host=mysq...', 'school_user', Object(SensitiveParameterValue), Array)
+#3 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/MySqlConnector.php(24): Illuminate\\Database\\Connectors\\Connector->createConnection('mysql:host=mysq...', Array, Array)
+#4 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/ConnectionFactory.php(185): Illuminate\\Database\\Connectors\\MySqlConnector->connect(Array)
+#5 [internal function]: Illuminate\\Database\\Connectors\\ConnectionFactory->{closure:Illuminate\\Database\\Connectors\\ConnectionFactory::createPdoResolverWithHosts():180}()
+#6 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(1231): call_user_func(Object(Closure))
+#7 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(1267): Illuminate\\Database\\Connection->getPdo()
+#8 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(512): Illuminate\\Database\\Connection->getReadPdo()
+#9 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(407): Illuminate\\Database\\Connection->getPdoForSelect(true)
+#10 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(812): Illuminate\\Database\\Connection->{closure:Illuminate\\Database\\Connection::select():398}('select exists (...', Array)
+#11 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(979): Illuminate\\Database\\Connection->runQueryCallback('select exists (...', Array, Object(Closure))
+#12 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(958): Illuminate\\Database\\Connection->tryAgainIfCausedByLostConnection(Object(Illuminate\\Database\\QueryException), 'select exists (...', Array, Object(Closure))
+#13 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(781): Illuminate\\Database\\Connection->handleQueryException(Object(Illuminate\\Database\\QueryException), 'select exists (...', Array, Object(Closure))
+#14 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(398): Illuminate\\Database\\Connection->run('select exists (...', Array, Object(Closure))
+#15 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(344): Illuminate\\Database\\Connection->select('select exists (...', Array, true)
+#16 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(361): Illuminate\\Database\\Connection->selectOne('select exists (...', Array, true)
+#17 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Schema/MySqlBuilder.php(45): Illuminate\\Database\\Connection->scalar('select exists (...')
+#18 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Migrations/DatabaseMigrationRepository.php(184): Illuminate\\Database\\Schema\\MySqlBuilder->hasTable('migrations')
+#19 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(742): Illuminate\\Database\\Migrations\\DatabaseMigrationRepository->repositoryExists()
+#20 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(165): Illuminate\\Database\\Migrations\\Migrator->repositoryExists()
+#21 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Support/helpers.php(338): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->{closure:Illuminate\\Database\\Console\\Migrations\\MigrateCommand::repositoryExists():165}(1)
+#22 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(165): retry(1, Object(Closure), 0, Object(Closure))
+#23 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(141): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->repositoryExists()
+#24 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(111): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->prepareDatabase()
+#25 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(658): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->{closure:Illuminate\\Database\\Console\\Migrations\\MigrateCommand::runMigrations():110}()
+#26 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(110): Illuminate\\Database\\Migrations\\Migrator->usingConnection(NULL, Object(Closure))
+#27 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(89): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->runMigrations()
+#28 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->handle()
+#29 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#30 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(95): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#31 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#32 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/Container.php(696): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#33 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Console/Command.php(213): Illuminate\\Container\\Container->call(Array)
+#34 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Command/Command.php(341): Illuminate\\Console\\Command->execute(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#35 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Console/Command.php(182): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#36 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Application.php(1117): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#37 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Application.php(356): Symfony\\Component\\Console\\Application->doRunCommand(Object(Illuminate\\Database\\Console\\Migrations\\MigrateCommand), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#38 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Application.php(195): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#39 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#40 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1235): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#41 /Users/phuwish/uploadclickrobot2/artisan(13): Illuminate\\Foundation\\Application->handleCommand(Object(Symfony\\Component\\Console\\Input\\ArgvInput))
+#42 {main}
+"} 
+[2026-05-09 16:16:17] local.ERROR: SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for mysql failed: nodename nor servname provided, or not known (Connection: mysql, SQL: select exists (select 1 from information_schema.tables where table_schema = 'school_upload' and table_name = 'migrations' and table_type in ('BASE TABLE', 'SYSTEM VERSIONED')) as `exists`) {"exception":"[object] (Illuminate\\Database\\QueryException(code: 2002): SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for mysql failed: nodename nor servname provided, or not known (Connection: mysql, SQL: select exists (select 1 from information_schema.tables where table_schema = 'school_upload' and table_name = 'migrations' and table_type in ('BASE TABLE', 'SYSTEM VERSIONED')) as `exists`) at /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php:825)
+[stacktrace]
+#0 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(979): Illuminate\\Database\\Connection->runQueryCallback('select exists (...', Array, Object(Closure))
+#1 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(958): Illuminate\\Database\\Connection->tryAgainIfCausedByLostConnection(Object(Illuminate\\Database\\QueryException), 'select exists (...', Array, Object(Closure))
+#2 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(781): Illuminate\\Database\\Connection->handleQueryException(Object(Illuminate\\Database\\QueryException), 'select exists (...', Array, Object(Closure))
+#3 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(398): Illuminate\\Database\\Connection->run('select exists (...', Array, Object(Closure))
+#4 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(344): Illuminate\\Database\\Connection->select('select exists (...', Array, true)
+#5 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(361): Illuminate\\Database\\Connection->selectOne('select exists (...', Array, true)
+#6 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Schema/MySqlBuilder.php(45): Illuminate\\Database\\Connection->scalar('select exists (...')
+#7 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Migrations/DatabaseMigrationRepository.php(184): Illuminate\\Database\\Schema\\MySqlBuilder->hasTable('migrations')
+#8 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(742): Illuminate\\Database\\Migrations\\DatabaseMigrationRepository->repositoryExists()
+#9 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(165): Illuminate\\Database\\Migrations\\Migrator->repositoryExists()
+#10 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Support/helpers.php(338): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->{closure:Illuminate\\Database\\Console\\Migrations\\MigrateCommand::repositoryExists():165}(1)
+#11 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(165): retry(1, Object(Closure), 0, Object(Closure))
+#12 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(141): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->repositoryExists()
+#13 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(111): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->prepareDatabase()
+#14 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(658): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->{closure:Illuminate\\Database\\Console\\Migrations\\MigrateCommand::runMigrations():110}()
+#15 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(110): Illuminate\\Database\\Migrations\\Migrator->usingConnection(NULL, Object(Closure))
+#16 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(89): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->runMigrations()
+#17 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->handle()
+#18 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#19 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(95): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#20 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#21 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/Container.php(696): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#22 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Console/Command.php(213): Illuminate\\Container\\Container->call(Array)
+#23 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Command/Command.php(341): Illuminate\\Console\\Command->execute(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#24 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Console/Command.php(182): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#25 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Application.php(1117): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#26 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Application.php(356): Symfony\\Component\\Console\\Application->doRunCommand(Object(Illuminate\\Database\\Console\\Migrations\\MigrateCommand), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#27 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Application.php(195): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#28 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#29 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1235): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#30 /Users/phuwish/uploadclickrobot2/artisan(13): Illuminate\\Foundation\\Application->handleCommand(Object(Symfony\\Component\\Console\\Input\\ArgvInput))
+#31 {main}
+
+[previous exception] [object] (PDOException(code: 2002): SQLSTATE[HY000] [2002] php_network_getaddresses: getaddrinfo for mysql failed: nodename nor servname provided, or not known at /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php:67)
+[stacktrace]
+#0 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(67): PDO::connect('mysql:host=mysq...', 'school_user', Object(SensitiveParameterValue), Array)
+#1 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(85): Illuminate\\Database\\Connectors\\Connector->createPdoConnection('mysql:host=mysq...', 'school_user', Object(SensitiveParameterValue), Array)
+#2 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(48): Illuminate\\Database\\Connectors\\Connector->tryAgainIfCausedByLostConnection(Object(PDOException), 'mysql:host=mysq...', 'school_user', Object(SensitiveParameterValue), Array)
+#3 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/MySqlConnector.php(24): Illuminate\\Database\\Connectors\\Connector->createConnection('mysql:host=mysq...', Array, Array)
+#4 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/ConnectionFactory.php(185): Illuminate\\Database\\Connectors\\MySqlConnector->connect(Array)
+#5 [internal function]: Illuminate\\Database\\Connectors\\ConnectionFactory->{closure:Illuminate\\Database\\Connectors\\ConnectionFactory::createPdoResolverWithHosts():180}()
+#6 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(1231): call_user_func(Object(Closure))
+#7 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(1267): Illuminate\\Database\\Connection->getPdo()
+#8 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(512): Illuminate\\Database\\Connection->getReadPdo()
+#9 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(407): Illuminate\\Database\\Connection->getPdoForSelect(true)
+#10 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(812): Illuminate\\Database\\Connection->{closure:Illuminate\\Database\\Connection::select():398}('select exists (...', Array)
+#11 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(979): Illuminate\\Database\\Connection->runQueryCallback('select exists (...', Array, Object(Closure))
+#12 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(958): Illuminate\\Database\\Connection->tryAgainIfCausedByLostConnection(Object(Illuminate\\Database\\QueryException), 'select exists (...', Array, Object(Closure))
+#13 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(781): Illuminate\\Database\\Connection->handleQueryException(Object(Illuminate\\Database\\QueryException), 'select exists (...', Array, Object(Closure))
+#14 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(398): Illuminate\\Database\\Connection->run('select exists (...', Array, Object(Closure))
+#15 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(344): Illuminate\\Database\\Connection->select('select exists (...', Array, true)
+#16 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(361): Illuminate\\Database\\Connection->selectOne('select exists (...', Array, true)
+#17 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Schema/MySqlBuilder.php(45): Illuminate\\Database\\Connection->scalar('select exists (...')
+#18 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Migrations/DatabaseMigrationRepository.php(184): Illuminate\\Database\\Schema\\MySqlBuilder->hasTable('migrations')
+#19 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(742): Illuminate\\Database\\Migrations\\DatabaseMigrationRepository->repositoryExists()
+#20 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(165): Illuminate\\Database\\Migrations\\Migrator->repositoryExists()
+#21 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Support/helpers.php(338): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->{closure:Illuminate\\Database\\Console\\Migrations\\MigrateCommand::repositoryExists():165}(1)
+#22 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(165): retry(1, Object(Closure), 0, Object(Closure))
+#23 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(141): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->repositoryExists()
+#24 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(111): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->prepareDatabase()
+#25 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(658): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->{closure:Illuminate\\Database\\Console\\Migrations\\MigrateCommand::runMigrations():110}()
+#26 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(110): Illuminate\\Database\\Migrations\\Migrator->usingConnection(NULL, Object(Closure))
+#27 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(89): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->runMigrations()
+#28 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->handle()
+#29 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#30 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(95): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#31 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#32 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/Container.php(696): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#33 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Console/Command.php(213): Illuminate\\Container\\Container->call(Array)
+#34 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Command/Command.php(341): Illuminate\\Console\\Command->execute(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#35 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Console/Command.php(182): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#36 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Application.php(1117): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#37 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Application.php(356): Symfony\\Component\\Console\\Application->doRunCommand(Object(Illuminate\\Database\\Console\\Migrations\\MigrateCommand), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#38 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Application.php(195): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#39 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#40 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1235): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#41 /Users/phuwish/uploadclickrobot2/artisan(13): Illuminate\\Foundation\\Application->handleCommand(Object(Symfony\\Component\\Console\\Input\\ArgvInput))
+#42 {main}
+
+[previous exception] [object] (PDOException(code: 0): PDO::connect(): php_network_getaddresses: getaddrinfo for mysql failed: nodename nor servname provided, or not known at /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php:67)
+[stacktrace]
+#0 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(67): PDO::connect('mysql:host=mysq...', 'school_user', Object(SensitiveParameterValue), Array)
+#1 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(85): Illuminate\\Database\\Connectors\\Connector->createPdoConnection('mysql:host=mysq...', 'school_user', Object(SensitiveParameterValue), Array)
+#2 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/Connector.php(48): Illuminate\\Database\\Connectors\\Connector->tryAgainIfCausedByLostConnection(Object(PDOException), 'mysql:host=mysq...', 'school_user', Object(SensitiveParameterValue), Array)
+#3 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/MySqlConnector.php(24): Illuminate\\Database\\Connectors\\Connector->createConnection('mysql:host=mysq...', Array, Array)
+#4 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connectors/ConnectionFactory.php(185): Illuminate\\Database\\Connectors\\MySqlConnector->connect(Array)
+#5 [internal function]: Illuminate\\Database\\Connectors\\ConnectionFactory->{closure:Illuminate\\Database\\Connectors\\ConnectionFactory::createPdoResolverWithHosts():180}()
+#6 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(1231): call_user_func(Object(Closure))
+#7 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(1267): Illuminate\\Database\\Connection->getPdo()
+#8 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(512): Illuminate\\Database\\Connection->getReadPdo()
+#9 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(407): Illuminate\\Database\\Connection->getPdoForSelect(true)
+#10 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(812): Illuminate\\Database\\Connection->{closure:Illuminate\\Database\\Connection::select():398}('select exists (...', Array)
+#11 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(979): Illuminate\\Database\\Connection->runQueryCallback('select exists (...', Array, Object(Closure))
+#12 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(958): Illuminate\\Database\\Connection->tryAgainIfCausedByLostConnection(Object(Illuminate\\Database\\QueryException), 'select exists (...', Array, Object(Closure))
+#13 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(781): Illuminate\\Database\\Connection->handleQueryException(Object(Illuminate\\Database\\QueryException), 'select exists (...', Array, Object(Closure))
+#14 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(398): Illuminate\\Database\\Connection->run('select exists (...', Array, Object(Closure))
+#15 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(344): Illuminate\\Database\\Connection->select('select exists (...', Array, true)
+#16 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Connection.php(361): Illuminate\\Database\\Connection->selectOne('select exists (...', Array, true)
+#17 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Schema/MySqlBuilder.php(45): Illuminate\\Database\\Connection->scalar('select exists (...')
+#18 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Migrations/DatabaseMigrationRepository.php(184): Illuminate\\Database\\Schema\\MySqlBuilder->hasTable('migrations')
+#19 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(742): Illuminate\\Database\\Migrations\\DatabaseMigrationRepository->repositoryExists()
+#20 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(165): Illuminate\\Database\\Migrations\\Migrator->repositoryExists()
+#21 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Support/helpers.php(338): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->{closure:Illuminate\\Database\\Console\\Migrations\\MigrateCommand::repositoryExists():165}(1)
+#22 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(165): retry(1, Object(Closure), 0, Object(Closure))
+#23 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(141): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->repositoryExists()
+#24 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(111): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->prepareDatabase()
+#25 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Migrations/Migrator.php(658): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->{closure:Illuminate\\Database\\Console\\Migrations\\MigrateCommand::runMigrations():110}()
+#26 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(110): Illuminate\\Database\\Migrations\\Migrator->usingConnection(NULL, Object(Closure))
+#27 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Database/Console/Migrations/MigrateCommand.php(89): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->runMigrations()
+#28 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\\Database\\Console\\Migrations\\MigrateCommand->handle()
+#29 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#30 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(95): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#31 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#32 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Container/Container.php(696): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#33 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Console/Command.php(213): Illuminate\\Container\\Container->call(Array)
+#34 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Command/Command.php(341): Illuminate\\Console\\Command->execute(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#35 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Console/Command.php(182): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#36 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Application.php(1117): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#37 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Application.php(356): Symfony\\Component\\Console\\Application->doRunCommand(Object(Illuminate\\Database\\Console\\Migrations\\MigrateCommand), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#38 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Application.php(195): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#39 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#40 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1235): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#41 /Users/phuwish/uploadclickrobot2/artisan(13): Illuminate\\Foundation\\Application->handleCommand(Object(Symfony\\Component\\Console\\Input\\ArgvInput))
+#42 {main}
+"} 
+[2026-05-09 16:22:36] local.INFO: MediaCompressor Start {"classroom_slug":"CLASS_1_2569_ม11","student_folder":"STU_9_นร003","student_code":"นร003","folderPath":"CLASS_1_2569_ม11/STU_9_นร003","fullPath":"CLASS_1_2569_ม11/STU_9_นร003/090526_162236_0755.mp4","type":"video"} 
+[2026-05-09 16:22:36] local.INFO: FFmpeg probe result {"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-stripping --enable-avfilter --enable-gpl --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libdav1d --enable-libdrm --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopenmpt --enable-libopus --"} 
+[2026-05-09 16:22:36] local.INFO: Video info {"original_width":1280,"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-st"} 
+[2026-05-09 16:22:36] local.INFO: FFmpeg 2-pass compression {"pass1":"/usr/bin/ffmpeg -i '/tmp/phpAkEIBE' -c:v libx264 -preset fast -b:v 1500k -pass 1 -an -f null - 2>&1","pass2":"/usr/bin/ffmpeg -i '/tmp/phpAkEIBE' -c:v libx264 -preset fast -b:v 1500k -pass 2 -c:a aac -b:a 48k -movflags +faststart -y '/tmp/69fefcdc85639_compressed.mp4' 2>&1"} 
+[2026-05-09 16:22:56] local.INFO: Video compression result {"original_size":29206849,"compressed_size":37102959,"saved_bytes":-7896110,"reduction_percent":-27.0} 
+[2026-05-09 16:22:56] local.INFO: Compression did not reduce size, using original  
+[2026-05-09 16:22:56] local.INFO: Extracting video thumbnail {"cmd":"/usr/bin/ffmpeg -ss 10 -i '/var/www/html/storage/app/uploads/CLASS_1_2569_ม11/STU_9_นร003/090526_162236_0755.mp4' -vframes 1 -q:v 1 -vf \"scale=480:-2\" -update 1 '/var/www/html/storage/app/uploads/CLASS_1_2569_ม11/STU_9_นร003/090526_162236_0755.jpg' 2>&1"} 
+[2026-05-09 16:22:56] local.INFO: Video thumbnail extracted {"thumbnail_path":"CLASS_1_2569_ม11/STU_9_นร003/090526_162236_0755.jpg","size":23149} 
+[2026-05-09 16:23:40] local.INFO: Uploaded to R2 {"path":"CLASS_1_2569_ม11/STU_9_นร003/090526_162236_0755.mp4"} 
+[2026-05-09 16:23:40] local.INFO: Uploaded to R2 {"path":"CLASS_1_2569_ม11/STU_9_นร003/090526_162236_0755.jpg"} 
+[2026-05-09 16:23:40] local.ERROR: Upload error {"file":"Electric - 3 Minute Countdown - Jack Murphy (720p, h264).mp4","student":"one","error":"SQLSTATE[42S22]: Column not found: 1054 Unknown column 'original_size' in 'field list' (Connection: mysql, SQL: insert into `media` (`student_id`, `classroom_id`, `type`, `original_name`, `stored_name`, `path`, `thumbnail_path`, `mime_type`, `size`, `original_size`, `compression_saved_bytes`, `compression_reduction_percent`, `uploaded_by`, `uploaded_date`, `updated_at`, `created_at`) values (9, 1, video, Electric - 3 Minute Countdown - Jack Murphy (720p, h264).mp4, 090526_162236_0755.mp4, CLASS_1_2569_ม11/STU_9_นร003/090526_162236_0755.mp4, CLASS_1_2569_ม11/STU_9_นร003/090526_162236_0755.jpg, video/mp4, 29206849, 29206849, 0, 0, 1, 2026-05-09 00:00:00, 2026-05-09 16:23:40, 2026-05-09 16:23:40))"} 
+[2026-05-09 16:23:56] local.INFO: MediaCompressor Start {"classroom_slug":"CLASS_1_2569_ม11","student_folder":"STU_9_นร003","student_code":"นร003","folderPath":"CLASS_1_2569_ม11/STU_9_นร003","fullPath":"CLASS_1_2569_ม11/STU_9_นร003/090526_162356_a6c0.mp4","type":"video"} 
+[2026-05-09 16:23:56] local.INFO: FFmpeg probe result {"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-stripping --enable-avfilter --enable-gpl --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libdav1d --enable-libdrm --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopenmpt --enable-libopus --"} 
+[2026-05-09 16:23:56] local.INFO: Video info {"original_width":1280,"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-st"} 
+[2026-05-09 16:23:56] local.INFO: FFmpeg 2-pass compression {"pass1":"/usr/bin/ffmpeg -i '/tmp/phpNECBiH' -c:v libx264 -preset fast -b:v 1500k -pass 1 -an -f null - 2>&1","pass2":"/usr/bin/ffmpeg -i '/tmp/phpNECBiH' -c:v libx264 -preset fast -b:v 1500k -pass 2 -c:a aac -b:a 48k -movflags +faststart -y '/tmp/69fefd2ca1c83_compressed.mp4' 2>&1"} 
+[2026-05-09 16:24:16] local.INFO: Video compression result {"original_size":29206849,"compressed_size":37102959,"saved_bytes":-7896110,"reduction_percent":-27.0} 
+[2026-05-09 16:24:16] local.INFO: Compression did not reduce size, using original  
+[2026-05-09 16:24:16] local.INFO: Extracting video thumbnail {"cmd":"/usr/bin/ffmpeg -ss 10 -i '/var/www/html/storage/app/uploads/CLASS_1_2569_ม11/STU_9_นร003/090526_162356_a6c0.mp4' -vframes 1 -q:v 1 -vf \"scale=480:-2\" -update 1 '/var/www/html/storage/app/uploads/CLASS_1_2569_ม11/STU_9_นร003/090526_162356_a6c0.jpg' 2>&1"} 
+[2026-05-09 16:24:16] local.INFO: Video thumbnail extracted {"thumbnail_path":"CLASS_1_2569_ม11/STU_9_นร003/090526_162356_a6c0.jpg","size":23149} 
+[2026-05-09 16:24:58] local.INFO: Uploaded to R2 {"path":"CLASS_1_2569_ม11/STU_9_นร003/090526_162356_a6c0.mp4"} 
+[2026-05-09 16:24:58] local.INFO: Uploaded to R2 {"path":"CLASS_1_2569_ม11/STU_9_นร003/090526_162356_a6c0.jpg"} 
+[2026-05-09 16:24:58] local.ERROR: Upload error {"file":"Electric - 3 Minute Countdown - Jack Murphy (720p, h264).mp4","student":"one","error":"SQLSTATE[42S22]: Column not found: 1054 Unknown column 'original_size' in 'field list' (Connection: mysql, SQL: insert into `media` (`student_id`, `classroom_id`, `type`, `original_name`, `stored_name`, `path`, `thumbnail_path`, `mime_type`, `size`, `original_size`, `compression_saved_bytes`, `compression_reduction_percent`, `uploaded_by`, `uploaded_date`, `updated_at`, `created_at`) values (9, 1, video, Electric - 3 Minute Countdown - Jack Murphy (720p, h264).mp4, 090526_162356_a6c0.mp4, CLASS_1_2569_ม11/STU_9_นร003/090526_162356_a6c0.mp4, CLASS_1_2569_ม11/STU_9_นร003/090526_162356_a6c0.jpg, video/mp4, 29206849, 29206849, 0, 0, 1, 2026-05-09 00:00:00, 2026-05-09 16:24:58, 2026-05-09 16:24:58))"} 
+[2026-05-09 16:28:45] local.INFO: MediaCompressor Start {"classroom_slug":"CLASS_1_2569_ม11","student_folder":"STU_9_นร003","student_code":"นร003","folderPath":"CLASS_1_2569_ม11/STU_9_นร003","fullPath":"CLASS_1_2569_ม11/STU_9_นร003/090526_162845_a2fd.mp4","type":"video"} 
+[2026-05-09 16:28:45] local.INFO: FFmpeg probe result {"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-stripping --enable-avfilter --enable-gpl --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libdav1d --enable-libdrm --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopenmpt --enable-libopus --"} 
+[2026-05-09 16:28:45] local.INFO: Video info {"original_width":1280,"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-st"} 
+[2026-05-09 16:28:45] local.INFO: FFmpeg 2-pass compression {"pass1":"/usr/bin/ffmpeg -i '/tmp/phpjpkOfF' -c:v libx264 -preset fast -b:v 1500k -pass 1 -an -f null - 2>&1","pass2":"/usr/bin/ffmpeg -i '/tmp/phpjpkOfF' -c:v libx264 -preset fast -b:v 1500k -pass 2 -c:a aac -b:a 48k -movflags +faststart -y '/tmp/69fefe4d930b5_compressed.mp4' 2>&1"} 
+[2026-05-09 16:29:05] local.INFO: Video compression result {"original_size":29206849,"compressed_size":37102959,"saved_bytes":-7896110,"reduction_percent":-27.0} 
+[2026-05-09 16:29:05] local.INFO: Compression did not reduce size, using original  
+[2026-05-09 16:29:05] local.INFO: Extracting video thumbnail {"cmd":"/usr/bin/ffmpeg -ss 10 -i '/var/www/html/storage/app/uploads/CLASS_1_2569_ม11/STU_9_นร003/090526_162845_a2fd.mp4' -vframes 1 -q:v 1 -vf \"scale=480:-2\" -update 1 '/var/www/html/storage/app/uploads/CLASS_1_2569_ม11/STU_9_นร003/090526_162845_a2fd.jpg' 2>&1"} 
+[2026-05-09 16:29:05] local.INFO: Video thumbnail extracted {"thumbnail_path":"CLASS_1_2569_ม11/STU_9_นร003/090526_162845_a2fd.jpg","size":23149} 
+[2026-05-09 16:29:52] local.INFO: Uploaded to R2 {"path":"CLASS_1_2569_ม11/STU_9_นร003/090526_162845_a2fd.mp4"} 
+[2026-05-09 16:29:52] local.INFO: Uploaded to R2 {"path":"CLASS_1_2569_ม11/STU_9_นร003/090526_162845_a2fd.jpg"} 
+[2026-05-09 16:33:25] local.INFO: MediaCompressor Start {"classroom_slug":"CLASS_2_2569_ม21","student_folder":"STU_10_นร004","student_code":"นร004","folderPath":"CLASS_2_2569_ม21/STU_10_นร004","fullPath":"CLASS_2_2569_ม21/STU_10_นร004/090526_163325_f9a7.mp4","type":"video"} 
+[2026-05-09 16:33:25] local.INFO: FFmpeg probe result {"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-stripping --enable-avfilter --enable-gpl --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libdav1d --enable-libdrm --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopenmpt --enable-libopus --"} 
+[2026-05-09 16:33:25] local.INFO: Video info {"original_width":1280,"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-st"} 
+[2026-05-09 16:33:25] local.INFO: Video appears already compressed, skipping compression {"size":29206849,"width":1280,"bitrate_kbps":1229} 
+[2026-05-09 16:33:25] local.INFO: Extracting video thumbnail {"cmd":"/usr/bin/ffmpeg -ss 10 -i '/var/www/html/storage/app/uploads/CLASS_2_2569_ม21/STU_10_นร004/090526_163325_f9a7.mp4' -vframes 1 -q:v 1 -vf \"scale=480:-2\" -update 1 '/var/www/html/storage/app/uploads/CLASS_2_2569_ม21/STU_10_นร004/090526_163325_f9a7.jpg' 2>&1"} 
+[2026-05-09 16:33:25] local.INFO: Video thumbnail extracted {"thumbnail_path":"CLASS_2_2569_ม21/STU_10_นร004/090526_163325_f9a7.jpg","size":23149} 
+[2026-05-09 16:34:26] local.INFO: Uploaded to R2 {"path":"CLASS_2_2569_ม21/STU_10_นร004/090526_163325_f9a7.mp4"} 
+[2026-05-09 16:34:27] local.INFO: Uploaded to R2 {"path":"CLASS_2_2569_ม21/STU_10_นร004/090526_163325_f9a7.jpg"} 
+[2026-05-09 16:40:59] local.INFO: MediaCompressor Start {"classroom_slug":"CLASS_1_2569_ม11","student_folder":"STU_9_นร003","student_code":"นร003","folderPath":"CLASS_1_2569_ม11/STU_9_นร003","fullPath":"CLASS_1_2569_ม11/STU_9_นร003/090526_164059_cc2f.MOV","type":"video"} 
+[2026-05-09 16:40:59] local.INFO: FFmpeg probe result {"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-stripping --enable-avfilter --enable-gpl --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libdav1d --enable-libdrm --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopenmpt --enable-libopus --"} 
+[2026-05-09 16:40:59] local.INFO: Video info {"original_width":1920,"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-st"} 
+[2026-05-09 16:40:59] local.INFO: FFmpeg 2-pass compression {"pass1":"/usr/bin/ffmpeg -i '/tmp/phpJlLlaj' -vf \"scale=1280:-2\" -c:v libx264 -preset fast -b:v 1500k -pass 1 -an -f null - 2>&1","pass2":"/usr/bin/ffmpeg -i '/tmp/phpJlLlaj' -vf \"scale=1280:-2\" -c:v libx264 -preset fast -b:v 1500k -pass 2 -c:a aac -b:a 48k -movflags +faststart -y '/tmp/69ff012b321ac_compressed.mp4' 2>&1"} 
+[2026-05-09 16:41:32] local.INFO: Video compression result {"original_size":53262039,"compressed_size":8633951,"saved_bytes":44628088,"reduction_percent":83.8} 
+[2026-05-09 16:41:32] local.INFO: Extracting video thumbnail {"cmd":"/usr/bin/ffmpeg -ss 10 -i '/var/www/html/storage/app/uploads/CLASS_1_2569_ม11/STU_9_นร003/090526_164059_cc2f.MOV' -vframes 1 -q:v 1 -vf \"scale=480:-2\" -update 1 '/var/www/html/storage/app/uploads/CLASS_1_2569_ม11/STU_9_นร003/090526_164059_cc2f.jpg' 2>&1"} 
+[2026-05-09 16:41:32] local.INFO: Video thumbnail extracted {"thumbnail_path":"CLASS_1_2569_ม11/STU_9_นร003/090526_164059_cc2f.jpg","size":42100} 
+[2026-05-09 16:41:49] local.INFO: Uploaded to R2 {"path":"CLASS_1_2569_ม11/STU_9_นร003/090526_164059_cc2f.MOV"} 
+[2026-05-09 16:41:50] local.INFO: Uploaded to R2 {"path":"CLASS_1_2569_ม11/STU_9_นร003/090526_164059_cc2f.jpg"} 
+[2026-05-09 16:47:11] local.INFO: MediaCompressor Start {"classroom_slug":"CLASS_2_2569_ม21","student_folder":"STU_10_นร004","student_code":"นร004","folderPath":"CLASS_2_2569_ม21/STU_10_นร004","fullPath":"CLASS_2_2569_ม21/STU_10_นร004/090526_164711_65b8.MOV","type":"video"} 
+[2026-05-09 16:47:11] local.INFO: FFmpeg probe result {"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-stripping --enable-avfilter --enable-gpl --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libdav1d --enable-libdrm --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopenmpt --enable-libopus --"} 
+[2026-05-09 16:47:11] local.INFO: Video info {"original_width":1920,"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-st"} 
+[2026-05-09 16:47:11] local.INFO: FFmpeg 2-pass compression {"pass1":"/usr/bin/ffmpeg -i '/tmp/phpdEPPJP' -vf \"scale=1280:-2\" -c:v libx264 -preset fast -b:v 1500k -pass 1 -an -f null - 2>&1","pass2":"/usr/bin/ffmpeg -i '/tmp/phpdEPPJP' -vf \"scale=1280:-2\" -c:v libx264 -preset fast -b:v 1500k -pass 2 -c:a aac -b:a 48k -movflags +faststart -y '/tmp/69ff029fe0811_compressed.mp4' 2>&1"} 
+[2026-05-09 16:47:45] local.INFO: Video compression result {"original_size":53262039,"compressed_size":8633951,"saved_bytes":44628088,"reduction_percent":83.8} 
+[2026-05-09 16:47:45] local.INFO: Extracting video thumbnail {"cmd":"/usr/bin/ffmpeg -ss 10 -i '/var/www/html/storage/app/uploads/CLASS_2_2569_ม21/STU_10_นร004/090526_164711_65b8.MOV' -vframes 1 -q:v 1 -vf \"scale=480:-2\" -update 1 '/var/www/html/storage/app/uploads/CLASS_2_2569_ม21/STU_10_นร004/090526_164711_65b8.jpg' 2>&1"} 
+[2026-05-09 16:47:45] local.INFO: Video thumbnail extracted {"thumbnail_path":"CLASS_2_2569_ม21/STU_10_นร004/090526_164711_65b8.jpg","size":42100} 
+[2026-05-09 16:48:01] local.INFO: Uploaded to R2 {"path":"CLASS_2_2569_ม21/STU_10_นร004/090526_164711_65b8.MOV"} 
+[2026-05-09 16:48:01] local.INFO: Uploaded to R2 {"path":"CLASS_2_2569_ม21/STU_10_นร004/090526_164711_65b8.jpg"} 
+[2026-05-09 16:50:27] local.INFO: MediaCompressor Start {"classroom_slug":"CLASS_2_2569_ม21","student_folder":"STU_10_นร004","student_code":"นร004","folderPath":"CLASS_2_2569_ม21/STU_10_นร004","fullPath":"CLASS_2_2569_ม21/STU_10_นร004/090526_165027_d9ae.MOV","type":"video"} 
+[2026-05-09 16:50:27] local.INFO: FFmpeg probe result {"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-stripping --enable-avfilter --enable-gpl --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libdav1d --enable-libdrm --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopenmpt --enable-libopus --"} 
+[2026-05-09 16:50:27] local.INFO: Video info {"original_width":1920,"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-st"} 
+[2026-05-09 16:50:27] local.INFO: FFmpeg 2-pass compression {"pass1":"/usr/bin/ffmpeg -i '/tmp/phpPjFMPC' -vf \"scale=1280:-2\" -c:v libx264 -preset fast -b:v 1500k -pass 1 -an -f null - 2>&1","pass2":"/usr/bin/ffmpeg -i '/tmp/phpPjFMPC' -vf \"scale=1280:-2\" -c:v libx264 -preset fast -b:v 1500k -pass 2 -c:a aac -b:a 48k -movflags +faststart -y '/tmp/69ff036378da1_compressed.mp4' 2>&1"} 
+[2026-05-09 16:51:01] local.INFO: Video compression result {"original_size":53262039,"compressed_size":8633951,"saved_bytes":44628088,"reduction_percent":83.8} 
+[2026-05-09 16:51:01] local.INFO: Extracting video thumbnail {"cmd":"/usr/bin/ffmpeg -ss 10 -i '/var/www/html/storage/app/uploads/CLASS_2_2569_ม21/STU_10_นร004/090526_165027_d9ae.MOV' -vframes 1 -q:v 1 -vf \"scale=480:-2\" -update 1 '/var/www/html/storage/app/uploads/CLASS_2_2569_ม21/STU_10_นร004/090526_165027_d9ae.jpg' 2>&1"} 
+[2026-05-09 16:51:01] local.INFO: Video thumbnail extracted {"thumbnail_path":"CLASS_2_2569_ม21/STU_10_นร004/090526_165027_d9ae.jpg","size":42100} 
+[2026-05-09 16:51:20] local.INFO: Uploaded to R2 {"path":"CLASS_2_2569_ม21/STU_10_นร004/090526_165027_d9ae.MOV"} 
+[2026-05-09 16:51:21] local.INFO: Uploaded to R2 {"path":"CLASS_2_2569_ม21/STU_10_นร004/090526_165027_d9ae.jpg"} 
+[2026-05-09 16:58:25] local.INFO: MediaCompressor Start {"classroom_slug":"CLASS_1_2569_ม11","student_folder":"STU_10_นร004","student_code":"นร004","folderPath":"CLASS_1_2569_ม11/STU_10_นร004","fullPath":"CLASS_1_2569_ม11/STU_10_นร004/090526_165825_52e6.MOV","type":"video"} 
+[2026-05-09 16:58:25] local.INFO: FFmpeg probe result {"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-stripping --enable-avfilter --enable-gpl --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libdav1d --enable-libdrm --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopenmpt --enable-libopus --"} 
+[2026-05-09 16:58:25] local.INFO: Video info {"original_width":1920,"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-st"} 
+[2026-05-09 16:58:25] local.INFO: FFmpeg 2-pass compression {"pass1":"/usr/bin/ffmpeg -i '/tmp/phpflHGpG' -vf \"scale=1280:-2\" -c:v libx264 -preset fast -b:v 1500k -pass 1 -an -f null - 2>&1","pass2":"/usr/bin/ffmpeg -i '/tmp/phpflHGpG' -vf \"scale=1280:-2\" -c:v libx264 -preset fast -b:v 1500k -pass 2 -c:a aac -b:a 48k -movflags +faststart -y '/tmp/69ff05419cf0f_compressed.mp4' 2>&1"} 
+[2026-05-09 16:58:58] local.INFO: Video compression result {"original_size":53262039,"compressed_size":8633951,"saved_bytes":44628088,"reduction_percent":83.8} 
+[2026-05-09 16:58:58] local.INFO: Extracting video thumbnail {"cmd":"/usr/bin/ffmpeg -ss 10 -i '/var/www/html/storage/app/uploads/CLASS_1_2569_ม11/STU_10_นร004/090526_165825_52e6.MOV' -vframes 1 -q:v 1 -vf \"scale=480:-2\" -update 1 '/var/www/html/storage/app/uploads/CLASS_1_2569_ม11/STU_10_นร004/090526_165825_52e6.jpg' 2>&1"} 
+[2026-05-09 16:58:58] local.INFO: Video thumbnail extracted {"thumbnail_path":"CLASS_1_2569_ม11/STU_10_นร004/090526_165825_52e6.jpg","size":42100} 
+[2026-05-09 16:59:15] local.INFO: Uploaded to R2 {"path":"CLASS_1_2569_ม11/STU_10_นร004/090526_165825_52e6.MOV"} 
+[2026-05-09 16:59:16] local.INFO: Uploaded to R2 {"path":"CLASS_1_2569_ม11/STU_10_นร004/090526_165825_52e6.jpg"} 
+[2026-05-09 17:35:21] local.INFO: MediaCompressor Start {"classroom_slug":"CLASS_1_2569_ม11","student_folder":"STU_9_นร003","student_code":"นร003","folderPath":"CLASS_1_2569_ม11/STU_9_นร003","fullPath":"CLASS_1_2569_ม11/STU_9_นร003/090526_173521_616a.MOV","type":"video"} 
+[2026-05-09 17:35:21] local.INFO: FFmpeg probe result {"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-stripping --enable-avfilter --enable-gpl --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libdav1d --enable-libdrm --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopenmpt --enable-libopus --"} 
+[2026-05-09 17:35:21] local.INFO: Video info {"original_width":1920,"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-st"} 
+[2026-05-09 17:35:21] local.INFO: FFmpeg 2-pass compression {"pass1":"/usr/bin/ffmpeg -i '/tmp/phpPDamhM' -vf \"scale=1280:-2\" -c:v libx264 -preset fast -b:v 1500k -pass 1 -an -f null - 2>&1","pass2":"/usr/bin/ffmpeg -i '/tmp/phpPDamhM' -vf \"scale=1280:-2\" -c:v libx264 -preset fast -b:v 1500k -pass 2 -c:a aac -b:a 48k -movflags +faststart -y '/tmp/69ff0de9d2401_compressed.mp4' 2>&1"} 
+[2026-05-09 17:35:54] local.INFO: Video compression result {"original_size":53262039,"compressed_size":8633951,"saved_bytes":44628088,"reduction_percent":83.8} 
+[2026-05-09 17:35:54] local.INFO: Extracting video thumbnail {"cmd":"/usr/bin/ffmpeg -ss 10 -i '/var/www/html/storage/app/uploads/CLASS_1_2569_ม11/STU_9_นร003/090526_173521_616a.MOV' -vframes 1 -q:v 1 -vf \"scale=480:-2\" -update 1 '/var/www/html/storage/app/uploads/CLASS_1_2569_ม11/STU_9_นร003/090526_173521_616a.jpg' 2>&1"} 
+[2026-05-09 17:35:55] local.INFO: Video thumbnail extracted {"thumbnail_path":"CLASS_1_2569_ม11/STU_9_นร003/090526_173521_616a.jpg","size":42100} 
+[2026-05-09 17:36:00] local.INFO: Uploaded to R2 {"path":"CLASS_1_2569_ม11/STU_9_นร003/090526_173521_616a.MOV"} 
+[2026-05-09 17:36:01] local.INFO: Uploaded to R2 {"path":"CLASS_1_2569_ม11/STU_9_นร003/090526_173521_616a.jpg"} 
+[2026-05-09 17:59:21] local.INFO: MediaCompressor Start {"classroom_slug":"CLASS_2_2569_ม21","student_folder":"STU_10_นร004","student_code":"นร004","folderPath":"CLASS_2_2569_ม21/STU_10_นร004","fullPath":"CLASS_2_2569_ม21/STU_10_นร004/090526_175921_9569.MOV","type":"video"} 
+[2026-05-09 17:59:21] local.INFO: FFmpeg probe result {"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-stripping --enable-avfilter --enable-gpl --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libdav1d --enable-libdrm --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopenmpt --enable-libopus --"} 
+[2026-05-09 17:59:21] local.INFO: Video info {"original_width":1920,"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-st"} 
+[2026-05-09 17:59:21] local.INFO: FFmpeg 2-pass compression {"pass1":"/usr/bin/ffmpeg -i '/tmp/phpIcFAjP' -vf \"scale=1280:-2\" -c:v libx264 -preset fast -b:v 1500k -pass 1 -an -f null - 2>&1","pass2":"/usr/bin/ffmpeg -i '/tmp/phpIcFAjP' -vf \"scale=1280:-2\" -c:v libx264 -preset fast -b:v 1500k -pass 2 -c:a aac -b:a 48k -movflags +faststart -y '/tmp/69ff1389e6d9f_compressed.mp4' 2>&1"} 
+[2026-05-09 17:59:54] local.INFO: Video compression result {"original_size":53262039,"compressed_size":8633951,"saved_bytes":44628088,"reduction_percent":83.8} 
+[2026-05-09 17:59:54] local.INFO: Extracting video thumbnail {"cmd":"/usr/bin/ffmpeg -ss 10 -i '/var/www/html/storage/app/uploads/CLASS_2_2569_ม21/STU_10_นร004/090526_175921_9569.MOV' -vframes 1 -q:v 1 -vf \"scale=480:-2\" -update 1 '/var/www/html/storage/app/uploads/CLASS_2_2569_ม21/STU_10_นร004/090526_175921_9569.jpg' 2>&1"} 
+[2026-05-09 17:59:54] local.INFO: Video thumbnail extracted {"thumbnail_path":"CLASS_2_2569_ม21/STU_10_นร004/090526_175921_9569.jpg","size":42100} 
+[2026-05-09 17:59:57] local.INFO: Uploaded to R2 {"path":"CLASS_2_2569_ม21/STU_10_นร004/090526_175921_9569.MOV"} 
+[2026-05-09 17:59:57] local.INFO: Uploaded to R2 {"path":"CLASS_2_2569_ม21/STU_10_นร004/090526_175921_9569.jpg"} 

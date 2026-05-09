@@ -193,6 +193,9 @@ class MediaCompressor
                 'path' => $jpgRelativePath,
                 'mime_type' => 'image/jpeg',
                 'size' => $size,
+                'original_size' => $originalSize,
+                'compression_saved_bytes' => $originalSize - $compressedSize,
+                'compression_reduction_percent' => round((1 - $compressedSize / $originalSize) * 100, 1),
             ];
         }
         
@@ -232,6 +235,9 @@ class MediaCompressor
                 'path' => $jpgRelativePath,
                 'mime_type' => 'image/jpeg',
                 'size' => $size,
+                'original_size' => $originalSize,
+                'compression_saved_bytes' => $originalSize - $compressedSize,
+                'compression_reduction_percent' => round((1 - $compressedSize / $originalSize) * 100, 1),
             ];
         }
         
@@ -254,12 +260,18 @@ class MediaCompressor
             'path' => $webpRelativePath,
             'mime_type' => 'image/webp',
             'size' => $size,
+            'original_size' => $originalSize,
+            'compression_saved_bytes' => $originalSize - $compressedSize,
+            'compression_reduction_percent' => round((1 - $compressedSize / $originalSize) * 100, 1),
         ];
     }
 
     protected function compressVideo(UploadedFile $file, string $absolutePath, string $relativePath): array
     {
         $tempInput = $file->getPathname();
+        $originalSize = filesize($tempInput);
+        $compressionSavedBytes = 0;
+        $compressionReductionPercent = 0;
         
         $dir = dirname($absolutePath);
         
@@ -292,7 +304,6 @@ class MediaCompressor
             copy($tempInput, $absolutePath);
         } else {
             $tempOutput = '/tmp/' . uniqid() . '_compressed.mp4';
-            $originalSize = filesize($tempInput);
             
             // Get video info to check if re-encoding is needed
             $probeCmd = sprintf('%s -i %s 2>&1', $ffmpegPath, escapeshellarg($tempInput));
@@ -309,10 +320,22 @@ class MediaCompressor
             }
             
             \Log::info('Video info', ['original_width' => $originalWidth, 'probe' => substr($probeText, 0, 200)]);
+
+            $originalBitrateKbps = 0;
+            if (preg_match('/bitrate:\s*(\d+)\s*kb\/s/i', $probeText, $matches)) {
+                $originalBitrateKbps = (int) $matches[1];
+            }
             
             // Skip compression if original is already small enough (< 10MB)
             if ($originalSize < 10 * 1024 * 1024) {
                 \Log::info('Video is already small enough, skipping compression', ['size' => $originalSize]);
+                copy($tempInput, $absolutePath);
+            } elseif ($originalWidth <= 1280 && $originalBitrateKbps > 0 && $originalBitrateKbps <= 1800) {
+                \Log::info('Video appears already compressed, skipping compression', [
+                    'size' => $originalSize,
+                    'width' => $originalWidth,
+                    'bitrate_kbps' => $originalBitrateKbps,
+                ]);
                 copy($tempInput, $absolutePath);
             } else {
                 // Use 2-pass encoding for better compression with target bitrate
@@ -350,16 +373,20 @@ class MediaCompressor
                 
                 if (file_exists($tempOutput) && filesize($tempOutput) > 0) {
                     $compressedSize = filesize($tempOutput);
+                    $attemptedSavedBytes = $originalSize - $compressedSize;
+                    $attemptedReductionPercent = $originalSize > 0 ? round((1 - $compressedSize / $originalSize) * 100, 1) : 0;
                     
                     \Log::info('Video compression result', [
                         'original_size' => $originalSize,
                         'compressed_size' => $compressedSize,
-                        'saved_bytes' => $originalSize - $compressedSize,
-                        'reduction_percent' => $originalSize > 0 ? round((1 - $compressedSize / $originalSize) * 100, 1) : 0
+                        'saved_bytes' => $attemptedSavedBytes,
+                        'reduction_percent' => $attemptedReductionPercent
                     ]);
                     
                     // Only use compressed version if it's actually smaller
                     if ($compressedSize < $originalSize) {
+                        $compressionSavedBytes = $attemptedSavedBytes;
+                        $compressionReductionPercent = $attemptedReductionPercent;
                         copy($tempOutput, $absolutePath);
                     } else {
                         \Log::info('Compression did not reduce size, using original');
@@ -395,6 +422,9 @@ class MediaCompressor
             'mime_type' => 'video/mp4',
             'size' => $size,
             'thumbnail_path' => $thumbnailResult['relative_path'] ?? null,
+            'original_size' => $originalSize,
+            'compression_saved_bytes' => $compressionSavedBytes,
+            'compression_reduction_percent' => $compressionReductionPercent,
         ];
     }
 
