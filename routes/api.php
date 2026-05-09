@@ -42,6 +42,7 @@ Route::middleware(['auth:sanctum', 'role:teacher'])->group(function () {
 
     // Media Upload
     Route::post('/media/upload', [MediaController::class, 'upload']);
+    Route::delete('/media/{media}', [MediaController::class, 'destroy']);
 });
 
 // Student API

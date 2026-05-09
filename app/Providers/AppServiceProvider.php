@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Classroom;
+use App\Models\Media;
 use App\Models\Student;
+use App\Observers\MediaObserver;
 use App\Policies\ClassroomPolicy;
 use App\Policies\StudentPolicy;
 use Illuminate\Support\Facades\Gate;
@@ -20,5 +22,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(Student::class, StudentPolicy::class);
         Gate::policy(Classroom::class, ClassroomPolicy::class);
+
+        Media::observe(MediaObserver::class);
     }
 }

@@ -110,4 +110,25 @@ class MediaController extends Controller
         return redirect()->route('teacher.upload.create', ['classroom_id' => $classroom->id])
             ->with('success', "อัปโหลดสำเร็จ {$uploadedCount} ไฟล์");
     }
+
+    public function destroy(Request $request, Media $media)
+    {
+        $user = $request->user();
+
+        // ตรวจสอบว่า media อยู่ใน classroom ที่ครูเป็นเจ้าของ
+        if (!$user->classrooms()->where('classrooms.id', $media->classroom_id)->exists()) {
+            if ($request->expectsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+                return response()->json(['message' => 'Unauthorized'], 403);
+            }
+            abort(403);
+        }
+
+        $media->delete();
+
+        if ($request->expectsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
+            return response()->json(['message' => 'ลบสำเร็จ']);
+        }
+
+        return redirect()->back()->with('success', 'ลบไฟล์สำเร็จ');
+    }
 }

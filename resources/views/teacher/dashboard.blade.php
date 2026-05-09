@@ -92,7 +92,7 @@
             @if($recentMedia->count() > 0)
                 <div class="space-y-3">
                     @foreach($recentMedia as $media)
-                        <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg group">
                             <div class="flex-shrink-0 mr-3 w-12 h-12">
                                 @if($media->type === 'image')
                                     <img src="{{ $media->url }}" alt="{{ $media->original_name }}" class="w-full h-full object-cover rounded">
@@ -114,9 +114,18 @@
                                     {{ $media->student->name }} | {{ $media->classroom->name }}
                                 </p>
                             </div>
-                            <div class="text-xs text-gray-400">
+                            <div class="text-xs text-gray-400 mr-3">
                                 {{ $media->uploaded_date->format('d/m/Y') }}
                             </div>
+                            <form action="{{ route('teacher.media.destroy', $media) }}" method="POST" class="delete-form">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="delete-btn opacity-0 group-hover:opacity-100 bg-red-500 hover:bg-red-600 text-white p-2 rounded transition-all">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </form>
                         </div>
                     @endforeach
                 </div>
@@ -126,4 +135,45 @@
         </div>
     </div>
 </div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 max-w-md mx-4">
+        <h3 class="text-lg font-semibold mb-2">ยืนยันการลบ</h3>
+        <p class="text-gray-600 mb-4">คุณต้องการลบไฟล์นี้ใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้</p>
+        <div class="flex justify-end gap-3">
+            <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800">ยกเลิก</button>
+            <button type="button" id="confirmDeleteBtn" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">ลบ</button>
+        </div>
+    </div>
+</div>
+
+@endsection
+
+@push('scripts')
+<script>
+let deleteFormToSubmit = null;
+
+document.querySelectorAll('.delete-form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        deleteFormToSubmit = this;
+        document.getElementById('deleteModal').classList.remove('hidden');
+        document.getElementById('deleteModal').classList.add('flex');
+    });
+});
+
+document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+    if (deleteFormToSubmit) {
+        deleteFormToSubmit.submit();
+    }
+});
+
+function closeDeleteModal() {
+    document.getElementById('deleteModal').classList.add('hidden');
+    document.getElementById('deleteModal').classList.remove('flex');
+    deleteFormToSubmit = null;
+}
+</script>
+@endpush
 @endsection

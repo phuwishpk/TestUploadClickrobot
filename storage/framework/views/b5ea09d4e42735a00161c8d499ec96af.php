@@ -273,7 +273,6 @@ document.getElementById('upload_form').addEventListener('submit', async function
             }
             const start = fakePercent;
             const startTime = Date.now();
-            console.log('accelerateTo called', {target, start, duration, fakePercent});
             const accelInterval = setInterval(() => {
                 const elapsed = Date.now() - startTime;
                 const progress = Math.min(elapsed / duration, 1);
@@ -289,7 +288,6 @@ document.getElementById('upload_form').addEventListener('submit', async function
         
         // When upload completes (real)
         uploadXhr.addEventListener('loadend', function() {
-            console.log('loadend fired', {fakePercent, status: uploadXhr.status});
             if (uploadXhr.status >= 200 && uploadXhr.status < 300) {
                 // Stop fake interval first before accelerating
                 if (fakeInterval) {
@@ -324,7 +322,6 @@ document.getElementById('upload_form').addEventListener('submit', async function
                     
                     // Continue fake progress (already running, will reach 90%)
                     // When fake reaches ~90%, processing should be done
-                    console.log('processing timeout starting', {fakePercent});
                     setTimeout(() => {
                         // Accelerate to 100%
                         accelerateTo(100, 500, function() {

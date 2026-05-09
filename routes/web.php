@@ -66,6 +66,7 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
     // Media Upload
     Route::get('/upload', [App\Http\Controllers\Teacher\MediaController::class, 'create'])->name('upload.create');
     Route::post('/upload', [App\Http\Controllers\Teacher\MediaController::class, 'store'])->name('upload.store');
+    Route::delete('/media/{media}', [App\Http\Controllers\Teacher\MediaController::class, 'destroy'])->name('media.destroy');
 });
 
 // Student Routes

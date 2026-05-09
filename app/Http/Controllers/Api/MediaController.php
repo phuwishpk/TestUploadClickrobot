@@ -135,4 +135,18 @@ class MediaController extends Controller
             ->header('Content-Type', $mimeType)
             ->header('Content-Disposition', 'inline; filename="' . $media->original_name . '"');
     }
+
+    public function destroy(Request $request, Media $media)
+    {
+        $user = $request->user();
+        $accessibleIds = $user->getAccessibleStudentIds();
+
+        if (!in_array($media->student_id, $accessibleIds)) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $media->delete();
+
+        return response()->json(['message' => 'ลบสำเร็จ']);
+    }
 }
