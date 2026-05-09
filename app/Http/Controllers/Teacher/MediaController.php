@@ -56,6 +56,8 @@ class MediaController extends Controller
         $uploadDate = $validated['upload_date'] ?? now()->format('Y-m-d');
         $uploadedCount = 0;
         $errors = [];
+        $totalFiles = count($validated['student_ids']) * count($request->file('files'));
+        $processedFiles = 0;
 
         foreach ($validated['student_ids'] as $studentId) {
             $student = Student::findOrFail($studentId);
@@ -80,12 +82,16 @@ class MediaController extends Controller
                     $uploadedCount++;
                 } catch (\Exception $e) {
                     $errors[] = "ไฟล์ {$file->getClientOriginalName()} สำหรับ {$student->name}: " . $e->getMessage();
+                    \Log::error('Upload error', [
+                        'file' => $file->getClientOriginalName(),
+                        'student' => $student->name,
+                        'error' => $e->getMessage()
+                    ]);
                 }
+                
+                $processedFiles++;
             }
         }
-        
-        // Always return 200 for XHR so the client knows upload completed (success or partial)
-        $statusCode = ($uploadedCount > 0 && empty($errors)) ? 200 : 200;
         
         if ($request->expectsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
             return response()->json([
@@ -94,7 +100,9 @@ class MediaController extends Controller
                     ? "อัปโหลดสำเร็จ {$uploadedCount} ไฟล์"
                     : "อัปโหลดสำเร็จ {$uploadedCount} ไฟล์ มีข้อผิดพลาด " . count($errors) . " รายการ",
                 'count' => $uploadedCount,
-                'errors' => $errors
+                'errors' => $errors,
+                'processed_files' => $processedFiles,
+                'total_files' => $totalFiles
             ], 200);
         }
         

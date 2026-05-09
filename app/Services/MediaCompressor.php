@@ -50,7 +50,6 @@ class MediaCompressor
         $dateObj = \Carbon\Carbon::parse($uploadDate);
         $dateStr = $dateObj->format('dmy');
         
-        // New path structure: CLASS_{id}_{year}_{slug}/STU_{id}_{code}/{date}_{filename}
         $r2Service = app(R2FolderService::class);
         $studentFolder = $r2Service->getStudentFolder($classroom, $student);
         $classFolder = $classroom->folder_slug;
@@ -60,13 +59,13 @@ class MediaCompressor
         $fullPath = $folderPath . '/' . $filename;
         $absolutePath = $this->uploadsPath . '/' . $fullPath;
         
-        // Debug logging
-        \Log::info('MediaCompressor Debug', [
+        \Log::info('MediaCompressor Start', [
             'classroom_slug' => $classFolder,
             'student_folder' => $studentFolder,
             'student_code' => $student->code,
             'folderPath' => $folderPath,
             'fullPath' => $fullPath,
+            'type' => $type,
         ]);
 
         if ($type === 'image') {
@@ -126,7 +125,6 @@ class MediaCompressor
     {
         $tempFile = $file->getPathname();
         
-        // Create directory
         $dir = dirname($absolutePath);
         
         if (!is_dir($dir)) {
@@ -151,10 +149,8 @@ class MediaCompressor
             @chgrp($dir, 'www-data');
         }
         
-        // Read and process image
         $image = $this->imageManager->read($tempFile);
         
-        // Resize if too large (max 2048px for better quality)
         $maxWidth = 2048;
         $maxHeight = 2048;
         
@@ -165,14 +161,89 @@ class MediaCompressor
             });
         }
 
-        // Convert to WebP for better compression (quality 85 = same visual as 90% JPEG)
         $webpPath = preg_replace('/\.(jpe?g|png|gif)$/i', '.webp', $absolutePath);
         $webpRelativePath = preg_replace('/\.(jpe?g|png|gif)$/i', '.webp', $relativePath);
         
-        $image->toWebp(85)->save($webpPath);
-        $size = filesize($webpPath);
+        $originalSize = filesize($tempFile);
+        
+        if (!function_exists('imagewebp')) {
+            \Log::warning('WebP not supported by GD, falling back to JPEG compression');
+            $jpgPath = preg_replace('/\.(png|gif)$/i', '.jpg', $absolutePath);
+            $jpgRelativePath = preg_replace('/\.(png|gif)$/i', '.jpg', $relativePath);
+            
+            $image->toJpeg(80)->save($jpgPath);
+            $compressedSize = filesize($jpgPath);
+            
+            \Log::info('Image compression (JPEG fallback)', [
+                'original_size' => $originalSize,
+                'compressed_size' => $compressedSize,
+                'saved_bytes' => $originalSize - $compressedSize,
+                'reduction_percent' => round((1 - $compressedSize / $originalSize) * 100, 1)
+            ]);
+            
+            $size = $compressedSize;
+            
+            if ($this->s3Client) {
+                $this->uploadToR2($jpgPath, $jpgRelativePath);
+            }
+            
+            return [
+                'type' => 'image',
+                'filename' => basename($jpgRelativePath),
+                'path' => $jpgRelativePath,
+                'mime_type' => 'image/jpeg',
+                'size' => $size,
+            ];
+        }
+        
+        $image->toWebp(80)->save($webpPath);
+        
+        if (!file_exists($webpPath)) {
+            throw new \RuntimeException("Failed to create WebP file: {$webpPath}");
+        }
+        
+        $compressedSize = filesize($webpPath);
+        
+        if ($compressedSize >= $originalSize) {
+            \Log::info('WebP compression did not reduce size, trying JPEG');
+            @unlink($webpPath);
+            
+            $jpgPath = preg_replace('/\.(jpe?g|png|gif)$/i', '.jpg', $absolutePath);
+            $jpgRelativePath = preg_replace('/\.(jpe?g|png|gif)$/i', '.jpg', $relativePath);
+            $image->toJpeg(75)->save($jpgPath);
+            $compressedSize = filesize($jpgPath);
+            
+            \Log::info('Image compression (JPEG)', [
+                'original_size' => $originalSize,
+                'compressed_size' => $compressedSize,
+                'saved_bytes' => $originalSize - $compressedSize,
+                'reduction_percent' => round((1 - $compressedSize / $originalSize) * 100, 1)
+            ]);
+            
+            $size = $compressedSize;
+            
+            if ($this->s3Client) {
+                $this->uploadToR2($jpgPath, $jpgRelativePath);
+            }
+            
+            return [
+                'type' => 'image',
+                'filename' => basename($jpgRelativePath),
+                'path' => $jpgRelativePath,
+                'mime_type' => 'image/jpeg',
+                'size' => $size,
+            ];
+        }
+        
+        \Log::info('Image compression result', [
+            'original_size' => $originalSize,
+            'compressed_size' => $compressedSize,
+            'saved_bytes' => $originalSize - $compressedSize,
+            'reduction_percent' => round((1 - $compressedSize / $originalSize) * 100, 1)
+        ]);
+        
+        $size = $compressedSize;
 
-        // Upload to R2 if configured
         if ($this->s3Client) {
             $this->uploadToR2($webpPath, $webpRelativePath);
         }
@@ -190,7 +261,6 @@ class MediaCompressor
     {
         $tempInput = $file->getPathname();
         
-        // Create directory
         $dir = dirname($absolutePath);
         
         if (!is_dir($dir)) {
@@ -216,48 +286,66 @@ class MediaCompressor
         }
 
         $ffmpegPath = '/usr/bin/ffmpeg';
-        $tempOutput = '/tmp/' . uniqid() . '.mp4';
-
-        if (file_exists($ffmpegPath)) {
-            // Get original video info for adaptive compression
+        
+        if (!file_exists($ffmpegPath)) {
+            \Log::warning('FFmpeg not found at ' . $ffmpegPath . ' - video copied without compression');
+            copy($tempInput, $absolutePath);
+        } else {
+            $tempOutput = '/tmp/' . uniqid() . '_compressed.mp4';
             $originalSize = filesize($tempInput);
             
-            // Check if video is small enough to skip compression (under 5MB)
-            if ($originalSize < 5 * 1024 * 1024) {
-                // For small videos, just copy with faststart for web optimization
+            // Get video info to check if re-encoding is needed
+            $probeCmd = sprintf('%s -i %s 2>&1', $ffmpegPath, escapeshellarg($tempInput));
+            exec($probeCmd, $probeOutput, $probeCode);
+            $probeText = implode("\n", $probeOutput);
+            
+            \Log::info('FFmpeg probe result', ['probe' => substr($probeText, 0, 500)]);
+            
+            // Check if video needs scaling (width > 1280) or re-encoding
+            $needsProcessing = preg_match('/([0-9]+)x([0-9]+)/', $probeText, $matches);
+            $originalWidth = isset($matches[1]) ? (int)$matches[1] : 1920;
+            
+            if ($originalWidth > 1280) {
+                // Scale down + re-encode to H.264
                 $command = sprintf(
-                    '%s -i %s -c:v copy -c:a copy -movflags +faststart -y %s 2>&1',
-                    escapeshellcmd($ffmpegPath),
+                    '%s -i %s -vf "scale=1280:-2" -c:v libx264 -preset fast -crf 28 -c:a aac -b:a 64k -movflags +faststart -y %s 2>&1',
+                    $ffmpegPath,
                     escapeshellarg($tempInput),
                     escapeshellarg($tempOutput)
                 );
             } else {
-                // For larger videos, compress with quality-preserving settings
-                // CRF 20 = high quality (lower = better, 18-23 is perceptually lossless range)
-                // Preset slow = better compression at same quality
+                // Just re-encode to compress (without scaling)
                 $command = sprintf(
-                    '%s -i %s -vf "scale=min(iw\\,1920):max(ih\\,1080),force_original_aspect_ratio=decrease" -c:v libx264 -preset slow -crf 20 -c:a aac -b:a 192k -movflags +faststart -y %s 2>&1',
-                    escapeshellcmd($ffmpegPath),
+                    '%s -i %s -c:v libx264 -preset fast -crf 28 -c:a aac -b:a 64k -movflags +faststart -y %s 2>&1',
+                    $ffmpegPath,
                     escapeshellarg($tempInput),
                     escapeshellarg($tempOutput)
                 );
             }
-
+            
+            \Log::info('FFmpeg compression command', ['command' => $command]);
             exec($command, $output, $returnCode);
-
-            if ($returnCode === 0 && file_exists($tempOutput)) {
+            
+            if ($returnCode === 0 && file_exists($tempOutput) && filesize($tempOutput) > 0) {
+                $compressedSize = filesize($tempOutput);
+                
+                \Log::info('Video compression result', [
+                    'original_size' => $originalSize,
+                    'compressed_size' => $compressedSize,
+                    'saved_bytes' => $originalSize - $compressedSize,
+                    'reduction_percent' => $originalSize > 0 ? round((1 - $compressedSize / $originalSize) * 100, 1) : 0
+                ]);
+                
                 copy($tempOutput, $absolutePath);
                 @unlink($tempOutput);
             } else {
+                \Log::error('FFmpeg compression failed', ['output' => implode("\n", array_slice($output, -10))]);
                 copy($tempInput, $absolutePath);
             }
-        } else {
-            copy($tempInput, $absolutePath);
         }
 
         $size = filesize($absolutePath);
 
-        // Upload to R2 if configured
         if ($this->s3Client) {
             $this->uploadToR2($absolutePath, $relativePath);
         }

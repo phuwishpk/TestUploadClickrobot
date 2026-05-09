@@ -13,7 +13,8 @@ RUN apk add --no-cache \
     oniguruma-dev \
     $PHPIZE_DEPS
 
-# Install PHP extensions
+# Install PHP extensions with WebP support
+# Note: On Alpine, webp extension is separate from gd
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
     docker-php-ext-install -j$(nproc) \
     pdo_mysql \
