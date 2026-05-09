@@ -16,6 +16,7 @@ class Media extends Model
         'original_name',
         'stored_name',
         'path',
+        'thumbnail_path',
         'mime_type',
         'size',
         'uploaded_by',
@@ -45,6 +46,14 @@ class Media extends Model
     public function getUrlAttribute(): string
     {
         return '/uploads/' . $this->path;
+    }
+
+    public function getThumbnailUrlAttribute(): ?string
+    {
+        if (!$this->thumbnail_path) {
+            return null;
+        }
+        return '/uploads/' . $this->thumbnail_path;
     }
 
     public function getIsImageAttribute(): bool

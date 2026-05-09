@@ -232,110 +232,154 @@ document.getElementById('upload_form').addEventListener('submit', async function
     });
     
     let hasError = false;
+    let processingInterval = null;
+    let fakeInterval = null;
+    let uploadStartTime = null;
     
-    // Get main progress elements (the header progress bar, not individual items)
-    const mainIconEl = progressSection.querySelector('.upload-icon') || progressBar.parentElement.querySelector('span') || null;
+    // Calculate estimated total time based on file sizes
+    let totalSize = 0;
+    Array.from(files).forEach(file => {
+        totalSize += file.size;
+    });
+    // Estimate: 1MB = 1 second total, minimum 5 seconds, maximum 60 seconds
+    const estimatedTotalTime = Math.min(60000, Math.max(5000, totalSize / (1024 * 1024) * 1000));
     
-    // Upload files using XHR with full progress tracking
+    // Upload files using XHR with fake progress tracking
     try {
         const uploadXhr = new XMLHttpRequest();
         
-        // Show initial state - update main status
+        // Show initial state
         statusText.textContent = 'กำลังอัปโหลดไฟล์ไปยังเซิร์ฟเวอร์...';
+        uploadStartTime = Date.now();
         
-        uploadXhr.upload.addEventListener('progress', function(e) {
-            if (e.lengthComputable) {
-                const uploadPercent = Math.round((e.loaded / e.total) * 100);
-                // Scale upload progress to 0-40% of total
-                const overallPercent = Math.round(uploadPercent * 0.4);
-                progressBar.style.width = overallPercent + '%';
-                percentage.textContent = overallPercent + '%';
-                statusText.textContent = `อัปโหลด ${uploadPercent}% (${files.length} ไฟล์)`;
+        // Start fake progress immediately (0→100)
+        let fakePercent = 0;
+        const fakeIncrement = 100 / (estimatedTotalTime / 50); // smooth increment
+        
+        fakeInterval = setInterval(() => {
+            fakePercent += fakeIncrement;
+            if (fakePercent > 100) fakePercent = 100;
+            progressBar.style.width = Math.round(fakePercent) + '%';
+            percentage.textContent = Math.round(fakePercent) + '%';
+            statusText.textContent = `อัปโหลด ${Math.round(fakePercent)}%`;
+        }, 50);
+        
+        // Helper function to accelerate to target
+        function accelerateTo(target, duration, callback) {
+            // If already at or past target, skip animation
+            if (fakePercent >= target) {
+                if (callback) callback();
+                return;
             }
-        });
-        
-        uploadXhr.addEventListener('loadend', function() {
-            if (uploadXhr.status >= 200 && uploadXhr.status < 300) {
-                // Upload done, now server processing
-                statusText.textContent = 'กำลังบีบอัดไฟล์และอัปโหลดไป Cloudflare R2...';
-                progressBar.style.width = '45%';
-                percentage.textContent = '45%';
-                
-                // Parse response
-                try {
-                    const response = JSON.parse(uploadXhr.responseText);
-                    
-                    // Wait for processing to complete (simulate progress)
-                    let processingProgress = 45;
-                    const progressInterval = setInterval(() => {
-                        processingProgress += 5;
-                        if (processingProgress >= 95) {
-                            clearInterval(progressInterval);
-                            processingProgress = 95;
-                        }
-                        progressBar.style.width = processingProgress + '%';
-                        percentage.textContent = processingProgress + '%';
-                        statusText.textContent = 'กำลังบีบอัดไฟล์... ' + processingProgress + '%';
-                    }, 200);
-                    
-                    // Wait for server processing then show complete
-                    setTimeout(() => {
-                        clearInterval(progressInterval);
-                        
-                        // Update all status items to complete
-                        studentIds.forEach((studentId) => {
-                            Array.from(files).forEach((file, fIdx) => {
-                                const itemId = `${studentId}_${fIdx}`;
-                                const statusEl = document.getElementById(`status_${itemId}`);
-                                if (statusEl) {
-                                    const itemIcon = statusEl.querySelector('.file-icon');
-                                    const itemStatus = statusEl.querySelector('.file-status');
-                                    if (itemIcon) {
-                                        itemIcon.textContent = '✅';
-                                        itemIcon.className = 'file-icon w-6 h-6 flex items-center justify-center text-green-500';
-                                    }
-                                    if (itemStatus) {
-                                        itemStatus.textContent = 'เสร็จ';
-                                        itemStatus.className = 'file-status text-xs px-2 py-1 rounded bg-green-100 text-green-700';
-                                    }
-                                }
-                            });
-                        });
-                        
-                        // Check for errors from server
-                        if (response.errors && response.errors.length > 0) {
-                            hasError = true;
-                            statusText.textContent = 'อัปโหลดเสร็จบางส่วน (มีข้อผิดพลาด ' + response.errors.length + ' รายการ)';
-                            statusText.className = 'text-sm font-medium text-orange-600';
-                        } else {
-                            statusText.textContent = 'อัปโหลดเสร็จสิ้น!';
-                            statusText.className = 'text-sm font-medium text-green-600';
-                        }
-                        
-                        progressBar.style.width = '100%';
-                        percentage.textContent = '100%';
-                        spinner.classList.add('hidden');
-                        uploadBtn.disabled = false;
-                        uploadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                        
-                        if (!hasError) {
-                            setTimeout(() => {
-                                window.location.href = '<?php echo e(route("teacher.dashboard")); ?>';
-                            }, 1500);
-                        }
-                    }, 1500); // Wait for server processing
-                    
-                } catch (e) {
-                    hasError = true;
-                    spinner.classList.add('hidden');
-                    uploadBtn.disabled = false;
-                    uploadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                    statusText.textContent = 'เกิดข้อผิดพลาดในการอ่านผลตอบกลับ';
-                    statusText.className = 'text-sm font-medium text-red-600';
+            const start = fakePercent;
+            const startTime = Date.now();
+            console.log('accelerateTo called', {target, start, duration, fakePercent});
+            const accelInterval = setInterval(() => {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                fakePercent = start + (target - start) * progress;
+                progressBar.style.width = Math.round(fakePercent) + '%';
+                percentage.textContent = Math.round(fakePercent) + '%';
+                if (progress >= 1) {
+                    clearInterval(accelInterval);
+                    if (callback) callback();
                 }
+            }, 16);
+        }
+        
+        // When upload completes (real)
+        uploadXhr.addEventListener('loadend', function() {
+            console.log('loadend fired', {fakePercent, status: uploadXhr.status});
+            if (uploadXhr.status >= 200 && uploadXhr.status < 300) {
+                // Stop fake interval first before accelerating
+                if (fakeInterval) {
+                    clearInterval(fakeInterval);
+                    fakeInterval = null;
+                }
+                
+                // Accelerate to 40% quickly (300ms)
+                accelerateTo(40, 300, function() {
+                    // Start processing phase
+                    statusText.textContent = 'กำลังประมวลผล...';
+                    
+                    // Update status for each file
+                    studentIds.forEach((studentId) => {
+                        Array.from(files).forEach((file, fIdx) => {
+                            const itemId = `${studentId}_${fIdx}`;
+                            const statusEl = document.getElementById(`status_${itemId}`);
+                            if (statusEl) {
+                                const itemIcon = statusEl.querySelector('.file-icon');
+                                const itemStatus = statusEl.querySelector('.file-status');
+                                if (itemIcon) {
+                                    itemIcon.textContent = '⚙️';
+                                    itemIcon.className = 'file-icon w-6 h-6 flex items-center justify-center text-blue-500 animate-spin';
+                                }
+                                if (itemStatus) {
+                                    itemStatus.textContent = 'กำลังประมวลผล';
+                                    itemStatus.className = 'file-status text-xs px-2 py-1 rounded bg-blue-100 text-blue-700';
+                                }
+                            }
+                        });
+                    });
+                    
+                    // Continue fake progress (already running, will reach 90%)
+                    // When fake reaches ~90%, processing should be done
+                    console.log('processing timeout starting', {fakePercent});
+                    setTimeout(() => {
+                        // Accelerate to 100%
+                        accelerateTo(100, 500, function() {
+                            // Update all status items to complete
+                            studentIds.forEach((studentId) => {
+                                Array.from(files).forEach((file, fIdx) => {
+                                    const itemId = `${studentId}_${fIdx}`;
+                                    const statusEl = document.getElementById(`status_${itemId}`);
+                                    if (statusEl) {
+                                        const itemIcon = statusEl.querySelector('.file-icon');
+                                        const itemStatus = statusEl.querySelector('.file-status');
+                                        if (itemIcon) {
+                                            itemIcon.textContent = '✅';
+                                            itemIcon.className = 'file-icon w-6 h-6 flex items-center justify-center text-green-500';
+                                        }
+                                        if (itemStatus) {
+                                            itemStatus.textContent = 'เสร็จ';
+                                            itemStatus.className = 'file-status text-xs px-2 py-1 rounded bg-green-100 text-green-700';
+                                        }
+                                    }
+                                });
+                            });
+                            
+                            // Parse response
+                            try {
+                                const response = JSON.parse(uploadXhr.responseText);
+                                if (response.errors && response.errors.length > 0) {
+                                    hasError = true;
+                                    statusText.textContent = 'อัปโหลดเสร็จบางส่วน (มีข้อผิดพลาด ' + response.errors.length + ' รายการ)';
+                                    statusText.className = 'text-sm font-medium text-orange-600';
+                                } else {
+                                    statusText.textContent = 'อัปโหลดเสร็จสิ้น!';
+                                    statusText.className = 'text-sm font-medium text-green-600';
+                                }
+                            } catch (e) {
+                                statusText.textContent = 'อัปโหลดเสร็จสิ้น!';
+                                statusText.className = 'text-sm font-medium text-green-600';
+                            }
+                            
+                            spinner.classList.add('hidden');
+                            uploadBtn.disabled = false;
+                            uploadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                            
+                            if (!hasError) {
+                                setTimeout(() => {
+                                    window.location.href = '<?php echo e(route("teacher.dashboard")); ?>';
+                                }, 1500);
+                            }
+                        });
+                    }, 500); // Processing delay
+                });
             } else {
                 // Upload failed
                 hasError = true;
+                if (fakeInterval) clearInterval(fakeInterval);
                 statusText.textContent = 'อัปโหลดล้มเหลว';
                 statusText.className = 'text-sm font-medium text-red-600';
                 spinner.classList.add('hidden');
@@ -366,6 +410,7 @@ document.getElementById('upload_form').addEventListener('submit', async function
         
         uploadXhr.addEventListener('error', function() {
             hasError = true;
+            if (fakeInterval) clearInterval(fakeInterval);
             statusText.textContent = 'การเชื่อมต่อผิดพลาด';
             statusText.className = 'text-sm font-medium text-red-600';
             spinner.classList.add('hidden');
@@ -376,11 +421,12 @@ document.getElementById('upload_form').addEventListener('submit', async function
         uploadXhr.open('POST', '<?php echo e(route("teacher.upload.store")); ?>');
         uploadXhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').content);
         uploadXhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        uploadXhr.timeout = 600000; // 10 minutes timeout
+        uploadXhr.timeout = 600000;
         uploadXhr.send(formData);
         
     } catch (error) {
         hasError = true;
+        if (fakeInterval) clearInterval(fakeInterval);
         statusText.textContent = 'เกิดข้อผิดพลาด: ' + error.message;
         statusText.className = 'text-sm font-medium text-red-600';
         spinner.classList.add('hidden');

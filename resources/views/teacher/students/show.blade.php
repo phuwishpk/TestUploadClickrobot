@@ -69,11 +69,19 @@
                 <div class="space-y-3">
                     @foreach($student->media as $media)
                         <div class="flex items-center p-2 bg-gray-50 rounded">
-                            <div class="flex-shrink-0 mr-2 text-xs">
+                            <div class="flex-shrink-0 mr-2 text-xs w-12 h-12">
                                 @if($media->type === 'image')
-                                    <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded">IMG</span>
+                                    <img src="{{ $media->url }}" alt="{{ $media->original_name }}" class="w-full h-full object-cover rounded">
                                 @else
-                                    <span class="px-2 py-1 bg-red-100 text-red-700 rounded">VID</span>
+                                    @if($media->thumbnail_path)
+                                        <img src="{{ $media->thumbnail_url }}" alt="{{ $media->original_name }}" class="w-full h-full object-cover rounded">
+                                    @else
+                                        <div class="w-full h-full bg-red-100 rounded flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                            </svg>
+                                        </div>
+                                    @endif
                                 @endif
                             </div>
                             <div class="flex-1 min-w-0">

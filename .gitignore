@@ -1,4 +1,4 @@
-/node_modules
+9/node_modules
 /public/build
 /public/hot
 /public/storage
@@ -21,3 +21,7 @@ public/ffmpeg2pass-0.log
 .gitignore
 storage/logs/laravel.log
 public/ffmpeg2pass-0.log.mbtree
+public/ffmpeg2pass-0.log.mbtree.temp
+public/ffmpeg2pass-0.log.temp
+storage/logs/laravel.log
+storage/logs/laravel.log

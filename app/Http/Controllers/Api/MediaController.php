@@ -94,6 +94,7 @@ class MediaController extends Controller
                     'original_name' => $file->getClientOriginalName(),
                     'stored_name' => $result['filename'],
                     'path' => $result['path'],
+                    'thumbnail_path' => $result['thumbnail_path'] ?? null,
                     'mime_type' => $result['mime_type'],
                     'size' => $result['size'],
                     'uploaded_by' => $request->user()->id,

@@ -1,0 +1,4 @@
+{"sessionId":"d414ed","location":"upload.blade.php:280","message":"loadend fired","data":{"fakePercentAtLoadend":100,"status":200},"timestamp":1778298321175}
+{"sessionId":"d414ed","location":"upload.blade.php:265","message":"accelerateTo called","data":{"target":40,"start":100,"duration":300,"goingBackwards":true},"timestamp":1778298321176}
+{"sessionId":"d414ed","location":"upload.blade.php:318","message":"processing timeout starting","data":{"fakePercentAtTimeout":40},"timestamp":1778298321482}
+{"sessionId":"d414ed","location":"upload.blade.php:265","message":"accelerateTo called","data":{"target":100,"start":40,"duration":500,"goingBackwards":false},"timestamp":1778298321984}

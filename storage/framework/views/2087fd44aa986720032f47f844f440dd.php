@@ -14,12 +14,16 @@
                     <?php if($m->type === 'image'): ?>
                         <img src="<?php echo e($m->url); ?>" alt="<?php echo e($m->original_name); ?>" class="w-full h-40 object-cover">
                     <?php else: ?>
-                        <div class="w-full h-40 bg-red-50 flex items-center justify-center relative">
-                            <svg class="w-16 h-16 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                            </svg>
-                            <div class="absolute bottom-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">VIDEO</div>
-                        </div>
+                        <?php if($m->thumbnail_path): ?>
+                            <img src="<?php echo e($m->thumbnail_url); ?>" alt="<?php echo e($m->original_name); ?>" class="w-full h-40 object-cover">
+                        <?php else: ?>
+                            <div class="w-full h-40 bg-red-50 flex items-center justify-center relative">
+                                <svg class="w-16 h-16 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                </svg>
+                                <div class="absolute bottom-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">VIDEO</div>
+                            </div>
+                        <?php endif; ?>
                     <?php endif; ?>
                     <div class="p-3">
                         <p class="text-sm truncate"><?php echo e($m->original_name); ?></p>

@@ -48,6 +48,8 @@
                     <div class="bg-gray-50 rounded-lg overflow-hidden hover:shadow-md transition">
                         @if($media->type === 'image')
                             <img src="{{ $media->url }}" alt="{{ $media->original_name }}" class="w-full h-32 object-cover">
+                        @elseif($media->thumbnail_path)
+                            <img src="{{ $media->thumbnail_url }}" alt="{{ $media->original_name }}" class="w-full h-32 object-cover">
                         @else
                             <div class="w-full h-32 bg-red-50 flex items-center justify-center">
                                 <svg class="w-12 h-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

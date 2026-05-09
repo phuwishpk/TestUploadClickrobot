@@ -378,8 +378,14 @@ class MediaCompressor
 
         $size = filesize($absolutePath);
 
+        // Extract video thumbnail
+        $thumbnailResult = $this->extractVideoThumbnail($absolutePath, $relativePath);
+
         if ($this->s3Client) {
             $this->uploadToR2($absolutePath, $relativePath);
+            if ($thumbnailResult) {
+                $this->uploadToR2($thumbnailResult['absolute_path'], $thumbnailResult['relative_path']);
+            }
         }
 
         return [
@@ -388,6 +394,56 @@ class MediaCompressor
             'path' => $relativePath,
             'mime_type' => 'video/mp4',
             'size' => $size,
+            'thumbnail_path' => $thumbnailResult['relative_path'] ?? null,
+        ];
+    }
+
+    public function extractVideoThumbnail(string $videoPath, string $videoRelativePath): ?array
+    {
+        $ffmpegPath = '/usr/bin/ffmpeg';
+
+        if (!file_exists($ffmpegPath)) {
+            \Log::warning('FFmpeg not found, cannot extract thumbnail');
+            return null;
+        }
+
+        $thumbnailFilename = preg_replace('/\.[^.]+$/', '.jpg', basename($videoRelativePath));
+        $thumbnailRelativePath = dirname($videoRelativePath) . '/' . $thumbnailFilename;
+        $thumbnailAbsolutePath = $this->uploadsPath . '/' . $thumbnailRelativePath;
+
+        $thumbDir = dirname($thumbnailAbsolutePath);
+        if (!is_dir($thumbDir)) {
+            @mkdir($thumbDir, 0755, true);
+        }
+
+        // Extract frame at 10 seconds (after opening/black frames)
+        $extractCmd = sprintf(
+            '%s -ss 10 -i %s -vframes 1 -q:v 1 -vf "scale=480:-2" -update 1 %s 2>&1',
+            $ffmpegPath,
+            escapeshellarg($videoPath),
+            escapeshellarg($thumbnailAbsolutePath)
+        );
+
+        \Log::info('Extracting video thumbnail', ['cmd' => $extractCmd]);
+        exec($extractCmd, $extractOutput, $extractCode);
+
+        if (!file_exists($thumbnailAbsolutePath) || filesize($thumbnailAbsolutePath) < 5000) {
+            \Log::warning('Video thumbnail too small or failed', [
+                'path' => $thumbnailRelativePath,
+                'size' => file_exists($thumbnailAbsolutePath) ? filesize($thumbnailAbsolutePath) : 0,
+            ]);
+            @unlink($thumbnailAbsolutePath);
+            return null;
+        }
+
+        \Log::info('Video thumbnail extracted', [
+            'thumbnail_path' => $thumbnailRelativePath,
+            'size' => filesize($thumbnailAbsolutePath)
+        ]);
+
+        return [
+            'absolute_path' => $thumbnailAbsolutePath,
+            'relative_path' => $thumbnailRelativePath,
         ];
     }
 
