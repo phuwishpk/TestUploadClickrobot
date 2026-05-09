@@ -176,4 +176,3 @@ function closeDeleteModal() {
 }
 </script>
 @endpush
-@endsection
