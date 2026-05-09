@@ -302,45 +302,77 @@ class MediaCompressor
             \Log::info('FFmpeg probe result', ['probe' => substr($probeText, 0, 500)]);
             
             // Check if video needs scaling (width > 1280) or re-encoding
-            $needsProcessing = preg_match('/([0-9]+)x([0-9]+)/', $probeText, $matches);
-            $originalWidth = isset($matches[1]) ? (int)$matches[1] : 1920;
-            
-            if ($originalWidth > 1280) {
-                // Scale down + re-encode to H.264
-                $command = sprintf(
-                    '%s -i %s -vf "scale=1280:-2" -c:v libx264 -preset fast -crf 28 -c:a aac -b:a 64k -movflags +faststart -y %s 2>&1',
-                    $ffmpegPath,
-                    escapeshellarg($tempInput),
-                    escapeshellarg($tempOutput)
-                );
-            } else {
-                // Just re-encode to compress (without scaling)
-                $command = sprintf(
-                    '%s -i %s -c:v libx264 -preset fast -crf 28 -c:a aac -b:a 64k -movflags +faststart -y %s 2>&1',
-                    $ffmpegPath,
-                    escapeshellarg($tempInput),
-                    escapeshellarg($tempOutput)
-                );
+            // Extract resolution from probe output
+            $originalWidth = 1920; // default
+            if (preg_match('/([0-9]{2,4})x([0-9]{2,4})/', $probeText, $matches)) {
+                $originalWidth = (int)$matches[1];
             }
             
-            \Log::info('FFmpeg compression command', ['command' => $command]);
-            exec($command, $output, $returnCode);
+            \Log::info('Video info', ['original_width' => $originalWidth, 'probe' => substr($probeText, 0, 200)]);
             
-            if ($returnCode === 0 && file_exists($tempOutput) && filesize($tempOutput) > 0) {
-                $compressedSize = filesize($tempOutput);
-                
-                \Log::info('Video compression result', [
-                    'original_size' => $originalSize,
-                    'compressed_size' => $compressedSize,
-                    'saved_bytes' => $originalSize - $compressedSize,
-                    'reduction_percent' => $originalSize > 0 ? round((1 - $compressedSize / $originalSize) * 100, 1) : 0
-                ]);
-                
-                copy($tempOutput, $absolutePath);
-                @unlink($tempOutput);
-            } else {
-                \Log::error('FFmpeg compression failed', ['output' => implode("\n", array_slice($output, -10))]);
+            // Skip compression if original is already small enough (< 10MB)
+            if ($originalSize < 10 * 1024 * 1024) {
+                \Log::info('Video is already small enough, skipping compression', ['size' => $originalSize]);
                 copy($tempInput, $absolutePath);
+            } else {
+                // Use 2-pass encoding for better compression with target bitrate
+                $targetBitrate = '1500k'; // 1.5 Mbps - good quality for mobile
+                
+                if ($originalWidth > 1280) {
+                    // Scale down + 2-pass encoding
+                    $pass1 = sprintf(
+                        '%s -i %s -vf "scale=1280:-2" -c:v libx264 -preset fast -b:v %s -pass 1 -an -f null - 2>&1',
+                        $ffmpegPath, escapeshellarg($tempInput), $targetBitrate
+                    );
+                    $pass2 = sprintf(
+                        '%s -i %s -vf "scale=1280:-2" -c:v libx264 -preset fast -b:v %s -pass 2 -c:a aac -b:a 48k -movflags +faststart -y %s 2>&1',
+                        $ffmpegPath, escapeshellarg($tempInput), $targetBitrate, escapeshellarg($tempOutput)
+                    );
+                    
+                    \Log::info('FFmpeg 2-pass compression', ['pass1' => $pass1, 'pass2' => $pass2]);
+                    exec($pass1, $p1Out, $p1Code);
+                    exec($pass2, $p2Out, $p2Code);
+                } else {
+                    // 2-pass encoding without scaling
+                    $pass1 = sprintf(
+                        '%s -i %s -c:v libx264 -preset fast -b:v %s -pass 1 -an -f null - 2>&1',
+                        $ffmpegPath, escapeshellarg($tempInput), $targetBitrate
+                    );
+                    $pass2 = sprintf(
+                        '%s -i %s -c:v libx264 -preset fast -b:v %s -pass 2 -c:a aac -b:a 48k -movflags +faststart -y %s 2>&1',
+                        $ffmpegPath, escapeshellarg($tempInput), $targetBitrate, escapeshellarg($tempOutput)
+                    );
+                    
+                    \Log::info('FFmpeg 2-pass compression', ['pass1' => $pass1, 'pass2' => $pass2]);
+                    exec($pass1, $p1Out, $p1Code);
+                    exec($pass2, $p2Out, $p2Code);
+                }
+                
+                if (file_exists($tempOutput) && filesize($tempOutput) > 0) {
+                    $compressedSize = filesize($tempOutput);
+                    
+                    \Log::info('Video compression result', [
+                        'original_size' => $originalSize,
+                        'compressed_size' => $compressedSize,
+                        'saved_bytes' => $originalSize - $compressedSize,
+                        'reduction_percent' => $originalSize > 0 ? round((1 - $compressedSize / $originalSize) * 100, 1) : 0
+                    ]);
+                    
+                    // Only use compressed version if it's actually smaller
+                    if ($compressedSize < $originalSize) {
+                        copy($tempOutput, $absolutePath);
+                    } else {
+                        \Log::info('Compression did not reduce size, using original');
+                        copy($tempInput, $absolutePath);
+                    }
+                    // Clean up 2-pass log files
+                    @unlink($tempOutput);
+                    @unlink('/tmp/ffmpeg2pass-0.log');
+                    @unlink('/tmp/ffmpeg2pass-0.log.mbtree');
+                } else {
+                    \Log::error('FFmpeg compression failed, using original');
+                    copy($tempInput, $absolutePath);
+                }
             }
         }
 

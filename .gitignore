@@ -17,3 +17,7 @@ yarn-error.log
 /.idea
 /.vscode
 storage/logs/laravel.log
+public/ffmpeg2pass-0.log
+.gitignore
+storage/logs/laravel.log
+public/ffmpeg2pass-0.log.mbtree

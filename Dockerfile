@@ -55,10 +55,19 @@ RUN sed -i 's/^user = application/user = www-data/' /usr/local/etc/php-fpm.d/app
     echo 'sed -i "s/^group = application\$/group = www-data/" /usr/local/etc/php-fpm.d/application.conf' >> /opt/docker/bin/service.d/php-fpm.d/fix-config.sh && \
     chmod +x /opt/docker/bin/service.d/php-fpm.d/fix-config.sh
 
-# Configure PHP
-RUN echo "upload_max_filesize = 200M" >> /usr/local/etc/php/conf.d/uploads.ini \
-    && echo "post_max_size = 200M" >> /usr/local/etc/php/conf.d/uploads.ini \
-    && echo "memory_limit = 512M" >> /usr/local/etc/php/conf.d/uploads.ini
+# Configure PHP - 100GB limit for large video uploads
+RUN echo "upload_max_filesize = 100G" > /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "post_max_size = 100G" >> /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "memory_limit = 2048M" >> /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "max_execution_time = 7200" >> /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "max_input_time = 7200" >> /usr/local/etc/php/conf.d/uploads.ini
+
+# Configure Nginx for 100GB uploads - override vhost config
+RUN echo "client_max_body_size 100G;" > /opt/docker/etc/nginx/vhost.common.d/10-general.conf \
+    && echo "client_body_buffer_size 128M;" >> /opt/docker/etc/nginx/vhost.common.d/10-general.conf \
+    && echo "proxy_read_timeout 7200s;" >> /opt/docker/etc/nginx/vhost.common.d/10-general.conf \
+    && echo "proxy_connect_timeout 7200s;" >> /opt/docker/etc/nginx/vhost.common.d/10-general.conf \
+    && echo "proxy_send_timeout 7200s;" >> /opt/docker/etc/nginx/vhost.common.d/10-general.conf
 
 # Configure Nginx
 ENV WEB_DOCUMENT_ROOT=/var/www/html/public

@@ -1676,3 +1676,32 @@ Error opening output files: Invalid argument"}
 [2026-05-09 07:17:48] local.INFO: FFmpeg compression command {"command":"/usr/bin/ffmpeg -i '/tmp/phpfHCeCh' -c:v libx264 -preset fast -crf 28 -c:a aac -b:a 64k -movflags +faststart -y '/tmp/69fe7d2c20a34_compressed.mp4' 2>&1"} 
 [2026-05-09 07:18:02] local.INFO: Video compression result {"original_size":29206849,"compressed_size":37886025,"saved_bytes":-8679176,"reduction_percent":-29.7} 
 [2026-05-09 07:19:00] local.INFO: Uploaded to R2 {"path":"CLASS_2_2569_ม21/STU_10_นร004/090526_071748_ce36.mp4"} 
+[2026-05-09 07:31:14] local.INFO: MediaCompressor Start {"classroom_slug":"CLASS_2_2569_ม21","student_folder":"STU_10_นร004","student_code":"นร004","folderPath":"CLASS_2_2569_ม21/STU_10_นร004","fullPath":"CLASS_2_2569_ม21/STU_10_นร004/090526_073114_8802.mp4","type":"video"} 
+[2026-05-09 07:31:14] local.INFO: FFmpeg probe result {"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-stripping --enable-avfilter --enable-gpl --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libdav1d --enable-libdrm --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopenmpt --enable-libopus --"} 
+[2026-05-09 07:31:14] local.INFO: Video info {"original_width":1280,"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-st"} 
+[2026-05-09 07:31:14] local.INFO: FFmpeg compression command {"command":"/usr/bin/ffmpeg -i '/tmp/phpNGcNco' -c:v libx264 -preset fast -crf 30 -c:a aac -b:a 48k -movflags +faststart -y '/tmp/69fe80525caf1_compressed.mp4' 2>&1"} 
+[2026-05-09 07:31:28] local.INFO: Video compression result {"original_size":29206849,"compressed_size":32382730,"saved_bytes":-3175881,"reduction_percent":-10.9} 
+[2026-05-09 07:32:18] local.INFO: Uploaded to R2 {"path":"CLASS_2_2569_ม21/STU_10_นร004/090526_073114_8802.mp4"} 
+[2026-05-09 08:45:04] local.INFO: MediaCompressor Start {"classroom_slug":"CLASS_2_2569_ม21","student_folder":"STU_10_นร004","student_code":"นร004","folderPath":"CLASS_2_2569_ม21/STU_10_นร004","fullPath":"CLASS_2_2569_ม21/STU_10_นร004/090526_084504_40b5.mp4","type":"video"} 
+[2026-05-09 08:45:04] local.INFO: FFmpeg probe result {"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-stripping --enable-avfilter --enable-gpl --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libdav1d --enable-libdrm --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopenmpt --enable-libopus --"} 
+[2026-05-09 08:45:04] local.INFO: Video info {"original_width":406,"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-st"} 
+[2026-05-09 08:45:04] local.INFO: Video is already small enough, skipping compression {"size":8152797} 
+[2026-05-09 08:45:17] local.INFO: Uploaded to R2 {"path":"CLASS_2_2569_ม21/STU_10_นร004/090526_084504_40b5.mp4"} 
+[2026-05-09 08:54:08] local.INFO: MediaCompressor Start {"classroom_slug":"CLASS_2_2569_ม21","student_folder":"STU_10_นร004","student_code":"นร004","folderPath":"CLASS_2_2569_ม21/STU_10_นร004","fullPath":"CLASS_2_2569_ม21/STU_10_นร004/090526_085408_67a1.MOV","type":"video"} 
+[2026-05-09 08:54:08] local.INFO: FFmpeg probe result {"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-stripping --enable-avfilter --enable-gpl --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libdav1d --enable-libdrm --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopenmpt --enable-libopus --"} 
+[2026-05-09 08:54:08] local.INFO: Video info {"original_width":1920,"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-st"} 
+[2026-05-09 08:54:08] local.INFO: FFmpeg 2-pass compression {"pass1":"/usr/bin/ffmpeg -i '/tmp/phpDHLnON' -vf \"scale=1280:-2\" -c:v libx264 -preset fast -b:v 1500k -pass 1 -an -f null - 2>&1","pass2":"/usr/bin/ffmpeg -i '/tmp/phpDHLnON' -vf \"scale=1280:-2\" -c:v libx264 -preset fast -b:v 1500k -pass 2 -c:a aac -b:a 48k -movflags +faststart -y '/tmp/69fe93c0d80c9_compressed.mp4' 2>&1"} 
+[2026-05-09 08:54:43] local.INFO: Video compression result {"original_size":53262039,"compressed_size":8633951,"saved_bytes":44628088,"reduction_percent":83.8} 
+[2026-05-09 08:54:56] local.INFO: Uploaded to R2 {"path":"CLASS_2_2569_ม21/STU_10_นร004/090526_085408_67a1.MOV"} 
