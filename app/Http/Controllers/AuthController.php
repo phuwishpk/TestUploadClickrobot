@@ -19,7 +19,7 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
-            'role' => 'required|in:teacher,parent,student',
+            'role' => 'required|in:admin,school_admin,teacher,parent,student',
         ]);
 
         $user = User::where('email', $request->email)->first();
@@ -52,6 +52,8 @@ class AuthController extends Controller
     protected function redirectToDashboard(string $role): \Illuminate\Http\RedirectResponse
     {
         return match($role) {
+            'admin' => redirect()->route('admin.dashboard'),
+            'school_admin' => redirect()->route('school_admin.dashboard'),
             'teacher' => redirect()->route('teacher.dashboard'),
             'parent' => redirect()->route('parent.dashboard'),
             'student' => redirect()->route('student.dashboard'),

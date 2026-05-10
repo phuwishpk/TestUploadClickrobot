@@ -17,6 +17,7 @@ class User extends Authenticatable
         'password',
         'role',
         'student_code',
+        'school_id',
     ];
 
     protected $hidden = [
@@ -45,6 +46,16 @@ class User extends Authenticatable
     public function isStudent(): bool
     {
         return $this->role === 'student';
+    }
+
+    public function isSchoolAdmin(): bool
+    {
+        return $this->role === 'school_admin';
+    }
+
+    public function school()
+    {
+        return $this->belongsTo(School::class);
     }
 
     public function classrooms()

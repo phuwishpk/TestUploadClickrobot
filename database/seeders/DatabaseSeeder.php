@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use App\Models\School;
 use App\Models\Classroom;
 use App\Models\Student;
 use App\Models\ParentStudent;
@@ -13,6 +14,14 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // Create default school
+        $school = School::create([
+            'name' => 'Demo School',
+            'slug' => 'demo_school',
+            'code' => 'DEMO001',
+            'description' => 'Demo school for testing',
+        ]);
+
         // Create default teacher
         $teacher = User::create([
             'name' => 'ครูผู้สอน',
@@ -25,11 +34,13 @@ class DatabaseSeeder extends Seeder
         $classroom1 = Classroom::create([
             'name' => 'ม.1/1',
             'teacher_id' => $teacher->id,
+            'school_id' => $school->id,
         ]);
 
         $classroom2 = Classroom::create([
             'name' => 'ม.2/1',
             'teacher_id' => $teacher->id,
+            'school_id' => $school->id,
         ]);
 
         // Create students

@@ -46,19 +46,19 @@ class MediaCompressor
     {
         $mimeType = $file->getMimeType();
         $type = $this->determineType($mimeType);
-        
+
         $dateObj = \Carbon\Carbon::parse($uploadDate);
         $dateStr = $dateObj->format('dmy');
-        
+
         $r2Service = app(R2FolderService::class);
-        $studentFolder = $r2Service->getStudentFolder($classroom, $student);
         $classFolder = $classroom->folder_slug;
-        
-        $folderPath = sprintf('%s/%s', $classFolder, $studentFolder);
+        $studentFolder = $r2Service->getStudentFolder($classroom, $student);
+
+        $folderPath = sprintf('%s/%s', $classFolder, $dateStr);
         $filename = $this->generateFilenameWithDate($dateStr, $file);
-        $fullPath = $folderPath . '/' . $filename;
+        $fullPath = $folderPath . '/' . $studentFolder . '/' . $filename;
         $absolutePath = $this->uploadsPath . '/' . $fullPath;
-        
+
         \Log::info('MediaCompressor Start', [
             'classroom_slug' => $classFolder,
             'student_folder' => $studentFolder,

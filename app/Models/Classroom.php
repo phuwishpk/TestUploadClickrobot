@@ -13,7 +13,13 @@ class Classroom extends Model
     protected $fillable = [
         'name',
         'teacher_id',
+        'school_id',
     ];
+
+    public function school()
+    {
+        return $this->belongsTo(School::class);
+    }
 
     public function teacher()
     {
@@ -38,7 +44,14 @@ class Classroom extends Model
     public function getFolderSlugAttribute(): string
     {
         $clean = preg_replace('/[^a-zA-Z0-9ก-๙]/', '', $this->name);
-        return sprintf('CLASS_%d_%d_%s', $this->id, now()->year + 543, $clean);
+        $classSlug = sprintf('CLS_%d_%s', $this->id, $clean);
+
+        if ($this->school) {
+            $schoolSlug = preg_replace('/[^a-zA-Z0-9ก-๙]/', '', $this->school->name);
+            return sprintf('%s/%s', $schoolSlug, $classSlug);
+        }
+
+        return $classSlug;
     }
 
     protected static function booted(): void

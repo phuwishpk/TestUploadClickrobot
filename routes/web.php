@@ -82,3 +82,47 @@ Route::middleware(['auth', 'role:parent'])->prefix('parent')->name('parent.')->g
     Route::get('/media', [App\Http\Controllers\Parent\MediaController::class, 'index'])->name('media.index');
     Route::get('/media/{media}', [App\Http\Controllers\Parent\MediaController::class, 'show'])->name('media.show');
 });
+
+// Admin Routes
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/schools', [App\Http\Controllers\Admin\SchoolController::class, 'index'])->name('schools.index');
+    Route::get('/schools/create', [App\Http\Controllers\Admin\SchoolController::class, 'create'])->name('schools.create');
+    Route::post('/schools', [App\Http\Controllers\Admin\SchoolController::class, 'store'])->name('schools.store');
+    Route::get('/schools/{school}', [App\Http\Controllers\Admin\SchoolController::class, 'show'])->name('schools.show');
+    Route::get('/schools/{school}/edit', [App\Http\Controllers\Admin\SchoolController::class, 'edit'])->name('schools.edit');
+    Route::put('/schools/{school}', [App\Http\Controllers\Admin\SchoolController::class, 'update'])->name('schools.update');
+    Route::delete('/schools/{school}', [App\Http\Controllers\Admin\SchoolController::class, 'destroy'])->name('schools.destroy');
+    Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+    Route::get('/users/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('users.create');
+    Route::post('/users', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('users.store');
+    Route::get('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'show'])->name('users.show');
+    Route::get('/users/{user}/edit', [App\Http\Controllers\Admin\UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
+
+    // Media
+    Route::get('/media', [App\Http\Controllers\Admin\MediaController::class, 'index'])->name('media.index');
+    Route::get('/media/{media}', [App\Http\Controllers\Admin\MediaController::class, 'show'])->name('media.show');
+});
+
+// School Admin Routes
+Route::middleware(['auth', 'role:school_admin'])->prefix('school-admin')->name('school_admin.')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\SchoolAdmin\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/classrooms', [App\Http\Controllers\SchoolAdmin\ClassroomController::class, 'index'])->name('classrooms.index');
+    Route::get('/classrooms/create', [App\Http\Controllers\SchoolAdmin\ClassroomController::class, 'create'])->name('classrooms.create');
+    Route::post('/classrooms', [App\Http\Controllers\SchoolAdmin\ClassroomController::class, 'store'])->name('classrooms.store');
+    Route::get('/classrooms/{classroom}', [App\Http\Controllers\SchoolAdmin\ClassroomController::class, 'show'])->name('classrooms.show');
+    Route::get('/classrooms/{classroom}/edit', [App\Http\Controllers\SchoolAdmin\ClassroomController::class, 'edit'])->name('classrooms.edit');
+    Route::put('/classrooms/{classroom}', [App\Http\Controllers\SchoolAdmin\ClassroomController::class, 'update'])->name('classrooms.update');
+    Route::delete('/classrooms/{classroom}', [App\Http\Controllers\SchoolAdmin\ClassroomController::class, 'destroy'])->name('classrooms.destroy');
+    Route::get('/teachers', [App\Http\Controllers\SchoolAdmin\TeacherController::class, 'index'])->name('teachers.index');
+    Route::get('/teachers/create', [App\Http\Controllers\SchoolAdmin\TeacherController::class, 'create'])->name('teachers.create');
+    Route::post('/teachers', [App\Http\Controllers\SchoolAdmin\TeacherController::class, 'store'])->name('teachers.store');
+    Route::get('/teachers/{teacher}', [App\Http\Controllers\SchoolAdmin\TeacherController::class, 'show'])->name('teachers.show');
+    Route::get('/teachers/{teacher}/edit', [App\Http\Controllers\SchoolAdmin\TeacherController::class, 'edit'])->name('teachers.edit');
+    Route::put('/teachers/{teacher}', [App\Http\Controllers\SchoolAdmin\TeacherController::class, 'update'])->name('teachers.update');
+    Route::delete('/teachers/{teacher}', [App\Http\Controllers\SchoolAdmin\TeacherController::class, 'destroy'])->name('teachers.destroy');
+    Route::get('/upload', [App\Http\Controllers\SchoolAdmin\MediaController::class, 'create'])->name('upload.create');
+    Route::post('/upload', [App\Http\Controllers\SchoolAdmin\MediaController::class, 'store'])->name('upload.store');
+});

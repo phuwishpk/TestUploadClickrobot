@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Classroom;
+use App\Models\School;
 use App\Models\Student;
 use Aws\S3\S3Client;
 use Illuminate\Support\Facades\Log;
@@ -34,6 +35,22 @@ class R2FolderService
         ]);
     }
 
+    public function createSchoolFolder(School $school): bool
+    {
+        $folderSlug = $school->slug;
+
+        Log::info('Creating school folder', [
+            'school_id' => $school->id,
+            'folder_slug' => $folderSlug,
+        ]);
+
+        return $this->createFolder($folderSlug, [
+            'school_id' => $school->id,
+            'school_name' => $school->name,
+            'created_at' => $school->created_at->toIso8601String(),
+        ]);
+    }
+
     public function createClassroomFolder(Classroom $classroom): bool
     {
         $folderSlug = $classroom->folder_slug;
@@ -44,9 +61,14 @@ class R2FolderService
             'folder_slug' => $folderSlug,
         ]);
 
+        if ($classroom->school) {
+            $this->createSchoolFolder($classroom->school);
+        }
+
         return $this->createFolder($folderSlug, [
             'classroom_id' => $classroom->id,
             'classroom_name' => $classroom->name,
+            'school_id' => $classroom->school_id,
             'created_at' => $classroom->created_at->toIso8601String(),
         ]);
     }
@@ -72,17 +94,34 @@ class R2FolderService
 
     public function getStudentFolder(Classroom $classroom, Student $student): string
     {
-        $folderSlug = $classroom->folder_slug;
         return sprintf('STU_%d_%s', $student->id, $student->code);
     }
 
-    public function getFullPath(Classroom $classroom, Student $student, string $filename): string
+    public function getDateFolder(string $uploadDate): string
     {
-        return sprintf('%s/%s/%s', 
-            $classroom->folder_slug,
-            $this->getStudentFolder($classroom, $student),
+        $dateObj = \Carbon\Carbon::parse($uploadDate);
+        return $dateObj->format('dmy');
+    }
+
+    public function getFullPath(Classroom $classroom, Student $student, string $filename, ?string $uploadDate = null): string
+    {
+        $folderSlug = $classroom->folder_slug;
+        $studentFolder = $this->getStudentFolder($classroom, $student);
+        $dateFolder = $uploadDate ? $this->getDateFolder($uploadDate) : now()->format('dmy');
+
+        return sprintf('%s/%s/%s/%s',
+            $folderSlug,
+            $dateFolder,
+            $studentFolder,
             $filename
         );
+    }
+
+    public function getBasePath(Classroom $classroom, ?string $uploadDate = null): string
+    {
+        $folderSlug = $classroom->folder_slug;
+        $dateFolder = $uploadDate ? $this->getDateFolder($uploadDate) : now()->format('dmy');
+        return sprintf('%s/%s', $folderSlug, $dateFolder);
     }
 
     protected function createFolder(string $path, array $metadata = []): bool

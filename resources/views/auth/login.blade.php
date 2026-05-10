@@ -32,10 +32,20 @@
 
             <div class="mb-6">
                 <label class="block text-sm font-medium text-gray-700 mb-2">เข้าสู่ระบบในฐานะ</label>
-                <div class="flex space-x-4">
+                <div class="flex flex-wrap gap-4">
+                    <label class="flex items-center">
+                        <input type="radio" name="role" value="admin" {{ old('role') === 'admin' ? 'checked' : '' }}
+                            class="w-4 h-4 text-indigo-600 focus:ring-indigo-500" required>
+                        <span class="ml-2 text-sm text-gray-700">ผู้ดูแลระบบ</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="role" value="school_admin" {{ old('role') === 'school_admin' ? 'checked' : '' }}
+                            class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                        <span class="ml-2 text-sm text-gray-700">ผู้ดูแลโรงเรียน</span>
+                    </label>
                     <label class="flex items-center">
                         <input type="radio" name="role" value="teacher" {{ old('role') === 'teacher' ? 'checked' : '' }}
-                            class="w-4 h-4 text-indigo-600 focus:ring-indigo-500" required>
+                            class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
                         <span class="ml-2 text-sm text-gray-700">ครู</span>
                     </label>
                     <label class="flex items-center">
