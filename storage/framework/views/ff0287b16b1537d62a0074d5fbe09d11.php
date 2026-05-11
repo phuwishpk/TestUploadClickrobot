@@ -3,7 +3,15 @@
 <?php $__env->startSection('content'); ?>
 <div class="min-h-[80vh] flex items-center justify-center">
     <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">เข้าสู่ระบบ</h1>
+        
+        <?php if(isset($school) && $school): ?>
+            <div class="text-center mb-6">
+                <h2 class="text-xl font-bold text-indigo-600"><?php echo e($school->name); ?></h2>
+                <p class="text-sm text-gray-500"><?php echo e($school->domain); ?>.<?php echo e(config('app.base_domain')); ?></p>
+            </div>
+        <?php else: ?>
+            <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">เข้าสู่ระบบ</h1>
+        <?php endif; ?>
 
         <form action="<?php echo e(route('login')); ?>" method="POST">
             <?php echo csrf_field(); ?>
@@ -59,16 +67,19 @@ unset($__errorArgs, $__bag); ?>
             <div class="mb-6">
                 <label class="block text-sm font-medium text-gray-700 mb-2">เข้าสู่ระบบในฐานะ</label>
                 <div class="flex flex-wrap gap-4">
-                    <label class="flex items-center">
-                        <input type="radio" name="role" value="admin" <?php echo e(old('role') === 'admin' ? 'checked' : ''); ?>
+                    <?php if(!isset($school) || !$school): ?>
+                        
+                        <label class="flex items-center">
+                            <input type="radio" name="role" value="admin" <?php echo e(old('role') === 'admin' ? 'checked' : ''); ?>
 
-                            class="w-4 h-4 text-indigo-600 focus:ring-indigo-500" required>
-                        <span class="ml-2 text-sm text-gray-700">ผู้ดูแลระบบ</span>
-                    </label>
+                                class="w-4 h-4 text-indigo-600 focus:ring-indigo-500" required>
+                            <span class="ml-2 text-sm text-gray-700">ผู้ดูแลระบบ</span>
+                        </label>
+                    <?php endif; ?>
                     <label class="flex items-center">
                         <input type="radio" name="role" value="school_admin" <?php echo e(old('role') === 'school_admin' ? 'checked' : ''); ?>
 
-                            class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                            class="w-4 h-4 text-indigo-600 focus:ring-indigo-500" required>
                         <span class="ml-2 text-sm text-gray-700">ผู้ดูแลโรงเรียน</span>
                     </label>
                     <label class="flex items-center">

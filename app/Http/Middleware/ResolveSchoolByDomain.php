@@ -14,36 +14,61 @@ class ResolveSchoolByDomain
     {
         $host = $request->getHost();
 
-        // Extract domain e.g. bangrak from bangrak.school.com
-        $domain = $this->extractDomain($host);
+        // Extract school slug from subdomain (e.g. bangrak from bangrak.localhost)
+        $slug = $this->extractSlug($host);
 
-        // If no subdomain detected, continue normally
-        if (!$domain) {
-            return $next($request);
+        $school = null;
+
+        if ($slug) {
+            // Look up school by slug
+            $school = School::where('slug', $slug)->first();
+
+            if (!$school) {
+                abort(404, 'School not found: ' . $slug);
+            }
+        } else {
+            // No subdomain - try to get school from session
+            $schoolId = $request->session()->get('school_id');
+
+            if ($schoolId) {
+                $school = School::find($schoolId);
+            }
+
+            // Fallback: use first active school
+            if (!$school) {
+                $school = School::where('is_active', true)->first();
+            }
         }
-
-        // Look up school from master database (mysql connection)
-        $school = School::on('mysql')->where('domain', $domain)->first();
 
         if (!$school) {
-            abort(404, 'School not found');
+            abort(404, 'No school configured');
         }
 
-        // Store school in request attributes for later use
+        // Store school in request attributes
         $request->attributes->set('school', $school);
+        $request->attributes->set('school_id', $school->id);
 
-        // Switch database connection to school-specific database
-        $this->switchToSchoolDatabase($school->id, $school->getDatabaseName());
+        // Switch to school-specific database if configured
+        if ($school->database_name) {
+            $this->switchToSchoolDatabase($school->id, $school->database_name);
+        }
 
-        // Switch R2 bucket to school-specific bucket
-        config(['filesystems.disks.r2.bucket' => $school->getR2Bucket()]);
+        // Switch R2 bucket to school-specific bucket if configured
+        if ($school->r2_bucket) {
+            config(['filesystems.disks.r2.bucket' => $school->r2_bucket]);
+        }
 
         return $next($request);
     }
 
-    private function extractDomain(string $host): ?string
+    private function extractSlug(string $host): ?string
     {
-        // main.school.com -> bangrak (strip school.com)
+        // localhost: bangrak.localhost:8080 -> bangrak
+        if (preg_match('/^([a-z0-9-]+)\.localhost(?::\d+)?$/i', $host, $matches)) {
+            return $matches[1];
+        }
+
+        // e.g. bangrak.school.com -> bangrak
         $baseDomain = config('app.base_domain', 'school.com');
 
         if (str_ends_with($host, '.' . $baseDomain)) {
@@ -51,9 +76,9 @@ class ResolveSchoolByDomain
             return $subdomain ?: null;
         }
 
-        // localhost: bangrak.localhost -> bangrak
-        if (preg_match('/^([a-z0-9-]+)\.localhost(?::\d+)?$/i', $host, $matches)) {
-            return $matches[1];
+        // e.g. school.com -> null (main domain)
+        if ($host === $baseDomain || $host === 'www.' . $baseDomain) {
+            return null;
         }
 
         return null;

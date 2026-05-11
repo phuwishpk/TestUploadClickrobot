@@ -14,7 +14,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex items-center">
-                    <a href="{{ route(auth()->user()->role . '.dashboard') }}" class="text-xl font-bold text-indigo-600">
+                    <a href="{{ dashboard_url(auth()->user()->role, auth()->user()->school_id) }}" class="text-xl font-bold text-indigo-600">
                         ระบบ Upload
                     </a>
                 </div>

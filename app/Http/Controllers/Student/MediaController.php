@@ -13,8 +13,18 @@ class MediaController extends Controller
         $user = $request->user();
         $student = $user->student;
 
+        file_put_contents('/tmp/route_debug.log', json_encode([
+            'timestamp' => date('Y-m-d H:i:s'),
+            'controller' => 'Student\MediaController@index',
+            'user_id' => $user->id ?? null,
+            'user_role' => $user->role ?? null,
+            'student_exists' => $student ? true : false,
+            'uri' => $request->getRequestUri(),
+            'host' => $request->getHost(),
+        ]) . "\n", FILE_APPEND);
+
         if (!$student) {
-            return redirect()->route('student.dashboard')->with('error', 'ไม่พบข้อมูลนักเรียน');
+            return redirect()->away('/student/dashboard')->with('error', 'ไม่พบข้อมูลนักเรียน');
         }
 
         $media = $student->media()

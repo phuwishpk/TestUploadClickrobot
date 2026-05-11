@@ -14,7 +14,8 @@ services:
     environment:
       - APP_ENV=${APP_ENV:-production}
       - APP_DEBUG=${APP_DEBUG:-false}
-      - APP_BASE_DOMAIN=${APP_BASE_DOMAIN:-school.com}
+      - APP_BASE_DOMAIN=${APP_BASE_DOMAIN:-localhost}
+      - APP_PORT=${APP_PORT:-8080}
       - DB_CONNECTION=mysql
       - DB_HOST=${DB_MASTER_HOST:-mysql_master}
       - DB_PORT=3306
@@ -46,7 +47,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_secret}
       MYSQL_DATABASE: schools
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_master_data:/var/lib/mysql
       - ./mysql-init.sql:/docker-entrypoint-initdb.d/init.sql
