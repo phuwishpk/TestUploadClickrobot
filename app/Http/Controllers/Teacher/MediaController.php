@@ -53,6 +53,11 @@ class MediaController extends Controller
             abort(403);
         }
 
+        // Set school for correct R2 bucket
+        if ($classroom->school) {
+            $this->compressor->setSchool($classroom->school);
+        }
+
         $uploadDate = $validated['upload_date'] ?? now()->format('Y-m-d');
         $uploadedCount = 0;
         $errors = [];

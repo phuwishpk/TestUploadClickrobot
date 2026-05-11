@@ -11,6 +11,7 @@ Route::get('/', function () {
 Route::get('/login', [App\Http\Controllers\AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [App\Http\Controllers\AuthController::class, 'login']);
 Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
+Route::get('/test-url', [App\Http\Controllers\TestController::class, 'test']);
 
 // Serve uploaded files
 Route::get('/uploads/{path}', function ($path) {
@@ -28,16 +29,12 @@ Route::get('/uploads/{path}', function ($path) {
 })->where('path', '.*');
 
 // School Subdomain Routes
-Route::domain('{school}.' . config('app.base_domain', 'localhost'))
-    ->group(function () {
-        // Make `school` domain parameter available as URL default for ALL route() calls in views
-        Route::defaults(['school' => request()->route()?->parameter('school') ?? request()->getHost()]);
+Route::domain('{school}.' . config('app.base_domain', 'localhost'))->group(function () {
 
-        Route::middleware(['web', 'school.domain'])->group(function () {
-
-        // Teacher Routes
-        Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
+    // Teacher Routes
+    Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
             Route::get('/dashboard', [App\Http\Controllers\Teacher\DashboardController::class, 'index'])->name('dashboard');
+            Route::get('/test-url', [App\Http\Controllers\TestController::class, 'test'])->name('test');
 
             // Classroom
             Route::get('/classrooms', [App\Http\Controllers\Teacher\ClassroomController::class, 'index'])->name('classrooms.index');
@@ -109,10 +106,17 @@ Route::domain('{school}.' . config('app.base_domain', 'localhost'))
             Route::get('/teachers/{teacher}/edit', [App\Http\Controllers\SchoolAdmin\TeacherController::class, 'edit'])->name('teachers.edit');
             Route::put('/teachers/{teacher}', [App\Http\Controllers\SchoolAdmin\TeacherController::class, 'update'])->name('teachers.update');
             Route::delete('/teachers/{teacher}', [App\Http\Controllers\SchoolAdmin\TeacherController::class, 'destroy'])->name('teachers.destroy');
+            Route::get('/students', [App\Http\Controllers\SchoolAdmin\StudentController::class, 'index'])->name('students.index');
+            Route::get('/students/create', [App\Http\Controllers\SchoolAdmin\StudentController::class, 'create'])->name('students.create');
+            Route::post('/students', [App\Http\Controllers\SchoolAdmin\StudentController::class, 'store'])->name('students.store');
+            Route::get('/students/{student}', [App\Http\Controllers\SchoolAdmin\StudentController::class, 'show'])->name('students.show');
+            Route::get('/students/{student}/edit', [App\Http\Controllers\SchoolAdmin\StudentController::class, 'edit'])->name('students.edit');
+            Route::put('/students/{student}', [App\Http\Controllers\SchoolAdmin\StudentController::class, 'update'])->name('students.update');
+            Route::delete('/students/{student}', [App\Http\Controllers\SchoolAdmin\StudentController::class, 'destroy'])->name('students.destroy');
+            Route::post('/students/{student}/create-account', [App\Http\Controllers\SchoolAdmin\StudentController::class, 'createAccount'])->name('students.create-account');
             Route::get('/upload', [App\Http\Controllers\SchoolAdmin\MediaController::class, 'create'])->name('upload.create');
             Route::post('/upload', [App\Http\Controllers\SchoolAdmin\MediaController::class, 'store'])->name('upload.store');
         });
-    });
 });
 
 // Admin Routes (main domain - no school subdomain)

@@ -1,8 +1,6 @@
-@extends('layouts.app')
+<?php $__env->startSection('title', 'อัปโหลดไฟล์'); ?>
 
-@section('title', 'อัปโหลดไฟล์')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
 <style>
     html {
         scroll-behavior: smooth;
@@ -16,27 +14,35 @@
 
 <div class="bg-white rounded-lg shadow p-6">
     <form id="upload_form" enctype="multipart/form-data">
-        @csrf
+        <?php echo csrf_field(); ?>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
                 <label for="classroom_id" class="block text-sm font-medium text-gray-700 mb-1">ห้องเรียน</label>
                 <select name="classroom_id" id="classroom_id" 
-                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 @error('classroom_id') border-red-500 @enderror"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 <?php $__errorArgs = ['classroom_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> border-red-500 <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
                     required onchange="loadStudents(this.value)">
                     <option value="">เลือกห้องเรียน</option>
-                    @foreach($classrooms as $classroom)
-                        <option value="{{ $classroom->id }}">
-                            {{ $classroom->name }}
+                    <?php $__currentLoopData = $classrooms; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $classroom): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e($classroom->id); ?>">
+                            <?php echo e($classroom->name); ?>
+
                         </option>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
             </div>
 
             <div>
                 <label for="upload_date" class="block text-sm font-medium text-gray-700 mb-1">วันที่อัปโหลด</label>
                 <input type="date" name="upload_date" id="upload_date" 
-                    value="{{ old('upload_date', now()->format('Y-m-d')) }}"
+                    value="<?php echo e(old('upload_date', now()->format('Y-m-d'))); ?>"
                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
             </div>
         </div>
@@ -93,11 +99,11 @@
         </div>
     </form>
 </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script>
-const classrooms = @json($classrooms);
+const classrooms = <?php echo json_encode($classrooms, 15, 512) ?>;
 
 function loadStudents(classroomId) {
     const container = document.getElementById('student_list');
@@ -427,7 +433,7 @@ document.getElementById('upload_form').addEventListener('submit', async function
 
                     if (!hasError) {
                         setTimeout(() => {
-                            window.location.href = '{{ route("school_admin.dashboard") }}';
+                            window.location.href = '<?php echo e(route("school_admin.dashboard")); ?>';
                         }, 1500);
                     }
                 });
@@ -473,7 +479,7 @@ document.getElementById('upload_form').addEventListener('submit', async function
             uploadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
         });
         
-        uploadXhr.open('POST', '{{ route("school_admin.upload.store") }}');
+        uploadXhr.open('POST', '<?php echo e(route("school_admin.upload.store")); ?>');
         uploadXhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').content);
         uploadXhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
         uploadXhr.timeout = 600000;
@@ -491,4 +497,6 @@ document.getElementById('upload_form').addEventListener('submit', async function
     }
 });
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/school_admin/upload.blade.php ENDPATH**/ ?>

@@ -7,15 +7,35 @@ use App\Models\School;
 use App\Models\Student;
 use Aws\S3\S3Client;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class R2FolderService
 {
     protected ?S3Client $s3Client = null;
+    protected ?School $currentSchool = null;
 
     public function __construct()
     {
         $this->initS3Client();
+    }
+
+    /**
+     * Set the current school for bucket selection
+     */
+    public function setSchool(School $school): self
+    {
+        $this->currentSchool = $school;
+        return $this;
+    }
+
+    /**
+     * Get the current R2 bucket name
+     */
+    protected function getBucket(): string
+    {
+        if ($this->currentSchool) {
+            return $this->currentSchool->getR2Bucket();
+        }
+        return config('filesystems.disks.r2.bucket', 'school-uploads');
     }
 
     protected function initS3Client(): void
@@ -42,7 +62,11 @@ class R2FolderService
         Log::info('Creating school folder', [
             'school_id' => $school->id,
             'folder_slug' => $folderSlug,
+            'bucket' => $school->getR2Bucket(),
         ]);
+
+        // Set current school for bucket selection
+        $this->setSchool($school);
 
         return $this->createFolder($folderSlug, [
             'school_id' => $school->id,
@@ -54,7 +78,6 @@ class R2FolderService
     public function createClassroomFolder(Classroom $classroom): bool
     {
         $folderSlug = $classroom->folder_slug;
-        $markerPath = "{$folderSlug}/.classroom.meta";
 
         Log::info('Creating classroom folder', [
             'classroom_id' => $classroom->id,
@@ -62,6 +85,7 @@ class R2FolderService
         ]);
 
         if ($classroom->school) {
+            $this->setSchool($classroom->school);
             $this->createSchoolFolder($classroom->school);
         }
 
@@ -75,14 +99,20 @@ class R2FolderService
 
     public function createStudentFolder(Classroom $classroom, Student $student): string
     {
+        // Set school for bucket
+        if ($classroom->school) {
+            $this->setSchool($classroom->school);
+        }
+
         $folderSlug = $classroom->folder_slug;
-        $studentFolder = sprintf('STU_%d_%s', $student->id, $student->code);
+        $studentFolder = $this->getStudentFolder($classroom, $student);
         $fullPath = "{$folderSlug}/{$studentFolder}";
 
         Log::info('Creating student folder', [
             'classroom_id' => $classroom->id,
             'student_id' => $student->id,
             'folder' => $fullPath,
+            'bucket' => $this->getBucket(),
         ]);
 
         return $this->createFolder($fullPath, [
@@ -94,7 +124,11 @@ class R2FolderService
 
     public function getStudentFolder(Classroom $classroom, Student $student): string
     {
-        return sprintf('STU_%d_%s', $student->id, $student->code);
+        // Sanitize student code for R2 compatibility - use only ASCII
+        $code = preg_replace('/[^a-zA-Z0-9]/', '_', $student->code);
+        $code = preg_replace('/_+/', '_', $code);
+        $code = trim($code, '_');
+        return sprintf('STU_%d_%s', $student->id, $code);
     }
 
     public function getDateFolder(string $uploadDate): string
@@ -136,7 +170,7 @@ class R2FolderService
     protected function createR2Folder(string $path, array $metadata = []): bool
     {
         try {
-            $bucket = config('filesystems.disks.r2.bucket');
+            $bucket = $this->getBucket();
             
             $this->s3Client->putObject([
                 'Bucket' => $bucket,
@@ -146,11 +180,12 @@ class R2FolderService
                 'ACL' => 'public-read',
             ]);
 
-            Log::info('R2 folder created', ['path' => $path]);
+            Log::info('R2 folder created', ['path' => $path, 'bucket' => $bucket]);
             return true;
         } catch (\Exception $e) {
             Log::error('R2 folder creation failed', [
                 'path' => $path,
+                'bucket' => $this->getBucket(),
                 'error' => $e->getMessage(),
             ]);
             return false;
@@ -184,7 +219,7 @@ class R2FolderService
     {
         if ($this->s3Client) {
             try {
-                $bucket = config('filesystems.disks.r2.bucket');
+                $bucket = $this->getBucket();
                 $this->s3Client->headObject([
                     'Bucket' => $bucket,
                     'Key' => "{$path}/.folder.meta",

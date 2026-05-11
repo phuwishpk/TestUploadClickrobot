@@ -13,30 +13,15 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->web(append: [
-            \App\Http\Middleware\EncryptCookies::class,
-            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-            \Illuminate\Session\Middleware\StartSession::class,
-            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
-            \App\Http\Middleware\DebugRouteResolution::class,
+            \App\Http\Middleware\ResolveSchoolByDomain::class,  // resolves school + sets URL defaults for ALL requests
         ]);
 
         $middleware->alias([
+            'auth' => \App\Http\Middleware\Authenticate::class,
             'role' => \App\Http\Middleware\CheckRole::class,
             'school.domain' => \App\Http\Middleware\ResolveSchoolByDomain::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->renderable(function (\Illuminate\Routing\Exceptions\UrlGenerationException $e, $request) {
-            file_put_contents('/tmp/route_debug.log', json_encode([
-                'timestamp' => date('Y-m-d H:i:s'),
-                'event' => 'url_generation_exception',
-                'exception_message' => $e->getMessage(),
-                'uri' => $request->getRequestUri(),
-                'host' => $request->getHost(),
-                'session_school_id' => $request->session()->get('school_id'),
-            ]) . "\n", FILE_APPEND);
-
-            return null; // Let Laravel handle it normally
-        });
+        //
     })->create();

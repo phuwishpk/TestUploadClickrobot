@@ -4,11 +4,10 @@ namespace App\Services;
 
 use App\Models\Classroom;
 use App\Models\Student;
-use App\Models\Media;
+use App\Models\School;
 use Aws\S3\S3Client;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 
@@ -18,12 +17,34 @@ class MediaCompressor
     protected string $uploadsPath;
     protected ?S3Client $s3Client = null;
     protected ?string $r2Bucket = null;
+    protected ?School $currentSchool = null;
 
     public function __construct()
     {
         $this->imageManager = new ImageManager(new Driver());
         $this->uploadsPath = '/var/www/html/storage/app/uploads';
+    }
+
+    /**
+     * Set school for R2 bucket selection
+     */
+    public function setSchool(School $school): self
+    {
+        $this->currentSchool = $school;
+        $this->r2Bucket = $school->getR2Bucket();
         $this->initS3Client();
+        return $this;
+    }
+
+    /**
+     * Get the S3Client for the current school bucket
+     */
+    protected function getS3Client(): ?S3Client
+    {
+        if (!$this->currentSchool) {
+            $this->initS3Client();
+        }
+        return $this->s3Client;
     }
 
     protected function initS3Client(): void
@@ -32,7 +53,7 @@ class MediaCompressor
             return;
         }
 
-        $this->r2Bucket = config('filesystems.disks.r2.bucket');
+        $bucket = $this->r2Bucket ?? config('filesystems.disks.r2.bucket');
 
         $this->s3Client = new S3Client([
             'version' => 'latest',
@@ -46,17 +67,26 @@ class MediaCompressor
     }
 
     /**
-     * Refresh R2 bucket from config (called after middleware sets school config)
+     * Refresh R2 bucket from config
      */
     public function refreshBucket(): void
     {
-        $this->r2Bucket = config('filesystems.disks.r2.bucket');
+        if ($this->currentSchool) {
+            $this->r2Bucket = $this->currentSchool->getR2Bucket();
+        } else {
+            $this->r2Bucket = config('filesystems.disks.r2.bucket');
+        }
     }
 
     public function compress(UploadedFile $file, Student $student, Classroom $classroom, string $uploadDate): array
     {
         $mimeType = $file->getMimeType();
         $type = $this->determineType($mimeType);
+
+        // Set school from classroom if not already set
+        if (!$this->currentSchool && $classroom->school) {
+            $this->setSchool($classroom->school);
+        }
 
         $dateObj = \Carbon\Carbon::parse($uploadDate);
         $dateStr = $dateObj->format('dmy');
@@ -77,6 +107,7 @@ class MediaCompressor
             'folderPath' => $folderPath,
             'fullPath' => $fullPath,
             'type' => $type,
+            'r2_bucket' => $this->r2Bucket,
         ]);
 
         if ($type === 'image') {
@@ -194,9 +225,7 @@ class MediaCompressor
             
             $size = $compressedSize;
             
-            if ($this->s3Client) {
-                $this->uploadToR2($jpgPath, $jpgRelativePath);
-            }
+            $this->uploadToR2($jpgPath, $jpgRelativePath);
             
             return [
                 'type' => 'image',
@@ -236,9 +265,7 @@ class MediaCompressor
             
             $size = $compressedSize;
             
-            if ($this->s3Client) {
-                $this->uploadToR2($jpgPath, $jpgRelativePath);
-            }
+            $this->uploadToR2($jpgPath, $jpgRelativePath);
             
             return [
                 'type' => 'image',
@@ -261,9 +288,7 @@ class MediaCompressor
         
         $size = $compressedSize;
 
-        if ($this->s3Client) {
-            $this->uploadToR2($webpPath, $webpRelativePath);
-        }
+        $this->uploadToR2($webpPath, $webpRelativePath);
 
         return [
             'type' => 'image',
@@ -324,7 +349,6 @@ class MediaCompressor
             \Log::info('FFmpeg probe result', ['probe' => substr($probeText, 0, 500)]);
             
             // Check if video needs scaling (width > 1280) or re-encoding
-            // Extract resolution from probe output
             $originalWidth = 1920; // default
             if (preg_match('/([0-9]{2,4})x([0-9]{2,4})/', $probeText, $matches)) {
                 $originalWidth = (int)$matches[1];
@@ -419,11 +443,9 @@ class MediaCompressor
         // Extract video thumbnail
         $thumbnailResult = $this->extractVideoThumbnail($absolutePath, $relativePath);
 
-        if ($this->s3Client) {
-            $this->uploadToR2($absolutePath, $relativePath);
-            if ($thumbnailResult) {
-                $this->uploadToR2($thumbnailResult['absolute_path'], $thumbnailResult['relative_path']);
-            }
+        $this->uploadToR2($absolutePath, $relativePath);
+        if ($thumbnailResult) {
+            $this->uploadToR2($thumbnailResult['absolute_path'], $thumbnailResult['relative_path']);
         }
 
         return [
@@ -490,15 +512,13 @@ class MediaCompressor
 
     protected function uploadToR2(string $localPath, string $r2Path): bool
     {
-        if (!$this->s3Client) {
+        $s3Client = $this->getS3Client();
+        if (!$s3Client) {
             return false;
         }
 
-        // Refresh bucket from config (in case middleware changed it)
-        $this->refreshBucket();
-
         try {
-            $this->s3Client->putObject([
+            $s3Client->putObject([
                 'Bucket' => $this->r2Bucket,
                 'Key' => $r2Path,
                 'SourceFile' => $localPath,

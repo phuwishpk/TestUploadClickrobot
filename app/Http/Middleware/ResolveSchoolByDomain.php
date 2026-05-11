@@ -20,56 +20,58 @@ class ResolveSchoolByDomain
 
         $school = null;
 
-        if ($slug) {
-            // Look up school by slug
+        // If user is logged in, ALWAYS use their school (ignore subdomain)
+        if ($request->user()) {
+            $school = $request->user()->school;
+
+            // If user has no school, fallback to subdomain or default
+            if (!$school && $slug) {
+                $school = School::where('slug', $slug)->first();
+            }
+            if (!$school) {
+                $school = School::where('is_active', true)->first();
+            }
+        } elseif ($slug) {
+            // Subdomain request — school must exist
             $school = School::where('slug', $slug)->first();
 
             if (!$school) {
                 abort(404, 'School not found: ' . $slug);
             }
         } else {
-            // No subdomain - try to get school from session
+            // Main domain without login — use session or default
             $schoolId = $request->session()->get('school_id');
 
             if ($schoolId) {
                 $school = School::find($schoolId);
             }
 
-            // Fallback: use first active school
             if (!$school) {
                 $school = School::where('is_active', true)->first();
             }
         }
 
-        if (!$school) {
-            abort(404, 'No school configured');
+        if ($school) {
+            // Store school in request attributes
+            $request->attributes->set('school', $school);
+            $request->attributes->set('school_id', $school->id);
+
+            // Remove the {school} domain route parameter so it doesn't appear first
+            $request->route()?->forgetParameter('school');
+
+            // Switch to school-specific database if configured
+            if ($school->database_name) {
+                $this->switchToSchoolDatabase($school->id, $school->database_name);
+            }
+
+            // Switch R2 bucket to school-specific bucket if configured
+            if ($school->r2_bucket) {
+                config(['filesystems.disks.r2.bucket' => $school->r2_bucket]);
+            }
+
+            // Auto-fill the `school` route parameter so ALL route() calls in views Just Work
+            URL::defaults(['school' => $school->slug]);
         }
-
-        // Store school in request attributes
-        $request->attributes->set('school', $school);
-        $request->attributes->set('school_id', $school->id);
-
-        // Switch to school-specific database if configured
-        if ($school->database_name) {
-            $this->switchToSchoolDatabase($school->id, $school->database_name);
-        }
-
-        // Switch R2 bucket to school-specific bucket if configured
-        if ($school->r2_bucket) {
-            config(['filesystems.disks.r2.bucket' => $school->r2_bucket]);
-        }
-
-        // Auto-fill the `school` route parameter so ALL route() calls in views Just Work
-        URL::defaults(['school' => $school->slug]);
-
-        // DEBUG: verify defaults are set
-        file_put_contents('/tmp/route_debug.log', json_encode([
-            'timestamp' => date('Y-m-d H:i:s'),
-            'event' => 'url_defaults_set',
-            'school_slug' => $school->slug,
-            'defaults' => URL::getDefaultParameters(),
-            'uri' => $request->getRequestUri(),
-        ]) . "\n", FILE_APPEND);
 
         return $next($request);
     }

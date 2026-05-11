@@ -14,15 +14,6 @@ class DashboardController extends Controller
     {
         $user = $request->user();
 
-        file_put_contents('/tmp/route_debug.log', json_encode([
-            'timestamp' => date('Y-m-d H:i:s'),
-            'controller' => 'Teacher\DashboardController',
-            'user_id' => $user->id ?? null,
-            'user_role' => $user->role ?? null,
-            'user_school_id' => $user->school_id ?? null,
-            'uri' => $request->getRequestUri(),
-        ]) . "\n", FILE_APPEND);
-
         $stats = [
             'classrooms' => $user->classrooms()->count(),
             'students' => Student::whereIn('classroom_id', $user->classrooms()->pluck('id'))->count(),

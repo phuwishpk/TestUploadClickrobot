@@ -21,12 +21,14 @@ class DebugRouteResolution
         ];
 
         // Log to file inside container
-        file_put_contents('/tmp/route_debug.log', json_encode($debug) . "\n", FILE_APPEND);
+        $logPath = storage_path('logs/url_debug.log');
+        file_put_contents($logPath, json_encode($debug) . "\n", FILE_APPEND);
 
         $response = $next($request);
 
         // Log response
-        file_put_contents('/tmp/route_debug.log', json_encode([
+        $logPath = storage_path('logs/url_debug.log');
+        file_put_contents($logPath, json_encode([
             'timestamp' => date('Y-m-d H:i:s'),
             'event' => 'response_ready',
             'status' => $response->getStatusCode(),

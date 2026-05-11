@@ -43,12 +43,20 @@ class Classroom extends Model
 
     public function getFolderSlugAttribute(): string
     {
-        $clean = preg_replace('/[^a-zA-Z0-9ก-๙]/', '', $this->name);
-        $classSlug = sprintf('CLS_%d_%s', $this->id, $clean);
+        // Use ASCII-safe characters only for R2/S3 compatibility
+        // Replace non-ASCII with underscores, then clean up
+        $clean = preg_replace('/[^a-zA-Z0-9]/', '_', $this->name);
+        $clean = preg_replace('/_+/', '_', $clean);
+        $clean = trim($clean, '_');
+        $clean = substr($clean, 0, 30) ?: 'Class' . $this->id;
+        $classSlug = sprintf('CLS_%d_%s', $this->id, strtolower($clean));
 
         if ($this->school) {
-            $schoolSlug = preg_replace('/[^a-zA-Z0-9ก-๙]/', '', $this->school->name);
-            return sprintf('%s/%s', $schoolSlug, $classSlug);
+            $schoolSlug = preg_replace('/[^a-zA-Z0-9]/', '_', $this->school->name);
+            $schoolSlug = preg_replace('/_+/', '_', $schoolSlug);
+            $schoolSlug = trim($schoolSlug, '_');
+            $schoolSlug = substr($schoolSlug, 0, 30) ?: 'School' . $this->school->id;
+            return sprintf('%s/%s', strtolower($schoolSlug), $classSlug);
         }
 
         return $classSlug;

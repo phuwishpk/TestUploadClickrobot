@@ -53,14 +53,18 @@ class School extends Model
 
     public function setSlugAttribute(string $value): void
     {
-        $clean = preg_replace('/[^a-zA-Z0-9ก-๙]/', '', $value);
+        // Convert Thai to ASCII-safe slug
+        $clean = preg_replace('/[^a-zA-Z0-9]/', '_', $value);
+        $clean = preg_replace('/_+/', '_', $clean);
+        $clean = trim($clean, '_');
         $this->attributes['slug'] = strtolower($clean);
     }
 
     public static function generateSlug(string $name): string
     {
-        $clean = preg_replace('/[^a-zA-Z0-9ก-๙]/', '', $name);
-        return strtolower($clean);
+        $clean = preg_replace('/[^a-zA-Z0-9]/', '_', $name);
+        $clean = preg_replace('/_+/', '_', $clean);
+        return strtolower(trim($clean, '_'));
     }
 
     protected static function booted(): void

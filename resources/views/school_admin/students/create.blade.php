@@ -1,0 +1,84 @@
+@extends('layouts.app')
+
+@section('title', 'เพิ่มนักเรียน')
+
+@section('content')
+<div class="max-w-2xl mx-auto">
+    <div class="mb-6">
+        <a href="{{ route('school_admin.students.index') }}" class="text-indigo-600 hover:underline">← กลับไปนักเรียน</a>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <h1 class="text-xl font-bold mb-6">เพิ่มนักเรียนใหม่</h1>
+
+        <form action="{{ route('school_admin.students.store') }}" method="POST">
+            @csrf
+
+            <div class="mb-4">
+                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">ชื่อนักเรียน <span class="text-red-500">*</span></label>
+                <input type="text" name="name" id="name" value="{{ old('name') }}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 @error('name') border-red-500 @enderror"
+                    required>
+                @error('name')
+                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="mb-4">
+                <label for="classroom_ids" class="block text-sm font-medium text-gray-700 mb-1">ห้องเรียน (เลือกได้หลายห้อง) <span class="text-red-500">*</span></label>
+                <select name="classroom_ids[]" id="classroom_ids" multiple
+                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 @error('classroom_ids') border-red-500 @enderror"
+                    required>
+                    @foreach($classrooms as $classroom)
+                        <option value="{{ $classroom->id }}" {{ in_array($classroom->id, old('classroom_ids', [])) ? 'selected' : '' }}>
+                            {{ $classroom->name }}
+                        </option>
+                    @endforeach
+                </select>
+                <p class="mt-1 text-xs text-gray-500">กด Ctrl/Cmd เพื่อเลือกหลายห้อง</p>
+                @error('classroom_ids')
+                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="mb-4">
+                <label class="flex items-center">
+                    <input type="checkbox" name="create_account" value="1" {{ old('create_account') ? 'checked' : '' }}
+                        class="w-4 h-4 text-indigo-600 rounded" id="create_account_checkbox">
+                    <span class="ml-2 text-sm text-gray-700">สร้างบัญชีให้นักเรียน (เข้าสู่ระบบได้)</span>
+                </label>
+                <p class="mt-1 text-xs text-gray-500 ml-6">รหัสผ่านเริ่มต้น: 12345</p>
+            </div>
+
+            <div id="account_fields" class="{{ old('create_account') ? '' : 'hidden' }} bg-blue-50 p-4 rounded-lg mb-4">
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">อีเมลสำหรับเข้าสู่ระบบ <span class="text-red-500">*</span></label>
+                    <input type="email" name="email" id="email" value="{{ old('email') }}"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 @error('email') border-red-500 @enderror"
+                        placeholder="student@example.com">
+                    @error('email')
+                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-3">
+                <a href="{{ route('school_admin.students.index') }}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                    ยกเลิก
+                </a>
+                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                    เพิ่มนักเรียน
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection
+
+@push('scripts')
+<script>
+document.getElementById('create_account_checkbox').addEventListener('change', function() {
+    document.getElementById('account_fields').classList.toggle('hidden', !this.checked);
+});
+</script>
+@endpush
