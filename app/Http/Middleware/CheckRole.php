@@ -14,7 +14,9 @@ class CheckRole
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Unauthorized'], 403);
             }
-            return redirect()->route('login')->with('error', 'คุณไม่มีสิทธิ์เข้าถึงหน้านี้');
+            // Use direct URL to avoid needing 'school' route parameter in subdomain context
+            $loginUrl = $request->getSchemeAndHttpHost() . '/login';
+            return redirect($loginUrl)->with('error', 'คุณไม่มีสิทธิ์เข้าถึงหน้านี้');
         }
 
         return $next($request);

@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use App\Models\School;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\Response;
 
 class ResolveSchoolByDomain
@@ -57,6 +58,18 @@ class ResolveSchoolByDomain
         if ($school->r2_bucket) {
             config(['filesystems.disks.r2.bucket' => $school->r2_bucket]);
         }
+
+        // Auto-fill the `school` route parameter so ALL route() calls in views Just Work
+        URL::defaults(['school' => $school->slug]);
+
+        // DEBUG: verify defaults are set
+        file_put_contents('/tmp/route_debug.log', json_encode([
+            'timestamp' => date('Y-m-d H:i:s'),
+            'event' => 'url_defaults_set',
+            'school_slug' => $school->slug,
+            'defaults' => URL::getDefaultParameters(),
+            'uri' => $request->getRequestUri(),
+        ]) . "\n", FILE_APPEND);
 
         return $next($request);
     }

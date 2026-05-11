@@ -28,8 +28,12 @@ Route::get('/uploads/{path}', function ($path) {
 })->where('path', '.*');
 
 // School Subdomain Routes
-Route::domain('{school}.' . config('app.base_domain', 'localhost'))->group(function () {
-    Route::middleware(['school.domain'])->group(function () {
+Route::domain('{school}.' . config('app.base_domain', 'localhost'))
+    ->group(function () {
+        // Make `school` domain parameter available as URL default for ALL route() calls in views
+        Route::defaults(['school' => request()->route()?->parameter('school') ?? request()->getHost()]);
+
+        Route::middleware(['web', 'school.domain'])->group(function () {
 
         // Teacher Routes
         Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
