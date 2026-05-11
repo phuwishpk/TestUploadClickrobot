@@ -17,6 +17,7 @@ class MediaCompressor
     protected ImageManager $imageManager;
     protected string $uploadsPath;
     protected ?S3Client $s3Client = null;
+    protected ?string $r2Bucket = null;
 
     public function __construct()
     {
@@ -31,6 +32,8 @@ class MediaCompressor
             return;
         }
 
+        $this->r2Bucket = config('filesystems.disks.r2.bucket');
+
         $this->s3Client = new S3Client([
             'version' => 'latest',
             'region' => config('filesystems.disks.r2.region', 'auto'),
@@ -40,6 +43,14 @@ class MediaCompressor
                 'secret' => config('filesystems.disks.r2.secret'),
             ],
         ]);
+    }
+
+    /**
+     * Refresh R2 bucket from config (called after middleware sets school config)
+     */
+    public function refreshBucket(): void
+    {
+        $this->r2Bucket = config('filesystems.disks.r2.bucket');
     }
 
     public function compress(UploadedFile $file, Student $student, Classroom $classroom, string $uploadDate): array
@@ -483,19 +494,22 @@ class MediaCompressor
             return false;
         }
 
+        // Refresh bucket from config (in case middleware changed it)
+        $this->refreshBucket();
+
         try {
-            $bucket = config('filesystems.disks.r2.bucket');
             $this->s3Client->putObject([
-                'Bucket' => $bucket,
+                'Bucket' => $this->r2Bucket,
                 'Key' => $r2Path,
                 'SourceFile' => $localPath,
                 'ContentType' => $this->getMimeType($r2Path),
                 'ACL' => 'public-read',
             ]);
-            \Log::info('Uploaded to R2', ['path' => $r2Path]);
+            \Log::info('Uploaded to R2', ['bucket' => $this->r2Bucket, 'path' => $r2Path]);
             return true;
         } catch (\Exception $e) {
             \Log::error('R2 upload failed', [
+                'bucket' => $this->r2Bucket,
                 'path' => $r2Path,
                 'error' => $e->getMessage(),
             ]);

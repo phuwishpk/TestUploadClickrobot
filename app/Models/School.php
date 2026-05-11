@@ -17,6 +17,9 @@ class School extends Model
         'code',
         'description',
         'is_active',
+        'domain',
+        'database_name',
+        'r2_bucket',
     ];
 
     protected $casts = [
@@ -31,6 +34,16 @@ class School extends Model
     public function users()
     {
         return $this->hasMany(User::class);
+    }
+
+    public function getDatabaseName(): string
+    {
+        return $this->database_name ?? "school_{$this->id}";
+    }
+
+    public function getR2Bucket(): string
+    {
+        return $this->r2_bucket ?? "school{$this->id}-{$this->slug}";
     }
 
     public function getSlugAttribute(?string $value): ?string

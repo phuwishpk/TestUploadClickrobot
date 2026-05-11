@@ -12,35 +12,43 @@ services:
       - uploads_data:/var/www/html/storage/app/uploads
       - uploads_temp:/var/www/html/storage/app/temp
     environment:
-      - APP_ENV=local
-      - APP_DEBUG=true
-      - DB_HOST=mysql
-      - DB_DATABASE=school_upload
-      - DB_USERNAME=school_user
-      - DB_PASSWORD=school_secret
+      - APP_ENV=${APP_ENV:-production}
+      - APP_DEBUG=${APP_DEBUG:-false}
+      - APP_BASE_DOMAIN=${APP_BASE_DOMAIN:-school.com}
+      - DB_CONNECTION=mysql
+      - DB_HOST=${DB_MASTER_HOST:-mysql_master}
+      - DB_PORT=3306
+      - DB_DATABASE=schools
+      - DB_USERNAME=root
+      - DB_PASSWORD=${MYSQL_ROOT_PASSWORD:-root_secret}
       - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-auto}
+      - AWS_BUCKET=${AWS_BUCKET:-default}
+      - AWS_ENDPOINT=${AWS_ENDPOINT}
+      - AWS_URL=${AWS_URL}
     ports:
       - "8080:80"
     depends_on:
-      - mysql
+      - mysql_master
       - redis
     networks:
       - school-network
 
-  mysql:
+  mysql_master:
     image: mysql:8.2
-    container_name: school-upload-mysql
+    container_name: mysql_master
     restart: unless-stopped
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     environment:
-      MYSQL_DATABASE: school_upload
-      MYSQL_ROOT_PASSWORD: root_secret
-      MYSQL_USER: school_user
-      MYSQL_PASSWORD: school_secret
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_secret}
+      MYSQL_DATABASE: schools
     ports:
-      - "3307:3306"
+      - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql_master_data:/var/lib/mysql
       - ./mysql-init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - school-network
@@ -50,14 +58,17 @@ services:
     container_name: school-upload-redis
     restart: unless-stopped
     ports:
-      - "6380:6379"
+      - "6379:6379"
     volumes:
       - redis_data:/data
     networks:
       - school-network
 
+  # MySQL containers for each school are created dynamically via script
+  # See scripts/provision-school.sh
+
 volumes:
-  mysql_data:
+  mysql_master_data:
   redis_data:
   uploads_data:
   uploads_temp:

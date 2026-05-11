@@ -5,7 +5,15 @@
 @section('content')
 <div class="min-h-[80vh] flex items-center justify-center">
     <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">เข้าสู่ระบบ</h1>
+        {{-- School branding when accessed via subdomain --}}
+        @if(isset($school) && $school)
+            <div class="text-center mb-6">
+                <h2 class="text-xl font-bold text-indigo-600">{{ $school->name }}</h2>
+                <p class="text-sm text-gray-500">{{ $school->domain }}.{{ config('app.base_domain') }}</p>
+            </div>
+        @else
+            <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">เข้าสู่ระบบ</h1>
+        @endif
 
         <form action="{{ route('login') }}" method="POST">
             @csrf
@@ -33,14 +41,17 @@
             <div class="mb-6">
                 <label class="block text-sm font-medium text-gray-700 mb-2">เข้าสู่ระบบในฐานะ</label>
                 <div class="flex flex-wrap gap-4">
-                    <label class="flex items-center">
-                        <input type="radio" name="role" value="admin" {{ old('role') === 'admin' ? 'checked' : '' }}
-                            class="w-4 h-4 text-indigo-600 focus:ring-indigo-500" required>
-                        <span class="ml-2 text-sm text-gray-700">ผู้ดูแลระบบ</span>
-                    </label>
+                    @if(!isset($school) || !$school)
+                        {{-- Show admin role only on main domain --}}
+                        <label class="flex items-center">
+                            <input type="radio" name="role" value="admin" {{ old('role') === 'admin' ? 'checked' : '' }}
+                                class="w-4 h-4 text-indigo-600 focus:ring-indigo-500" required>
+                            <span class="ml-2 text-sm text-gray-700">ผู้ดูแลระบบ</span>
+                        </label>
+                    @endif
                     <label class="flex items-center">
                         <input type="radio" name="role" value="school_admin" {{ old('role') === 'school_admin' ? 'checked' : '' }}
-                            class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                            class="w-4 h-4 text-indigo-600 focus:ring-indigo-500" required>
                         <span class="ml-2 text-sm text-gray-700">ผู้ดูแลโรงเรียน</span>
                     </label>
                     <label class="flex items-center">
