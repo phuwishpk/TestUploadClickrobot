@@ -14233,3 +14233,5 @@ NoSuchBucket (client): The specified bucket does not exist."}
 [2026-05-12 11:10:03] local.INFO: Video thumbnail extracted {"thumbnail_path":"CLS_1_bangraka/120526/STU_16_012/120526_110929_ffab.jpg","size":42100} 
 [2026-05-12 11:10:12] local.INFO: Uploaded to R2 {"bucket":"school1-bangrak","path":"CLS_1_bangraka/120526/STU_16_012/120526_110929_ffab.MOV"} 
 [2026-05-12 11:10:12] local.INFO: Uploaded to R2 {"bucket":"school1-bangrak","path":"CLS_1_bangraka/120526/STU_16_012/120526_110929_ffab.jpg"} 
+[2026-05-12 11:13:51] local.INFO: Creating student folder {"classroom_id":1,"student_id":21,"folder":"CLS_1_bangraka/STU_21_017","bucket":"school1-bangrak"} 
+[2026-05-12 11:13:52] local.INFO: R2 folder created {"path":"CLS_1_bangraka/STU_21_017","bucket":"school1-bangrak"} 
