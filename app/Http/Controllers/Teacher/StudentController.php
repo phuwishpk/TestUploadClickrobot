@@ -82,7 +82,7 @@ class StudentController extends Controller
         // สร้างโฟลเดอร์นักเรียนในทุก classroom ที่เลือก
         $r2Service = app(\App\Services\R2FolderService::class);
         foreach ($classroomIds as $classroomId) {
-            $classroom = \App\Models\Classroom::find($classroomId);
+            $classroom = \App\Models\Classroom::with('school')->find($classroomId);
             $r2Service->createStudentFolder($classroom, $student);
         }
 

@@ -81,7 +81,7 @@ class StudentController extends Controller
         // Create R2 folders for student in each classroom
         $r2Service = app(R2FolderService::class);
         foreach ($validated['classroom_ids'] as $classroomId) {
-            $classroom = Classroom::find($classroomId);
+            $classroom = Classroom::with('school')->find($classroomId);
             $r2Service->createStudentFolder($classroom, $student);
         }
 

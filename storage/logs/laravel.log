@@ -14190,3 +14190,33 @@ NoSuchBucket (client): The specified bucket does not exist."}
 NoSuchBucket (client): The specified bucket does not exist."} 
 [2026-05-12 10:22:22] local.ERROR: R2 upload failed {"bucket":"school4-nonburi","path":"school4/CLS_3_1/120526/STU_18_014/120526_102146_d746.jpg","error":"Error executing \"PutObject\" on \"https://school4-nonburi.c22371faca4152b2eb40d7fad4f0afab.r2.cloudflarestorage.com/school4/CLS_3_1/120526/STU_18_014/120526_102146_d746.jpg\"; AWS HTTP error:
 NoSuchBucket (client): The specified bucket does not exist."} 
+[2026-05-12 10:31:17] local.INFO: Creating student folder {"classroom_id":3,"student_id":19,"folder":"school4/CLS_3_1/STU_19_015","bucket":"school4-nonburi"} 
+[2026-05-12 10:31:18] local.ERROR: R2 folder creation failed {"path":"school4/CLS_3_1/STU_19_015","bucket":"school4-nonburi","error":"Error executing \"PutObject\" on \"https://school4-nonburi.c22371faca4152b2eb40d7fad4f0afab.r2.cloudflarestorage.com/school4/CLS_3_1/STU_19_015/.folder.meta\"; AWS HTTP error:
+NoSuchBucket (client): The specified bucket does not exist."} 
+[2026-05-12 10:31:41] local.INFO: MediaCompressor Start {"classroom_slug":"school4/CLS_3_1","student_folder":"STU_19_015","student_code":"นร015","folderPath":"school4/CLS_3_1/120526","fullPath":"school4/CLS_3_1/120526/STU_19_015/120526_103141_fff9.jpg","type":"image","r2_bucket":"school4-nonburi"} 
+[2026-05-12 10:31:41] local.WARNING: WebP not supported by GD, falling back to JPEG compression  
+[2026-05-12 10:31:41] local.INFO: Image compression (JPEG fallback) {"original_size":298363,"compressed_size":215622,"saved_bytes":82741,"reduction_percent":27.7} 
+[2026-05-12 10:31:42] local.ERROR: R2 upload failed {"bucket":"school4-nonburi","path":"school4/CLS_3_1/120526/STU_19_015/120526_103141_fff9.jpg","error":"Error executing \"PutObject\" on \"https://school4-nonburi.c22371faca4152b2eb40d7fad4f0afab.r2.cloudflarestorage.com/school4/CLS_3_1/120526/STU_19_015/120526_103141_fff9.jpg\"; AWS HTTP error:
+NoSuchBucket (client): The specified bucket does not exist."} 
+[2026-05-12 10:34:55] local.ERROR: Command "tinker" is not defined. {"exception":"[object] (Symfony\\Component\\Console\\Exception\\CommandNotFoundException(code: 0): Command \"tinker\" is not defined. at /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Application.php:759)
+[stacktrace]
+#0 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Application.php(298): Symfony\\Component\\Console\\Application->find('tinker')
+#1 /Users/phuwish/uploadclickrobot2/vendor/symfony/console/Application.php(195): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#2 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#3 /Users/phuwish/uploadclickrobot2/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1235): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#4 /Users/phuwish/uploadclickrobot2/artisan(13): Illuminate\\Foundation\\Application->handleCommand(Object(Symfony\\Component\\Console\\Input\\ArgvInput))
+#5 {main}
+"} 
+[2026-05-12 10:43:08] local.INFO: Creating student folder {"classroom_id":3,"student_id":20,"folder":"school4/CLS_3_1/STU_20_016","bucket":"school3-nonburi"} 
+[2026-05-12 10:43:08] local.INFO: R2 folder created {"path":"school4/CLS_3_1/STU_20_016","bucket":"school3-nonburi"} 
+[2026-05-12 10:43:24] local.INFO: MediaCompressor Start {"classroom_slug":"school4/CLS_3_1","student_folder":"STU_20_016","student_code":"นร016","folderPath":"school4/CLS_3_1/120526","fullPath":"school4/CLS_3_1/120526/STU_20_016/120526_104324_9fa2.jpg","type":"image","r2_bucket":"school3-nonburi"} 
+[2026-05-12 10:43:24] local.WARNING: WebP not supported by GD, falling back to JPEG compression  
+[2026-05-12 10:43:24] local.INFO: Image compression (JPEG fallback) {"original_size":153701,"compressed_size":163572,"saved_bytes":-9871,"reduction_percent":-6.4} 
+[2026-05-12 10:43:24] local.INFO: Uploaded to R2 {"bucket":"school3-nonburi","path":"school4/CLS_3_1/120526/STU_20_016/120526_104324_9fa2.jpg"} 
+[2026-05-12 10:56:40] local.DEBUG: User logged in, role: teacher, school_id: 2  
+[2026-05-12 10:56:40] local.DEBUG: Login redirect target URL: http://localhost:8080/school/bangrak/teacher/dashboard  
+[2026-05-12 10:56:40] local.DEBUG: Redirect response prepared  
+[2026-05-12 10:56:54] local.INFO: MediaCompressor Start {"classroom_slug":"school2/CLS_1_1_1","student_folder":"STU_17_013","student_code":"นร013","folderPath":"school2/CLS_1_1_1/120526","fullPath":"school2/CLS_1_1_1/120526/STU_17_013/120526_105654_8f74.jpg","type":"image","r2_bucket":"school1-bangrak"} 
+[2026-05-12 10:56:54] local.WARNING: WebP not supported by GD, falling back to JPEG compression  
+[2026-05-12 10:56:54] local.INFO: Image compression (JPEG fallback) {"original_size":153701,"compressed_size":163572,"saved_bytes":-9871,"reduction_percent":-6.4} 
+[2026-05-12 10:56:55] local.INFO: Uploaded to R2 {"bucket":"school1-bangrak","path":"school2/CLS_1_1_1/120526/STU_17_013/120526_105654_8f74.jpg"} 

@@ -46,7 +46,8 @@ class School extends Model
 
     public function getR2Bucket(): string
     {
-        return $this->r2_bucket ?? "school{$this->id}-{$this->slug}";
+        $envKey = 'SCHOOL_' . strtoupper($this->slug) . '_R2_BUCKET';
+        return env($envKey) ?? $this->r2_bucket ?? "school{$this->id}-{$this->slug}";
     }
 
     public function getSlugAttribute(?string $value): ?string

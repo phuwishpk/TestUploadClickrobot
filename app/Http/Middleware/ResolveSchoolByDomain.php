@@ -74,9 +74,10 @@ class ResolveSchoolByDomain
             // Store school in session for persistence
             $request->session()->put('school_id', $school->id);
 
-            // Switch R2 bucket to school-specific bucket if configured
-            if ($school->r2_bucket) {
-                config(['filesystems.disks.r2.bucket' => $school->r2_bucket]);
+            // Switch R2 bucket to school-specific bucket
+            $bucket = $school->getR2Bucket();
+            if ($bucket) {
+                config(['filesystems.disks.r2.bucket' => $bucket]);
             }
 
             // Set URL default so ALL route() calls in views auto-use the current school slug
