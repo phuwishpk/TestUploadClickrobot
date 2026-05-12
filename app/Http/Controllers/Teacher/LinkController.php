@@ -49,7 +49,7 @@ class LinkController extends Controller
 
         ParentStudent::create($validated);
 
-        return redirect()->route('teacher.links.index')
+        return redirect()->to(school_route('teacher.links.index'))
             ->with('success', 'เชื่อมโยงสำเร็จ');
     }
 
@@ -57,7 +57,7 @@ class LinkController extends Controller
     {
         $link->delete();
 
-        return redirect()->route('teacher.links.index')
+        return redirect()->to(school_route('teacher.links.index'))
             ->with('success', 'ยกเลิกการเชื่อมโยงสำเร็จ');
     }
 }

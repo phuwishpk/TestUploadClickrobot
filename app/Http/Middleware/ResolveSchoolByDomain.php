@@ -15,11 +15,23 @@ class ResolveSchoolByDomain
     {
         $host = $request->getHost();
 
-        // Extract school slug from path — but only when {school} is a plain string slug.
-        // Admin routes also have a {school} param but it resolves to a School model;
-        // we must not use a model instance as a slug lookup.
+        \Illuminate\Support\Facades\Log::debug('ResolveSchoolByDomain middleware', [
+            'host' => $host,
+            'session_id' => $request->session()->getId(),
+            'session_token' => $request->session()->token() ?? 'no token',
+            'cookie' => $request->cookie('laravel_session') ?? 'no cookie',
+            'uri' => $request->getRequestUri(),
+        ]);
+
+        // Extract school slug from path (path-based: /bangrak/teacher/dashboard) or subdomain
         $routeSchool = $request->route('school');
         $schoolSlug = is_string($routeSchool) ? $routeSchool : null;
+
+        // Also check for schoolSlug route parameter (for path-based routing)
+        if (!$schoolSlug) {
+            $routeSchoolSlug = $request->route('schoolSlug');
+            $schoolSlug = is_string($routeSchoolSlug) ? $routeSchoolSlug : null;
+        }
 
         // Fallback: try subdomain
         if (!$schoolSlug) {
@@ -73,6 +85,7 @@ class ResolveSchoolByDomain
 
             // Store school in session for persistence
             $request->session()->put('school_id', $school->id);
+            $request->session()->put('current_school_slug', $school->slug);
 
             // Switch R2 bucket to school-specific bucket
             $bucket = $school->getR2Bucket();
@@ -80,8 +93,8 @@ class ResolveSchoolByDomain
                 config(['filesystems.disks.r2.bucket' => $bucket]);
             }
 
-            // Set URL default so ALL route() calls in views auto-use the current school slug
-            URL::defaults(['school' => $school->slug]);
+            // Set URL defaults for path-based routing (e.g., /bangrak/teacher/dashboard)
+            URL::defaults(['school' => $school->slug, 'schoolSlug' => $school->slug]);
         }
 
         return $next($request);

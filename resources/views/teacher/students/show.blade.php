@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="mb-6">
-    <a href="{{ route('teacher.students.index') }}" class="text-indigo-600 hover:underline">← กลับไปนักเรียน</a>
+    <a href="{{ school_route('teacher.students.index') }}" class="text-indigo-600 hover:underline">← กลับไปนักเรียน</a>
 </div>
 
 @if(session('success'))
@@ -29,7 +29,7 @@
                     <p class="text-gray-500">ห้องเรียน: {{ $student->classrooms->pluck('name')->implode(', ') }}</p>
                 </div>
                 <div>
-                    <a href="{{ route('teacher.students.edit', $student) }}" class="text-indigo-600 hover:underline">แก้ไข</a>
+                    <a href="{{ school_route('teacher.students.edit', $student) }}" class="text-indigo-600 hover:underline">แก้ไข</a>
                 </div>
             </div>
 
@@ -41,7 +41,7 @@
                         <p class="text-xs text-gray-400 mt-1">รหัสผ่าน: 12345</p>
                     @else
                         <p class="text-gray-400">ไม่มีบัญชี</p>
-                        <form action="{{ route('teacher.students.create-account', $student) }}" method="POST" class="mt-2">
+                        <form action="{{ school_route('teacher.students.create-account', $student) }}" method="POST" class="mt-2">
                             @csrf
                             <div class="flex gap-2">
                                 <input type="email" name="email" placeholder="อีเมลสำหรับบัญชี" required
@@ -70,7 +70,7 @@
                                 <p class="font-medium">{{ $parent->name }}</p>
                                 <p class="text-sm text-gray-500">{{ $parent->email }}</p>
                             </div>
-                            <a href="{{ route('teacher.parents.show', $parent) }}" class="text-indigo-600 hover:underline text-sm">ดู</a>
+                            <a href="{{ school_route('teacher.parents.show', $parent) }}" class="text-indigo-600 hover:underline text-sm">ดู</a>
                         </div>
                     @endforeach
                 </div>
@@ -78,7 +78,7 @@
                 <p class="text-gray-500">ยังไม่มีผู้ปกครองที่เชื่อมโยง</p>
             @endif
             <div class="mt-4">
-                <a href="{{ route('teacher.links.create') }}" class="text-sm text-indigo-600 hover:underline">+ เพิ่มผู้ปกครอง</a>
+                <a href="{{ school_route('teacher.links.create') }}" class="text-sm text-indigo-600 hover:underline">+ เพิ่มผู้ปกครอง</a>
             </div>
         </div>
     </div>
@@ -109,7 +109,7 @@
                                 <p class="text-sm truncate">{{ $media->original_name }}</p>
                                 <p class="text-xs text-gray-400">{{ $media->uploaded_date->format('d/m/Y') }}</p>
                             </div>
-                            <form action="{{ route('teacher.media.destroy', $media) }}" method="POST" class="delete-form">
+                            <form action="{{ school_route('teacher.media.destroy', $media) }}" method="POST" class="delete-form">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="delete-btn opacity-0 group-hover:opacity-100 bg-red-500 hover:bg-red-600 text-white p-1.5 rounded transition-all">

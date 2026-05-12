@@ -15,6 +15,13 @@ class AuthController extends Controller
      */
     public function showLoginForm(Request $request)
     {
+        \Illuminate\Support\Facades\Log::debug('showLoginForm called', [
+            'host' => $request->getHost(),
+            'session_id' => $request->session()->getId(),
+            'session_token' => $request->session()->token() ?? 'no token',
+            'cookie' => $request->cookie('laravel_session') ?? 'no cookie',
+        ]);
+
         $school = null;
         $host = $request->getHost();
         $slug = $this->extractSlug($host);
@@ -39,6 +46,14 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
+        \Illuminate\Support\Facades\Log::debug('login called', [
+            'session_id' => $request->session()->getId(),
+            'session_token' => $request->session()->token() ?? 'no token',
+            'cookie' => $request->cookie('laravel_session') ?? 'no cookie',
+            'has_csrf' => $request->has('_token'),
+            'request_token' => $request->input('_token') ?? 'no token',
+        ]);
+
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
@@ -110,23 +125,25 @@ class AuthController extends Controller
         }
         $role = $user->role;
 
-        // Clear URL defaults
-        \Illuminate\Support\Facades\URL::defaults([]);
-
-        $targetUrl = match($role) {
-            'admin' => $this->getAdminUrl(),
-            'school_admin' => $this->getSchoolUrl($school, 'school-admin/dashboard'),
-            'teacher' => $this->getSchoolUrl($school, 'teacher/dashboard'),
-            'parent' => $this->getSchoolUrl($school, 'parent/dashboard'),
-            'student' => $this->getSchoolUrl($school, 'student/dashboard'),
+        // Use school subdomains for school users so the browser URL stays
+        // bangrak.localhost:8080/teacher/dashboard.
+        $targetPath = match($role) {
+            'admin' => '/admin/dashboard',
+            'school_admin' => '/school-admin/dashboard',
+            'teacher' => '/teacher/dashboard',
+            'parent' => '/parent/dashboard',
+            'student' => '/student/dashboard',
             default => "/login",
         };
 
-        // Debug: log the target URL
-        \Illuminate\Support\Facades\Log::debug('Login redirect target URL: ' . $targetUrl);
+        if ($school && $school->slug && $role !== 'admin') {
+            $targetUrl = $this->getSchoolUrl($school, ltrim($targetPath, '/'));
+            \Illuminate\Support\Facades\Log::debug('Redirecting to school subdomain: ' . $targetUrl);
+            return redirect()->to($targetUrl);
+        }
 
-        // Use redirect()->to() for absolute URLs
-        return redirect()->to($targetUrl, 302);
+        \Illuminate\Support\Facades\Log::debug('Redirecting to: ' . $targetPath);
+        return redirect()->to($targetPath);
     }
 
     /**
@@ -141,7 +158,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Build URL with school path prefix: {base}:{port}/school/{slug}/{path}
+     * Build URL with school subdomain: {slug}.{base-domain}/{path}
      */
     protected function getSchoolUrl($school, string $path): string
     {
@@ -154,10 +171,10 @@ class AuthController extends Controller
             }
         }
 
-        $baseDomain = config('app.base_domain', 'localhost');
         $port = config('app.port', '8080');
+        $baseDomain = config('app.base_domain', 'localhost');
         $protocol = request()->secure() ? 'https' : 'http';
 
-        return "{$protocol}://{$baseDomain}:{$port}/school/{$school->slug}/{$path}";
+        return "{$protocol}://{$school->slug}.{$baseDomain}:{$port}/{$path}";
     }
 }

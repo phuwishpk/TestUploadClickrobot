@@ -5,7 +5,7 @@
 @section('content')
 <div class="mb-6 flex justify-between items-center">
     <h1 class="text-2xl font-bold text-gray-800">ผู้ปกครอง</h1>
-    <a href="{{ route('teacher.parents.create') }}" class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">
+    <a href="{{ school_route('teacher.parents.create') }}" class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">
         + เพิ่มผู้ปกครอง
     </a>
 </div>
@@ -33,9 +33,9 @@
                         @endforeach
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        <a href="{{ route('teacher.parents.show', $parent) }}" class="text-indigo-600 hover:underline mr-3">ดู</a>
-                        <a href="{{ route('teacher.parents.edit', $parent) }}" class="text-green-600 hover:underline mr-3">แก้ไข</a>
-                        <form action="{{ route('teacher.parents.destroy', $parent) }}" method="POST" class="inline">
+                        <a href="{{ school_route('teacher.parents.show', $parent) }}" class="text-indigo-600 hover:underline mr-3">ดู</a>
+                        <a href="{{ school_route('teacher.parents.edit', $parent) }}" class="text-green-600 hover:underline mr-3">แก้ไข</a>
+                        <form action="{{ school_route('teacher.parents.destroy', $parent) }}" method="POST" class="inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-red-600 hover:underline" onclick="return confirm('ต้องการลบ?')">ลบ</button>

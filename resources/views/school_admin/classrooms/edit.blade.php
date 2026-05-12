@@ -7,7 +7,7 @@
     <h1 class="text-2xl font-bold text-gray-800 mb-6">Edit Classroom</h1>
 
     <div class="bg-white rounded-lg shadow p-6">
-        <form action="{{ route('school_admin.classrooms.update', $classroom) }}" method="POST">
+        <form action="{{ school_route('school_admin.classrooms.update', $classroom) }}" method="POST">
             @csrf @method('PUT')
             <div class="space-y-4">
                 <div>
@@ -32,7 +32,7 @@
             </div>
             <div class="mt-6 flex gap-4">
                 <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">Update</button>
-                <a href="{{ route('school_admin.classrooms.index') }}" class="px-6 py-2 border rounded-lg hover:bg-gray-50">Cancel</a>
+                <a href="{{ school_route('school_admin.classrooms.index') }}" class="px-6 py-2 border rounded-lg hover:bg-gray-50">Cancel</a>
             </div>
         </form>
     </div>

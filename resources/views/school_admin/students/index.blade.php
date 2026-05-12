@@ -6,14 +6,14 @@
 <div class="mb-6 flex justify-between items-center flex-wrap gap-4">
     <h1 class="text-2xl font-bold text-gray-800">นักเรียน</h1>
     <div class="flex gap-2">
-        <a href="{{ route('school_admin.students.create') }}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+        <a href="{{ school_route('school_admin.students.create') }}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
             + เพิ่มนักเรียน
         </a>
     </div>
 </div>
 
 <div class="mb-4 flex flex-wrap gap-4 items-center">
-    <form method="GET" action="{{ route('school_admin.students.index') }}" class="flex items-center gap-2">
+    <form method="GET" action="{{ school_route('school_admin.students.index') }}" class="flex items-center gap-2">
         <input type="text" name="search" value="{{ $search }}" placeholder="ค้นหาชื่อหรือรหัส..."
             class="border border-gray-300 rounded px-3 py-1.5 text-sm w-48">
         <select name="classroom_id" class="border border-gray-300 rounded px-3 py-1.5 text-sm">
@@ -28,7 +28,7 @@
             ค้นหา
         </button>
         @if($search || $classroomId)
-            <a href="{{ route('school_admin.students.index') }}" class="text-sm text-red-600 hover:underline">ล้าง</a>
+            <a href="{{ school_route('school_admin.students.index') }}" class="text-sm text-red-600 hover:underline">ล้าง</a>
         @endif
     </form>
 </div>
@@ -69,9 +69,9 @@
                         @endif
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        <a href="{{ route('school_admin.students.show', $student) }}" class="text-indigo-600 hover:underline mr-3">ดู</a>
-                        <a href="{{ route('school_admin.students.edit', $student) }}" class="text-green-600 hover:underline mr-3">แก้ไข</a>
-                        <form action="{{ route('school_admin.students.destroy', $student) }}" method="POST" class="inline">
+                        <a href="{{ school_route('school_admin.students.show', $student) }}" class="text-indigo-600 hover:underline mr-3">ดู</a>
+                        <a href="{{ school_route('school_admin.students.edit', $student) }}" class="text-green-600 hover:underline mr-3">แก้ไข</a>
+                        <form action="{{ school_route('school_admin.students.destroy', $student) }}" method="POST" class="inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-red-600 hover:underline" onclick="return confirm('ต้องการลบนักเรียนนี้?')">ลบ</button>
@@ -84,7 +84,7 @@
                         @if($search || $classroomId)
                             ไม่พบนักเรียนที่ค้นหา
                         @else
-                            ยังไม่มีนักเรียน <a href="{{ route('school_admin.students.create') }}" class="text-indigo-600 hover:underline">เพิ่มนักเรียน</a>
+                            ยังไม่มีนักเรียน <a href="{{ school_route('school_admin.students.create') }}" class="text-indigo-600 hover:underline">เพิ่มนักเรียน</a>
                         @endif
                     </td>
                 </tr>

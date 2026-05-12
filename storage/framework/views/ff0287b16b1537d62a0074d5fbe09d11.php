@@ -18,7 +18,7 @@
             </div>
         <?php endif; ?>
 
-        <form action="<?php echo e(route('login')); ?>" method="POST">
+        <form action="<?php echo e(school_route('login')); ?>" method="POST">
             <?php echo csrf_field(); ?>
 
             <div class="mb-4">

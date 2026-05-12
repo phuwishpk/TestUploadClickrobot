@@ -37,7 +37,7 @@ class ParentController extends Controller
             'role' => 'parent',
         ]);
 
-        return redirect()->route('teacher.parents.show', ['school' => $request->attributes->get('school')->slug, 'parent' => $parent->id])
+        return redirect()->to(school_route('teacher.parents.show', ['parent' => $parent->id]))
             ->with('success', 'เพิ่มผู้ปกครองสำเร็จ');
     }
 
@@ -74,7 +74,7 @@ class ParentController extends Controller
 
         $parent->update($validated);
 
-        return redirect()->route('teacher.parents.show', ['school' => $request->attributes->get('school')->slug, 'parent' => $parent->id])
+        return redirect()->to(school_route('teacher.parents.show', ['parent' => $parent->id]))
             ->with('success', 'อัปเดตข้อมูลผู้ปกครองสำเร็จ');
     }
 
@@ -87,7 +87,7 @@ class ParentController extends Controller
         $parent->parentStudents()->delete();
         $parent->delete();
 
-        return redirect()->route('teacher.parents.index')
+        return redirect()->to(school_route('teacher.parents.index'))
             ->with('success', 'ลบผู้ปกครองสำเร็จ');
     }
 }

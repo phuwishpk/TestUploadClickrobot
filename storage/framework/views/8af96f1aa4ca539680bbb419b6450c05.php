@@ -24,7 +24,7 @@
                         <?php echo e(auth()->user()->role === 'teacher' ? 'ครู' : (auth()->user()->role === 'parent' ? 'ผู้ปกครอง' : 'นักเรียน')); ?>
 
                     </span>
-                    <form action="<?php echo e(route('logout')); ?>" method="POST" class="inline">
+                    <form action="<?php echo e(school_route('logout')); ?>" method="POST" class="inline">
                         <?php echo csrf_field(); ?>
                         <button type="submit" class="text-gray-500 hover:text-red-600">
                             ออกจากระบบ

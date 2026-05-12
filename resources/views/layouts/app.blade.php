@@ -23,7 +23,7 @@
                     <span class="px-2 py-1 text-xs font-semibold text-white bg-indigo-600 rounded">
                         {{ auth()->user()->role === 'teacher' ? 'ครู' : (auth()->user()->role === 'parent' ? 'ผู้ปกครอง' : 'นักเรียน') }}
                     </span>
-                    <form action="{{ route('logout') }}" method="POST" class="inline">
+                    <form action="{{ school_route('logout') }}" method="POST" class="inline">
                         @csrf
                         <button type="submit" class="text-gray-500 hover:text-red-600">
                             ออกจากระบบ

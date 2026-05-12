@@ -5,7 +5,7 @@
 @section('content')
 <div class="mb-6 flex justify-between items-center">
     <h1 class="text-2xl font-bold text-gray-800">เชื่อมโยงผู้ปกครอง-นักเรียน</h1>
-    <a href="{{ route('teacher.links.create') }}" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+    <a href="{{ school_route('teacher.links.create') }}" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
         + เพิ่มการเชื่อมโยง
     </a>
 </div>
@@ -27,7 +27,7 @@
                     <td class="px-6 py-4 whitespace-nowrap">{{ $link->student->name ?? '-' }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-gray-600">{{ $link->student->classroom->name ?? '-' }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        <form action="{{ route('teacher.links.destroy', $link) }}" method="POST" class="inline">
+                        <form action="{{ school_route('teacher.links.destroy', $link) }}" method="POST" class="inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-red-600 hover:underline" onclick="return confirm('ต้องการยกเลิกการเชื่อมโยง?')">ยกเลิก</button>

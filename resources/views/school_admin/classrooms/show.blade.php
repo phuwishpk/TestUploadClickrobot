@@ -7,8 +7,8 @@
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold text-gray-800">{{ $classroom->name }}</h1>
         <div class="space-x-2">
-            <a href="{{ route('school_admin.classrooms.edit', $classroom) }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Edit</a>
-            <a href="{{ route('school_admin.classrooms.index') }}" class="px-4 py-2 border rounded-lg hover:bg-gray-50">Back</a>
+            <a href="{{ school_route('school_admin.classrooms.edit', $classroom) }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Edit</a>
+            <a href="{{ school_route('school_admin.classrooms.index') }}" class="px-4 py-2 border rounded-lg hover:bg-gray-50">Back</a>
         </div>
     </div>
 

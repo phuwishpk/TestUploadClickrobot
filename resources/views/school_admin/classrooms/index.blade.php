@@ -6,7 +6,7 @@
 <div class="pb-16">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Classrooms</h1>
-        <a href="{{ route('school_admin.classrooms.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+        <a href="{{ school_route('school_admin.classrooms.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
             + Add Classroom
         </a>
     </div>
@@ -34,9 +34,9 @@
                     <td class="px-6 py-4">{{ $classroom->teacher?->name ?? '-' }}</td>
                     <td class="px-6 py-4">{{ $classroom->students()->count() }}</td>
                     <td class="px-6 py-4 text-right space-x-2">
-                        <a href="{{ route('school_admin.classrooms.show', $classroom) }}" class="text-indigo-600 hover:text-indigo-800">View</a>
-                        <a href="{{ route('school_admin.classrooms.edit', $classroom) }}" class="text-green-600 hover:text-green-800">Edit</a>
-                        <form action="{{ route('school_admin.classrooms.destroy', $classroom) }}" method="POST" class="inline">
+                        <a href="{{ school_route('school_admin.classrooms.show', $classroom) }}" class="text-indigo-600 hover:text-indigo-800">View</a>
+                        <a href="{{ school_route('school_admin.classrooms.edit', $classroom) }}" class="text-green-600 hover:text-green-800">Edit</a>
+                        <form action="{{ school_route('school_admin.classrooms.destroy', $classroom) }}" method="POST" class="inline">
                             @csrf @method('DELETE')
                             <button type="submit" onclick="return confirm('Delete this classroom?')" class="text-red-600 hover:text-red-800">Delete</button>
                         </form>

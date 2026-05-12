@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="mb-6">
-    <a href="{{ route('teacher.classrooms.index') }}" class="text-indigo-600 hover:underline">← กลับไปห้องเรียน</a>
+    <a href="{{ school_route('teacher.classrooms.index') }}" class="text-indigo-600 hover:underline">← กลับไปห้องเรียน</a>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -12,7 +12,7 @@
         <div class="bg-white rounded-lg shadow p-6 mb-6">
             <div class="flex justify-between items-center mb-4">
                 <h1 class="text-xl font-bold">{{ $classroom->name }}</h1>
-                <a href="{{ route('teacher.classrooms.edit', $classroom) }}" class="text-indigo-600 hover:underline">แก้ไข</a>
+                <a href="{{ school_route('teacher.classrooms.edit', $classroom) }}" class="text-indigo-600 hover:underline">แก้ไข</a>
             </div>
             <p class="text-gray-600">นักเรียน {{ $students->count() }} คน</p>
         </div>
@@ -20,7 +20,7 @@
         <div class="bg-white rounded-lg shadow p-6">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-lg font-semibold">รายชื่อนักเรียน</h2>
-                <a href="{{ route('teacher.students.create') }}?classroom_id={{ $classroom->id }}" class="text-sm bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
+                <a href="{{ school_route('teacher.students.create') }}?classroom_id={{ $classroom->id }}" class="text-sm bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
                     + เพิ่มนักเรียน
                 </a>
             </div>
@@ -49,7 +49,7 @@
                                         @endif
                                     </td>
                                     <td class="px-4 py-2 text-sm">
-                                        <a href="{{ route('teacher.students.show', $student) }}" class="text-indigo-600 hover:underline">ดู</a>
+                                        <a href="{{ school_route('teacher.students.show', $student) }}" class="text-indigo-600 hover:underline">ดู</a>
                                     </td>
                                 </tr>
                             @endforeach

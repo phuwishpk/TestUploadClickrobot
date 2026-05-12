@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="mb-6">
-    <a href="{{ route('teacher.parents.index') }}" class="text-indigo-600 hover:underline">← กลับไปผู้ปกครอง</a>
+    <a href="{{ school_route('teacher.parents.index') }}" class="text-indigo-600 hover:underline">← กลับไปผู้ปกครอง</a>
 </div>
 
 <div class="bg-white rounded-lg shadow p-6 mb-6">
@@ -14,7 +14,7 @@
             <p class="text-gray-500">{{ $parent->email }}</p>
         </div>
         <div>
-            <a href="{{ route('teacher.parents.edit', $parent) }}" class="text-indigo-600 hover:underline">แก้ไข</a>
+            <a href="{{ school_route('teacher.parents.edit', $parent) }}" class="text-indigo-600 hover:underline">แก้ไข</a>
         </div>
     </div>
 </div>
@@ -31,7 +31,7 @@
                             {{ $ps->student->code ?? '' }} | {{ $ps->student->classroom->name ?? '' }}
                         </p>
                     </div>
-                    <a href="{{ route('teacher.students.show', $ps->student) }}" class="text-indigo-600 hover:underline text-sm">ดูข้อมูลนักเรียน</a>
+                    <a href="{{ school_route('teacher.students.show', $ps->student) }}" class="text-indigo-600 hover:underline text-sm">ดูข้อมูลนักเรียน</a>
                 </div>
             @endforeach
         </div>
@@ -40,7 +40,7 @@
     @endif
     
     <div class="mt-4">
-        <a href="{{ route('teacher.links.create') }}" class="text-sm text-indigo-600 hover:underline">+ เชื่อมโยงนักเรียน</a>
+        <a href="{{ school_route('teacher.links.create') }}" class="text-sm text-indigo-600 hover:underline">+ เชื่อมโยงนักเรียน</a>
     </div>
 </div>
 @endsection

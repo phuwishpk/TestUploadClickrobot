@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="mb-6">
-    <a href="{{ route('student.media.index') }}" class="text-indigo-600 hover:underline">← กลับไปไฟล์</a>
+    <a href="{{ school_route('student.media.index') }}" class="text-indigo-600 hover:underline">← กลับไปไฟล์</a>
 </div>
 
 <div class="bg-white rounded-lg shadow overflow-hidden">

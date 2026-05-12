@@ -5,13 +5,13 @@
 @section('content')
 <div class="max-w-2xl mx-auto">
     <div class="mb-6">
-        <a href="{{ route('teacher.links.index') }}" class="text-indigo-600 hover:underline">← กลับ</a>
+        <a href="{{ school_route('teacher.links.index') }}" class="text-indigo-600 hover:underline">← กลับ</a>
     </div>
 
     <div class="bg-white rounded-lg shadow p-6">
         <h1 class="text-xl font-bold mb-6">เพิ่มการเชื่อมโยงผู้ปกครอง-นักเรียน</h1>
 
-        <form action="{{ route('teacher.links.store') }}" method="POST">
+        <form action="{{ school_route('teacher.links.store') }}" method="POST">
             @csrf
 
             <div class="mb-4">
@@ -49,7 +49,7 @@
             </div>
 
             <div class="flex justify-end space-x-3">
-                <a href="{{ route('teacher.links.index') }}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                <a href="{{ school_route('teacher.links.index') }}" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
                     ยกเลิก
                 </a>
                 <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">

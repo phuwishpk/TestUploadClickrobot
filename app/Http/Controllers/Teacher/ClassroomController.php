@@ -27,7 +27,7 @@ class ClassroomController extends Controller
 
         $classroom = $request->user()->classrooms()->create($validated);
 
-        return redirect()->route('teacher.classrooms.show', ['school' => $request->attributes->get('school')->slug, 'classroom' => $classroom->id])
+        return redirect()->to(school_route('teacher.classrooms.show', ['classroom' => $classroom->id]))
             ->with('success', 'สร้างห้องเรียนสำเร็จ');
     }
 
@@ -57,7 +57,7 @@ class ClassroomController extends Controller
 
         $classroom->update($validated);
 
-        return redirect()->route('teacher.classrooms.show', ['school' => $request->attributes->get('school')->slug, 'classroom' => $classroom->id])
+        return redirect()->to(school_route('teacher.classrooms.show', ['classroom' => $classroom->id]))
             ->with('success', 'อัปเดตห้องเรียนสำเร็จ');
     }
 
@@ -66,7 +66,7 @@ class ClassroomController extends Controller
         $this->authorize('delete', $classroom);
         $classroom->delete();
 
-        return redirect()->route('teacher.classrooms.index')
+        return redirect()->to(school_route('teacher.classrooms.index'))
             ->with('success', 'ลบห้องเรียนสำเร็จ');
     }
 }

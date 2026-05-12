@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="mb-6">
-    <a href="{{ route('school_admin.students.index') }}" class="text-indigo-600 hover:underline">← กลับไปนักเรียน</a>
+    <a href="{{ school_route('school_admin.students.index') }}" class="text-indigo-600 hover:underline">← กลับไปนักเรียน</a>
 </div>
 
 @if(session('success'))
@@ -29,8 +29,8 @@
                     <p class="text-gray-500">ห้องเรียน: {{ $student->classrooms->pluck('name')->implode(', ') }}</p>
                 </div>
                 <div class="flex gap-2">
-                    <a href="{{ route('school_admin.students.edit', $student) }}" class="text-indigo-600 hover:underline">แก้ไข</a>
-                    <form action="{{ route('school_admin.students.destroy', $student) }}" method="POST" class="inline">
+                    <a href="{{ school_route('school_admin.students.edit', $student) }}" class="text-indigo-600 hover:underline">แก้ไข</a>
+                    <form action="{{ school_route('school_admin.students.destroy', $student) }}" method="POST" class="inline">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="text-red-600 hover:underline ml-4" onclick="return confirm('ต้องการลบนักเรียนนี้?')">ลบ</button>
@@ -46,7 +46,7 @@
                         <p class="text-xs text-gray-400 mt-1">รหัสผ่าน: 12345</p>
                     @else
                         <p class="text-gray-400">ไม่มีบัญชี</p>
-                        <form action="{{ route('school_admin.students.create-account', $student) }}" method="POST" class="mt-2">
+                        <form action="{{ school_route('school_admin.students.create-account', $student) }}" method="POST" class="mt-2">
                             @csrf
                             <div class="flex gap-2">
                                 <input type="email" name="email" placeholder="อีเมลสำหรับบัญชี" required

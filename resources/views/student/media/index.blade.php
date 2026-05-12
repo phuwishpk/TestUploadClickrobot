@@ -11,7 +11,7 @@
 @if($media->count() > 0)
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
         @foreach($media as $m)
-            <a href="{{ route('student.media.show', $m) }}" class="block">
+            <a href="{{ school_route('student.media.show', $m) }}" class="block">
                 <div class="bg-white rounded-lg shadow overflow-hidden hover:shadow-md transition">
                     @if($m->type === 'image')
                         <img src="{{ $m->url }}" alt="{{ $m->original_name }}" class="w-full h-40 object-cover">

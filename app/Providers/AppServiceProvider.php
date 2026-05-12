@@ -40,8 +40,7 @@ class AppServiceProvider extends ServiceProvider
         Route::bind('teacher',   fn($v) => User::findOrFail($v));
         Route::bind('parent',    fn($v) => User::findOrFail($v));
 
-        // Share `school` with all views — set URL default for subdomain routes
-        // so that route('teacher.dashboard') etc. works without needing the `school` param explicitly
+        // Share `school` with all views
         View::composer('*', function ($view) {
             $school = null;
             $request = request();
@@ -50,10 +49,7 @@ class AppServiceProvider extends ServiceProvider
                 $school = $request->attributes->get('school');
             }
 
-            // Set URL default so ALL route() calls in views auto-use the current school
-            if ($school && $school instanceof School) {
-                URL::defaults(['school' => $school->slug]);
-            }
+            $view->with('school', $school);
         });
     }
 }

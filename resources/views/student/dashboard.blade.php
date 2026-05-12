@@ -29,7 +29,7 @@
 
     <div class="bg-white p-6 rounded-lg shadow mb-8">
         <h2 class="text-lg font-semibold mb-4">ไฟล์ที่อัปโหลดทั้งหมด: {{ $stats['media_count'] }} ไฟล์</h2>
-        <a href="{{ route('student.media.index') }}" class="inline-block bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+        <a href="{{ school_route('student.media.index') }}" class="inline-block bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
             ดูทั้งหมด
         </a>
     </div>
@@ -44,7 +44,7 @@
         <h2 class="text-lg font-semibold mb-4">ไฟล์ล่าสุด</h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             @foreach($recentMedia as $media)
-                <a href="{{ route('student.media.show', $media) }}" class="block">
+                <a href="{{ school_route('student.media.show', $media) }}" class="block">
                     <div class="bg-gray-50 rounded-lg overflow-hidden hover:shadow-md transition">
                         @if($media->type === 'image')
                             <img src="{{ $media->url }}" alt="{{ $media->original_name }}" class="w-full h-32 object-cover">

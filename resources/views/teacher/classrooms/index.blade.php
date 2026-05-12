@@ -5,7 +5,7 @@
 @section('content')
 <div class="mb-6 flex justify-between items-center">
     <h1 class="text-2xl font-bold text-gray-800">ห้องเรียน</h1>
-    <a href="{{ route('teacher.classrooms.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+    <a href="{{ school_route('teacher.classrooms.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
         + สร้างห้องเรียน
     </a>
 </div>
@@ -23,7 +23,7 @@
             @forelse($classrooms as $classroom)
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <a href="{{ route('teacher.classrooms.show', $classroom) }}" class="text-indigo-600 hover:underline font-medium">
+                        <a href="{{ school_route('teacher.classrooms.show', $classroom) }}" class="text-indigo-600 hover:underline font-medium">
                             {{ $classroom->name }}
                         </a>
                     </td>
@@ -31,9 +31,9 @@
                         {{ $classroom->students_count }} คน
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        <a href="{{ route('teacher.classrooms.show', $classroom) }}" class="text-indigo-600 hover:underline mr-3">ดู</a>
-                        <a href="{{ route('teacher.classrooms.edit', $classroom) }}" class="text-green-600 hover:underline mr-3">แก้ไข</a>
-                        <form action="{{ route('teacher.classrooms.destroy', $classroom) }}" method="POST" class="inline">
+                        <a href="{{ school_route('teacher.classrooms.show', $classroom) }}" class="text-indigo-600 hover:underline mr-3">ดู</a>
+                        <a href="{{ school_route('teacher.classrooms.edit', $classroom) }}" class="text-green-600 hover:underline mr-3">แก้ไข</a>
+                        <form action="{{ school_route('teacher.classrooms.destroy', $classroom) }}" method="POST" class="inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-red-600 hover:underline" onclick="return confirm('ต้องการลบห้องเรียนนี้?')">ลบ</button>
