@@ -86,27 +86,37 @@ class StudentController extends Controller
         }
 
         $message = 'เพิ่มนักเรียนสำเร็จ รหัส: ' . $student->code;
+        $accountError = null;
 
         if (!empty($validated['create_account']) && !empty($validated['email'])) {
-            $user = User::create([
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'password' => Hash::make('12345'),
-                'role' => 'student',
-                'student_code' => $student->code,
-                'school_id' => $schoolId,
-            ]);
-            $student->update(['user_id' => $user->id]);
-            $message .= ' และสร้างบัญชี: ' . $validated['email'];
+            try {
+                $user = User::create([
+                    'name' => $validated['name'],
+                    'email' => $validated['email'],
+                    'password' => Hash::make('12345'),
+                    'role' => 'student',
+                    'student_code' => $student->code,
+                    'school_id' => $schoolId,
+                ]);
+                $student->update(['user_id' => $user->id]);
+                $message .= ' และสร้างบัญชี: ' . $validated['email'];
+            } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+                $accountError = 'ไม่สามารถสร้างบัญชีได้ (รหัส ' . $student->code . ' ถูกใช้แล้ว) กรุณาสร้างบัญชีจากหน้ารายละเอียดนักเรียน';
+            }
         }
 
-        return redirect()->route('school_admin.students.show', ['school' => auth()->user()->school->slug, 'student' => $student->id])
+        $redirect = redirect()->route('school_admin.students.show', ['school' => auth()->user()->school->slug, 'student' => $student->id])
             ->with('success', $message);
+
+        if ($accountError) {
+            $redirect = $redirect->with('error', $accountError);
+        }
+
+        return $redirect;
     }
 
-    public function show(Request $request, $studentId)
+    public function show(Request $request, $student)
     {
-        $student = Student::findOrFail($studentId);
         $this->authorizeSchoolAccess($student);
         $student->load(['classrooms', 'user', 'parents', 'media' => function($q) {
             $q->latest()->limit(20);
@@ -114,18 +124,16 @@ class StudentController extends Controller
         return view('school_admin.students.show', compact('student'));
     }
 
-    public function edit(Request $request, $studentId)
+    public function edit(Request $request, $student)
     {
-        $student = Student::findOrFail($studentId);
         $this->authorizeSchoolAccess($student);
         $classrooms = Classroom::where('school_id', auth()->user()->school_id)->get();
         $selectedClassrooms = $student->classrooms()->pluck('id')->toArray();
         return view('school_admin.students.edit', compact('student', 'classrooms', 'selectedClassrooms'));
     }
 
-    public function update(Request $request, $studentId)
+    public function update(Request $request, $student)
     {
-        $student = Student::findOrFail($studentId);
         $this->authorizeSchoolAccess($student);
 
         $validated = $request->validate([
@@ -155,9 +163,8 @@ class StudentController extends Controller
             ->with('success', 'อัปเดตข้อมูลนักเรียนสำเร็จ');
     }
 
-    public function destroy(Request $request, $studentId)
+    public function destroy(Request $request, $student)
     {
-        $student = Student::findOrFail($studentId);
         $this->authorizeSchoolAccess($student);
 
         if ($student->user) {
@@ -170,9 +177,8 @@ class StudentController extends Controller
             ->with('success', 'ลบนักเรียนสำเร็จ');
     }
 
-    public function createAccount(Request $request, $studentId)
+    public function createAccount(Request $request, $student)
     {
-        $student = Student::findOrFail($studentId);
         $this->authorizeSchoolAccess($student);
 
         if ($student->user_id) {

@@ -87,27 +87,37 @@ class StudentController extends Controller
         }
 
         $message = 'เพิ่มนักเรียนสำเร็จ รหัส: ' . $student->code;
+        $accountError = null;
 
         if (!empty($validated['create_account']) && !empty($validated['email'])) {
-            $user = User::create([
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'password' => Hash::make('12345'),
-                'role' => 'student',
-                'student_code' => $student->code,
-                'school_id' => $request->user()->school_id,
-            ]);
-            $student->update(['user_id' => $user->id]);
-            $message .= ' และสร้างบัญชี: ' . $validated['email'];
+            try {
+                $user = User::create([
+                    'name' => $validated['name'],
+                    'email' => $validated['email'],
+                    'password' => Hash::make('12345'),
+                    'role' => 'student',
+                    'student_code' => $student->code,
+                    'school_id' => $request->user()->school_id,
+                ]);
+                $student->update(['user_id' => $user->id]);
+                $message .= ' และสร้างบัญชี: ' . $validated['email'];
+            } catch (\Illuminate\Database\UniqueConstraintViolationException $e) {
+                $accountError = 'ไม่สามารถสร้างบัญชีได้ (รหัส ' . $student->code . ' ถูกใช้แล้ว) กรุณาสร้างบัญชีจากหน้ารายละเอียดนักเรียน';
+            }
         }
 
-        return redirect()->route('teacher.students.show', ['school' => $request->attributes->get('school')->slug, 'student' => $student->id])
+        $redirect = redirect()->route('teacher.students.show', ['school' => $request->attributes->get('school')->slug, 'student' => $student->id])
             ->with('success', $message);
+
+        if ($accountError) {
+            $redirect = $redirect->with('error', $accountError);
+        }
+
+        return $redirect;
     }
 
-    public function createAccount(Request $request, $studentId)
+    public function createAccount(Request $request, $student)
     {
-        $student = Student::findOrFail($studentId);
         $userClassroomIds = $request->user()->classrooms()->pluck('id')->toArray();
         $hasAccess = $student->classrooms()->whereIn('classrooms.id', $userClassroomIds)->exists();
 
@@ -144,9 +154,8 @@ class StudentController extends Controller
         return back()->with('success', 'สร้างบัญชีสำเร็จ: ' . $validated['email'] . ' (รหัสผ่าน: 12345)');
     }
 
-    public function show(Request $request, $studentId)
+    public function show(Request $request, $student)
     {
-        $student = Student::findOrFail($studentId);
         $this->authorize('view', $student);
         $student->load(['classrooms', 'user', 'parents', 'media' => function($q) {
             $q->latest()->limit(20);
@@ -154,18 +163,16 @@ class StudentController extends Controller
         return view('teacher.students.show', compact('student'));
     }
 
-    public function edit(Request $request, $studentId)
+    public function edit(Request $request, $student)
     {
-        $student = Student::findOrFail($studentId);
         $this->authorize('update', $student);
         $classrooms = auth()->user()->classrooms;
         $selectedClassrooms = $student->classrooms()->pluck('id')->toArray();
         return view('teacher.students.edit', compact('student', 'classrooms', 'selectedClassrooms'));
     }
 
-    public function update(Request $request, $studentId)
+    public function update(Request $request, $student)
     {
-        $student = Student::findOrFail($studentId);
         $this->authorize('update', $student);
 
         $validated = $request->validate([
@@ -187,9 +194,8 @@ class StudentController extends Controller
             ->with('success', 'อัปเดตข้อมูลนักเรียนสำเร็จ');
     }
 
-    public function destroy(Request $request, $studentId)
+    public function destroy(Request $request, $student)
     {
-        $student = Student::findOrFail($studentId);
         $this->authorize('delete', $student);
 
         if ($student->user) {
