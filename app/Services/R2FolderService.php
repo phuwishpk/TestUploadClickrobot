@@ -124,10 +124,10 @@ class R2FolderService
 
     public function getStudentFolder(Classroom $classroom, Student $student): string
     {
-        // Use ID and name for folder, sanitize name for R2 compatibility
-        $name = preg_replace('/[^a-zA-Z0-9]/', '_', $student->name);
-        $name = preg_replace('/_+/', '_', $name);
-        $name = trim($name, '_');
+        // Use ID and name (allow Thai characters)
+        // Only replace spaces and special chars that cause issues in URLs
+        $name = preg_replace('/\s+/', '_', $student->name);
+        $name = preg_replace('/[\/\?\#\[\]\@\!\$\&\'\(\)\*\+\,\;\=]/', '', $name);
         return sprintf('%d_%s', $student->id, $name);
     }
 
