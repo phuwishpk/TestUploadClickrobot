@@ -105,7 +105,7 @@ class StudentController extends Controller
             }
         }
 
-        $redirect = redirect()->route('school_admin.students.show', ['school' => auth()->user()->school->slug, 'student' => $student->id])
+        $redirect = redirect()->to(school_route('school_admin.students.show', ['student' => $student->id]))
             ->with('success', $message);
 
         if ($accountError) {
@@ -159,7 +159,7 @@ class StudentController extends Controller
 
         $student->classrooms()->sync($validated['classroom_ids']);
 
-        return redirect()->route('school_admin.students.show', ['school' => auth()->user()->school->slug, 'student' => $student->id])
+        return redirect()->to(school_route('school_admin.students.show', ['student' => $student->id]))
             ->with('success', 'อัปเดตข้อมูลนักเรียนสำเร็จ');
     }
 
@@ -173,7 +173,7 @@ class StudentController extends Controller
 
         $student->delete();
 
-        return redirect()->route('school_admin.students.index')
+        return redirect()->to(school_route('school_admin.students.index'))
             ->with('success', 'ลบนักเรียนสำเร็จ');
     }
 

@@ -11,6 +11,7 @@ Route::get('/', function () {
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/login/consume', [AuthController::class, 'consumeSubdomainLogin'])->name('login.consume');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/test-url', [App\Http\Controllers\TestController::class, 'test']);
 
@@ -119,7 +120,7 @@ $schoolRoutes = function (): void {
 };
 
 // School routes on school subdomains: bangrak.localhost:8080/teacher/dashboard
-Route::middleware(['auth', 'school.domain'])->group($schoolRoutes);
+Route::middleware(['auth'])->group($schoolRoutes);
 
 // School routes with path-based fallback: localhost:8080/bangrak/teacher/dashboard
 Route::middleware(['auth'])

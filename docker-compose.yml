@@ -22,7 +22,8 @@ services:
       - DB_DATABASE=schools
       - DB_USERNAME=root
       - DB_PASSWORD=${MYSQL_ROOT_PASSWORD:-root_secret}
-      - SESSION_DOMAIN=.localhost
+      - SESSION_DOMAIN=${SESSION_DOMAIN:-}
+      - SESSION_COOKIE=${SESSION_COOKIE:-school_media_upload_host_session}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}

@@ -62,7 +62,8 @@ function school_route(string $name, array|Model|null $parameters = [], bool $abs
 
     try {
         $url = route($name, $parameters, false);
-        $subdomainPattern = '/^' . preg_quote($schoolSlug, '/') . '\.localhost$/i';
+        $baseDomain = config('app.base_domain', 'localhost');
+        $subdomainPattern = '/^' . preg_quote($schoolSlug, '/') . '\.' . preg_quote($baseDomain, '/') . '$/i';
 
         if (preg_match($subdomainPattern, request()->getHost())) {
             $url = preg_replace('#^/' . preg_quote($schoolSlug, '#') . '(/|$)#', '/', $url);
@@ -117,12 +118,14 @@ function dashboard_url($role, $schoolId = null): string
 
     $host = request()->getHost();
 
-    if (preg_match('/^' . preg_quote($school->slug, '/') . '\.localhost$/i', $host)) {
+    $baseDomain = config('app.base_domain', 'localhost');
+
+    if (preg_match('/^' . preg_quote($school->slug, '/') . '\.' . preg_quote($baseDomain, '/') . '$/i', $host)) {
         return "/{$path}";
     }
 
     $port = config('app.port', '8080');
     $protocol = request()->secure() ? 'https' : 'http';
 
-    return "{$protocol}://{$school->slug}.localhost:{$port}/{$path}";
+    return "{$protocol}://{$school->slug}.{$baseDomain}:{$port}/{$path}";
 }

@@ -6,7 +6,9 @@ use App\Models\School;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -95,6 +97,35 @@ class AuthController extends Controller
     }
 
     /**
+     * Consume a short-lived login handoff from the main domain to a school subdomain.
+     */
+    public function consumeSubdomainLogin(Request $request)
+    {
+        $token = (string) $request->query('token');
+        $cacheKey = 'subdomain-login:' . hash('sha256', $token);
+        $payload = Cache::pull($cacheKey);
+
+        if (!$token || !$payload || empty($payload['user_id']) || empty($payload['path'])) {
+            return redirect()->route('login')->withErrors(['email' => 'ลิงก์เข้าสู่ระบบหมดอายุ กรุณาเข้าสู่ระบบอีกครั้ง']);
+        }
+
+        $user = User::find($payload['user_id']);
+
+        if (!$user) {
+            return redirect()->route('login')->withErrors(['email' => 'ไม่พบบัญชีผู้ใช้ กรุณาเข้าสู่ระบบอีกครั้ง']);
+        }
+
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        if ($user->school_id) {
+            $request->session()->put('school_id', $user->school_id);
+        }
+
+        return redirect()->to($payload['path']);
+    }
+
+    /**
      * Handle logout
      */
     public function logout(Request $request)
@@ -138,6 +169,21 @@ class AuthController extends Controller
 
         if ($school && $school->slug && $role !== 'admin') {
             $targetUrl = $this->getSchoolUrl($school, ltrim($targetPath, '/'));
+            $targetHost = parse_url($targetUrl, PHP_URL_HOST);
+
+            if ($targetHost && $targetHost !== request()->getHost()) {
+                $token = Str::random(64);
+                Cache::put('subdomain-login:' . hash('sha256', $token), [
+                    'user_id' => $user->id,
+                    'path' => $targetPath,
+                ], now()->addMinute());
+
+                $handoffUrl = $this->getSchoolUrl($school, 'login/consume?token=' . $token);
+                \Illuminate\Support\Facades\Log::debug('Redirecting to school subdomain login handoff: ' . $handoffUrl);
+
+                return redirect()->to($handoffUrl);
+            }
+
             \Illuminate\Support\Facades\Log::debug('Redirecting to school subdomain: ' . $targetUrl);
             return redirect()->to($targetUrl);
         }

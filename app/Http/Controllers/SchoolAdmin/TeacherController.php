@@ -37,7 +37,7 @@ class TeacherController extends Controller
 
         User::create($validated);
 
-        return redirect()->route('school_admin.teachers.index')->with('success', 'Teacher created successfully');
+        return redirect()->to(school_route('school_admin.teachers.index'))->with('success', 'Teacher created successfully');
     }
 
     public function show(Request $request, $teacher)
@@ -70,13 +70,13 @@ class TeacherController extends Controller
         $validated = $request->validate($rules);
         $teacher->update($validated);
 
-        return redirect()->route('school_admin.teachers.index')->with('success', 'Teacher updated successfully');
+        return redirect()->to(school_route('school_admin.teachers.index'))->with('success', 'Teacher updated successfully');
     }
 
     public function destroy(Request $request, $teacher)
     {
         abort_unless($teacher->school_id === auth()->user()->school_id && $teacher->role === 'teacher', 403);
         $teacher->delete();
-        return redirect()->route('school_admin.teachers.index')->with('success', 'Teacher deleted successfully');
+        return redirect()->to(school_route('school_admin.teachers.index'))->with('success', 'Teacher deleted successfully');
     }
 }

@@ -13,10 +13,6 @@ class Authenticate extends Middleware
             return null;
         }
 
-        // Always redirect to main domain login (no subdomain)
-        $baseDomain = config('app.base_domain', 'localhost');
-        $port = config('app.port', '8080');
-
-        return "http://{$baseDomain}:{$port}/login";
+        return $request->getSchemeAndHttpHost() . '/login';
     }
 }

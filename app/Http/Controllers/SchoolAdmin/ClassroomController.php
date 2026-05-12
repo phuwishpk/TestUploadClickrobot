@@ -34,7 +34,7 @@ class ClassroomController extends Controller
 
         Classroom::create($validated);
 
-        return redirect()->route('school_admin.classrooms.index')->with('success', 'Classroom created successfully');
+        return redirect()->to(school_route('school_admin.classrooms.index'))->with('success', 'Classroom created successfully');
     }
 
     public function show(Request $request, $classroom)
@@ -64,13 +64,13 @@ class ClassroomController extends Controller
 
         $classroom->update($validated);
 
-        return redirect()->route('school_admin.classrooms.index')->with('success', 'Classroom updated successfully');
+        return redirect()->to(school_route('school_admin.classrooms.index'))->with('success', 'Classroom updated successfully');
     }
 
     public function destroy(Request $request, $classroom)
     {
         abort_unless($classroom->school_id === auth()->user()->school_id, 403);
         $classroom->delete();
-        return redirect()->route('school_admin.classrooms.index')->with('success', 'Classroom deleted successfully');
+        return redirect()->to(school_route('school_admin.classrooms.index'))->with('success', 'Classroom deleted successfully');
     }
 }

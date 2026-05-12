@@ -70,18 +70,6 @@ RUN mkdir -p /opt/docker/etc/nginx/vhost.common.d/ && \
     && echo "proxy_connect_timeout 7200s;" >> /opt/docker/etc/nginx/vhost.common.d/10-general.conf \
     && echo "proxy_send_timeout 7200s;" >> /opt/docker/etc/nginx/vhost.common.d/10-general.conf
 
-# Add subdomain to path-based routing (301 redirect)
-# bangrak.localhost:8080/teacher/dashboard -> redirects to localhost:8080/bangrak/teacher/dashboard
-# Note: URL in browser WILL change to localhost:8080/bangrak/teacher/dashboard
-# To keep URL the same, use path-based URL directly: http://localhost:8080/bangrak/teacher/dashboard
-RUN echo 'set $rewrite_url "";' > /opt/docker/etc/nginx/vhost.common.d/20-subdomain-redirect.conf && \
-    echo 'if ($host ~* ^(?<subdomain>[a-z0-9-]+)\\.localhost(:\d+)?$) {' >> /opt/docker/etc/nginx/vhost.common.d/20-subdomain-redirect.conf && \
-    echo '    set $rewrite_url "/${subdomain}";' >> /opt/docker/etc/nginx/vhost.common.d/20-subdomain-redirect.conf && \
-    echo '}' >> /opt/docker/etc/nginx/vhost.common.d/20-subdomain-redirect.conf && \
-    echo 'if ($rewrite_url != "") {' >> /opt/docker/etc/nginx/vhost.common.d/20-subdomain-redirect.conf && \
-    echo '    return 301 http://localhost:8080$rewrite_url$request_uri;' >> /opt/docker/etc/nginx/vhost.common.d/20-subdomain-redirect.conf && \
-    echo '}' >> /opt/docker/etc/nginx/vhost.common.d/20-subdomain-redirect.conf
-
 # Configure Nginx
 ENV WEB_DOCUMENT_ROOT=/var/www/html/public
 

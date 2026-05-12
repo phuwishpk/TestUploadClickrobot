@@ -14,11 +14,7 @@ class CheckRole
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Unauthorized'], 403);
             }
-            // Always redirect to main domain login (no subdomain)
-            $baseDomain = config('app.base_domain', 'localhost');
-            $port = config('app.port', '8080');
-
-            return redirect("http://{$baseDomain}:{$port}/login")->with('error', 'คุณไม่มีสิทธิ์เข้าถึงหน้านี้');
+            return redirect($request->getSchemeAndHttpHost() . '/login')->with('error', 'คุณไม่มีสิทธิ์เข้าถึงหน้านี้');
         }
 
         return $next($request);

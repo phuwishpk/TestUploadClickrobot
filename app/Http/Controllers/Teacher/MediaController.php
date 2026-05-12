@@ -115,7 +115,7 @@ class MediaController extends Controller
             ], 200);
         }
         
-        return redirect()->route('teacher.upload.create', ['school' => $request->attributes->get('school')->slug, 'classroom_id' => $classroom->id])
+        return redirect()->to(school_route('teacher.upload.create', ['classroom_id' => $classroom->id]))
             ->with('success', "อัปโหลดสำเร็จ {$uploadedCount} ไฟล์");
     }
 
