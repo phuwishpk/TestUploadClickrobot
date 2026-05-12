@@ -52,8 +52,8 @@ class Student extends Model
         parent::boot();
 
         static::created(function ($student) {
-            if (empty($student->code)) {
-                $student->update(['code' => $student->id . '_' . $student->name]);
+            if ($student->code === 'temp' || empty($student->code)) {
+                $student->updateQuietly(['code' => $student->id . '_' . $student->name]);
             }
         });
     }

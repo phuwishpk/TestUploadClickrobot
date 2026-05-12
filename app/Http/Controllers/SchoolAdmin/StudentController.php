@@ -72,8 +72,8 @@ class StudentController extends Controller
 
         $student = Student::create([
             'name' => $validated['name'],
-            'code' => Student::generateCode($primaryClassroomId),
             'classroom_id' => $primaryClassroomId,
+            'code' => 'temp', // temporary, will be updated in created() hook
         ]);
 
         $student->classrooms()->attach($validated['classroom_ids']);
