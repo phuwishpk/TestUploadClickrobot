@@ -167,7 +167,7 @@ class StudentController extends Controller
     {
         $this->authorize('update', $student);
         $classrooms = auth()->user()->classrooms;
-        $selectedClassrooms = $student->classrooms()->pluck('id')->toArray();
+        $selectedClassrooms = $student->classrooms()->pluck('classrooms.id')->toArray();
         return view('teacher.students.edit', compact('student', 'classrooms', 'selectedClassrooms'));
     }
 

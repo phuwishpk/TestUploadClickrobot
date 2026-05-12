@@ -14175,3 +14175,18 @@ NoSuchBucket (client): The specified bucket does not exist."}
 #63 /var/www/html/public/index.php(13): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
 #64 {main}
 "} 
+[2026-05-12 10:21:46] local.INFO: MediaCompressor Start {"classroom_slug":"school4/CLS_3_1","student_folder":"STU_18_014","student_code":"นร014","folderPath":"school4/CLS_3_1/120526","fullPath":"school4/CLS_3_1/120526/STU_18_014/120526_102146_d746.MOV","type":"video","r2_bucket":"school4-nonburi"} 
+[2026-05-12 10:21:46] local.INFO: FFmpeg probe result {"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-stripping --enable-avfilter --enable-gpl --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libdav1d --enable-libdrm --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopenmpt --enable-libopus --"} 
+[2026-05-12 10:21:46] local.INFO: Video info {"original_width":1920,"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-st"} 
+[2026-05-12 10:21:46] local.INFO: FFmpeg 2-pass compression {"pass1":"/usr/bin/ffmpeg -i '/tmp/phpEIoEDj' -vf \"scale=1280:-2\" -c:v libx264 -preset fast -b:v 1500k -pass 1 -an -f null - 2>&1","pass2":"/usr/bin/ffmpeg -i '/tmp/phpEIoEDj' -vf \"scale=1280:-2\" -c:v libx264 -preset fast -b:v 1500k -pass 2 -c:a aac -b:a 48k -movflags +faststart -y '/tmp/6a029cca2eabc_compressed.mp4' 2>&1"} 
+[2026-05-12 10:22:20] local.INFO: Video compression result {"original_size":53262039,"compressed_size":8633951,"saved_bytes":44628088,"reduction_percent":83.8} 
+[2026-05-12 10:22:20] local.INFO: Extracting video thumbnail {"cmd":"/usr/bin/ffmpeg -ss 10 -i '/var/www/html/storage/app/uploads/school4/CLS_3_1/120526/STU_18_014/120526_102146_d746.MOV' -vframes 1 -q:v 1 -vf \"scale=480:-2\" -update 1 '/var/www/html/storage/app/uploads/school4/CLS_3_1/120526/STU_18_014/120526_102146_d746.jpg' 2>&1"} 
+[2026-05-12 10:22:20] local.INFO: Video thumbnail extracted {"thumbnail_path":"school4/CLS_3_1/120526/STU_18_014/120526_102146_d746.jpg","size":42100} 
+[2026-05-12 10:22:21] local.ERROR: R2 upload failed {"bucket":"school4-nonburi","path":"school4/CLS_3_1/120526/STU_18_014/120526_102146_d746.MOV","error":"Error executing \"PutObject\" on \"https://school4-nonburi.c22371faca4152b2eb40d7fad4f0afab.r2.cloudflarestorage.com/school4/CLS_3_1/120526/STU_18_014/120526_102146_d746.MOV\"; AWS HTTP error:
+NoSuchBucket (client): The specified bucket does not exist."} 
+[2026-05-12 10:22:22] local.ERROR: R2 upload failed {"bucket":"school4-nonburi","path":"school4/CLS_3_1/120526/STU_18_014/120526_102146_d746.jpg","error":"Error executing \"PutObject\" on \"https://school4-nonburi.c22371faca4152b2eb40d7fad4f0afab.r2.cloudflarestorage.com/school4/CLS_3_1/120526/STU_18_014/120526_102146_d746.jpg\"; AWS HTTP error:
+NoSuchBucket (client): The specified bucket does not exist."} 

@@ -128,7 +128,7 @@ class StudentController extends Controller
     {
         $this->authorizeSchoolAccess($student);
         $classrooms = Classroom::where('school_id', auth()->user()->school_id)->get();
-        $selectedClassrooms = $student->classrooms()->pluck('id')->toArray();
+        $selectedClassrooms = $student->classrooms()->pluck('classrooms.id')->toArray();
         return view('school_admin.students.edit', compact('student', 'classrooms', 'selectedClassrooms'));
     }
 
