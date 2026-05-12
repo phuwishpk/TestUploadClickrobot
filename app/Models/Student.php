@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Student extends Model
 {
@@ -49,21 +50,28 @@ class Student extends Model
     public static function generateCode(int $classroomId = null): string
     {
         $query = self::query();
-        
+
         if ($classroomId) {
             $query->where('classroom_id', $classroomId);
         }
-        
+
         $lastStudent = $query->orderBy('id', 'desc')->first();
-        
+        $nextNumber = 1;
+
         if ($lastStudent) {
             preg_match('/\d+/', $lastStudent->code, $matches);
             $nextNumber = $matches ? ((int) $matches[0] + 1) : 1;
-        } else {
-            $nextNumber = 1;
         }
-        
-        return 'นร' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+
+        // Skip codes already taken by a user account (orphaned from deleted students)
+        do {
+            $code = 'นร' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+            $taken = User::on('mysql')->where('student_code', $code)->exists()
+                  || self::where('code', $code)->exists();
+            $nextNumber++;
+        } while ($taken);
+
+        return $code;
     }
 
     public static function boot()

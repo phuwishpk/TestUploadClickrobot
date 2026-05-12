@@ -191,11 +191,12 @@ class StudentController extends Controller
     {
         $student = Student::findOrFail($studentId);
         $this->authorize('delete', $student);
-        
+
         if ($student->user) {
-            $student->user->update(['user_id' => null]);
+            // Clear student_code so the code can be reused by future students
+            $student->user->update(['student_code' => null]);
         }
-        
+
         $student->delete();
 
         return redirect()->route('teacher.students.index')

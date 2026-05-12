@@ -161,7 +161,7 @@ class StudentController extends Controller
         $this->authorizeSchoolAccess($student);
 
         if ($student->user) {
-            $student->user->update(['user_id' => null]);
+            $student->user->update(['student_code' => null]);
         }
 
         $student->delete();

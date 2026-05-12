@@ -13892,3 +13892,6 @@ NoSuchBucket (client): The specified bucket does not exist."}
 #67 /var/www/html/public/index.php(13): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
 #68 {main}
 "} 
+[2026-05-12 10:09:18] local.INFO: Creating student folder {"classroom_id":1,"student_id":15,"folder":"school2/CLS_1_1_1/STU_15_011","bucket":"school2-bangrak"} 
+[2026-05-12 10:09:18] local.ERROR: R2 folder creation failed {"path":"school2/CLS_1_1_1/STU_15_011","bucket":"school2-bangrak","error":"Error executing \"PutObject\" on \"https://school2-bangrak.c22371faca4152b2eb40d7fad4f0afab.r2.cloudflarestorage.com/school2/CLS_1_1_1/STU_15_011/.folder.meta\"; AWS HTTP error:
+NoSuchBucket (client): The specified bucket does not exist."} 
