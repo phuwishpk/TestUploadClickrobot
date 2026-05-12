@@ -41,9 +41,8 @@ class ParentController extends Controller
             ->with('success', 'เพิ่มผู้ปกครองสำเร็จ');
     }
 
-    public function show(Request $request, $parentId)
+    public function show(Request $request, $parent)
     {
-        $parent = User::findOrFail($parentId);
         if ($parent->role !== 'parent') {
             abort(404);
         }
@@ -53,9 +52,8 @@ class ParentController extends Controller
         return view('teacher.parents.show', compact('parent'));
     }
 
-    public function edit(Request $request, $parentId)
+    public function edit(Request $request, $parent)
     {
-        $parent = User::findOrFail($parentId);
         if ($parent->role !== 'parent') {
             abort(404);
         }
@@ -63,9 +61,8 @@ class ParentController extends Controller
         return view('teacher.parents.edit', compact('parent'));
     }
 
-    public function update(Request $request, $parentId)
+    public function update(Request $request, $parent)
     {
-        $parent = User::findOrFail($parentId);
         if ($parent->role !== 'parent') {
             abort(404);
         }
@@ -81,9 +78,8 @@ class ParentController extends Controller
             ->with('success', 'อัปเดตข้อมูลผู้ปกครองสำเร็จ');
     }
 
-    public function destroy(Request $request, $parentId)
+    public function destroy(Request $request, $parent)
     {
-        $parent = User::findOrFail($parentId);
         if ($parent->role !== 'parent') {
             abort(404);
         }

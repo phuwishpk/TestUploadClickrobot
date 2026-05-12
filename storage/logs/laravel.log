@@ -14220,3 +14220,16 @@ NoSuchBucket (client): The specified bucket does not exist."}
 [2026-05-12 10:56:54] local.WARNING: WebP not supported by GD, falling back to JPEG compression  
 [2026-05-12 10:56:54] local.INFO: Image compression (JPEG fallback) {"original_size":153701,"compressed_size":163572,"saved_bytes":-9871,"reduction_percent":-6.4} 
 [2026-05-12 10:56:55] local.INFO: Uploaded to R2 {"bucket":"school1-bangrak","path":"school2/CLS_1_1_1/120526/STU_17_013/120526_105654_8f74.jpg"} 
+[2026-05-12 11:09:29] local.INFO: MediaCompressor Start {"classroom_slug":"CLS_1_bangraka","student_folder":"STU_16_012","student_code":"นร012","folderPath":"CLS_1_bangraka/120526","fullPath":"CLS_1_bangraka/120526/STU_16_012/120526_110929_ffab.MOV","type":"video","r2_bucket":"school1-bangrak"} 
+[2026-05-12 11:09:29] local.INFO: FFmpeg probe result {"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-stripping --enable-avfilter --enable-gpl --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libdav1d --enable-libdrm --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopenmpt --enable-libopus --"} 
+[2026-05-12 11:09:29] local.INFO: Video info {"original_width":1920,"probe":"ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with gcc 15.2.0 (Alpine 15.2.0)
+  configuration: --prefix=/usr --disable-librtmp --disable-lzma --disable-static --disable-st"} 
+[2026-05-12 11:09:29] local.INFO: FFmpeg 2-pass compression {"pass1":"/usr/bin/ffmpeg -i '/tmp/phpgONPmh' -vf \"scale=1280:-2\" -c:v libx264 -preset fast -b:v 1500k -pass 1 -an -f null - 2>&1","pass2":"/usr/bin/ffmpeg -i '/tmp/phpgONPmh' -vf \"scale=1280:-2\" -c:v libx264 -preset fast -b:v 1500k -pass 2 -c:a aac -b:a 48k -movflags +faststart -y '/tmp/6a02a7f924a7c_compressed.mp4' 2>&1"} 
+[2026-05-12 11:10:03] local.INFO: Video compression result {"original_size":53262039,"compressed_size":8633951,"saved_bytes":44628088,"reduction_percent":83.8} 
+[2026-05-12 11:10:03] local.INFO: Extracting video thumbnail {"cmd":"/usr/bin/ffmpeg -ss 10 -i '/var/www/html/storage/app/uploads/CLS_1_bangraka/120526/STU_16_012/120526_110929_ffab.MOV' -vframes 1 -q:v 1 -vf \"scale=480:-2\" -update 1 '/var/www/html/storage/app/uploads/CLS_1_bangraka/120526/STU_16_012/120526_110929_ffab.jpg' 2>&1"} 
+[2026-05-12 11:10:03] local.INFO: Video thumbnail extracted {"thumbnail_path":"CLS_1_bangraka/120526/STU_16_012/120526_110929_ffab.jpg","size":42100} 
+[2026-05-12 11:10:12] local.INFO: Uploaded to R2 {"bucket":"school1-bangrak","path":"CLS_1_bangraka/120526/STU_16_012/120526_110929_ffab.MOV"} 
+[2026-05-12 11:10:12] local.INFO: Uploaded to R2 {"bucket":"school1-bangrak","path":"CLS_1_bangraka/120526/STU_16_012/120526_110929_ffab.jpg"} 

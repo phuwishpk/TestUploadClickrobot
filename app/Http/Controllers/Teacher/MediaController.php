@@ -119,9 +119,8 @@ class MediaController extends Controller
             ->with('success', "อัปโหลดสำเร็จ {$uploadedCount} ไฟล์");
     }
 
-    public function destroy(Request $request, $mediaId)
+    public function destroy(Request $request, $media)
     {
-        $media = \App\Models\Media::findOrFail($mediaId);
         $user = $request->user();
 
         // ตรวจสอบว่า media อยู่ใน classroom ที่ครูเป็นเจ้าของ

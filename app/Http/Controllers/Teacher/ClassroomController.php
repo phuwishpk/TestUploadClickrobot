@@ -31,9 +31,8 @@ class ClassroomController extends Controller
             ->with('success', 'สร้างห้องเรียนสำเร็จ');
     }
 
-    public function show(Request $request, $classroomId)
+    public function show(Request $request, $classroom)
     {
-        $classroom = Classroom::findOrFail($classroomId);
         $this->authorize('view', $classroom);
 
         $students = $classroom->students()->with('user')->get();
@@ -42,16 +41,14 @@ class ClassroomController extends Controller
         return view('teacher.classrooms.show', compact('classroom', 'students', 'media'));
     }
 
-    public function edit(Request $request, $classroomId)
+    public function edit(Request $request, $classroom)
     {
-        $classroom = Classroom::findOrFail($classroomId);
         $this->authorize('update', $classroom);
         return view('teacher.classrooms.edit', compact('classroom'));
     }
 
-    public function update(Request $request, $classroomId)
+    public function update(Request $request, $classroom)
     {
-        $classroom = Classroom::findOrFail($classroomId);
         $this->authorize('update', $classroom);
 
         $validated = $request->validate([
@@ -64,9 +61,8 @@ class ClassroomController extends Controller
             ->with('success', 'อัปเดตห้องเรียนสำเร็จ');
     }
 
-    public function destroy(Request $request, $classroomId)
+    public function destroy(Request $request, $classroom)
     {
-        $classroom = Classroom::findOrFail($classroomId);
         $this->authorize('delete', $classroom);
         $classroom->delete();
 

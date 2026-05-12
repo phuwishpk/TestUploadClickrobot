@@ -37,17 +37,15 @@ class ClassroomController extends Controller
         return redirect()->route('school_admin.classrooms.index')->with('success', 'Classroom created successfully');
     }
 
-    public function show(Request $request, $classroomId)
+    public function show(Request $request, $classroom)
     {
-        $classroom = Classroom::findOrFail($classroomId);
         abort_unless($classroom->school_id === auth()->user()->school_id, 403);
         $classroom->load('students.parents', 'teacher');
         return view('school_admin.classrooms.show', compact('classroom'));
     }
 
-    public function edit(Request $request, $classroomId)
+    public function edit(Request $request, $classroom)
     {
-        $classroom = Classroom::findOrFail($classroomId);
         abort_unless($classroom->school_id === auth()->user()->school_id, 403);
         $teachers = User::where('school_id', auth()->user()->school_id)
             ->where('role', 'teacher')
@@ -55,9 +53,8 @@ class ClassroomController extends Controller
         return view('school_admin.classrooms.edit', compact('classroom', 'teachers'));
     }
 
-    public function update(Request $request, $classroomId)
+    public function update(Request $request, $classroom)
     {
-        $classroom = Classroom::findOrFail($classroomId);
         abort_unless($classroom->school_id === auth()->user()->school_id, 403);
 
         $validated = $request->validate([
@@ -70,9 +67,8 @@ class ClassroomController extends Controller
         return redirect()->route('school_admin.classrooms.index')->with('success', 'Classroom updated successfully');
     }
 
-    public function destroy(Request $request, $classroomId)
+    public function destroy(Request $request, $classroom)
     {
-        $classroom = Classroom::findOrFail($classroomId);
         abort_unless($classroom->school_id === auth()->user()->school_id, 403);
         $classroom->delete();
         return redirect()->route('school_admin.classrooms.index')->with('success', 'Classroom deleted successfully');

@@ -49,17 +49,7 @@ class Classroom extends Model
         $clean = preg_replace('/_+/', '_', $clean);
         $clean = trim($clean, '_');
         $clean = substr($clean, 0, 30) ?: 'Class' . $this->id;
-        $classSlug = sprintf('CLS_%d_%s', $this->id, strtolower($clean));
-
-        if ($this->school) {
-            $schoolSlug = preg_replace('/[^a-zA-Z0-9]/', '_', $this->school->name);
-            $schoolSlug = preg_replace('/_+/', '_', $schoolSlug);
-            $schoolSlug = trim($schoolSlug, '_');
-            $schoolSlug = substr($schoolSlug, 0, 30) ?: 'School' . $this->school->id;
-            return sprintf('%s/%s', strtolower($schoolSlug), $classSlug);
-        }
-
-        return $classSlug;
+        return sprintf('CLS_%d_%s', $this->id, strtolower($clean));
     }
 
     protected static function booted(): void
