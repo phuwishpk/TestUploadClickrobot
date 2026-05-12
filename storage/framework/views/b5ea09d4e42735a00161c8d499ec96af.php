@@ -31,7 +31,7 @@ unset($__errorArgs, $__bag); ?>"
                     required onchange="loadStudents(this.value)">
                     <option value="">เลือกห้องเรียน</option>
                     <?php $__currentLoopData = $classrooms; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $classroom): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <option value="<?php echo e($classroom->id); ?>">
+                        <option value="<?php echo e($classroom->id); ?>" <?php echo e($selectedClassroom && $selectedClassroom->id == $classroom->id ? 'selected' : ''); ?>>
                             <?php echo e($classroom->name); ?>
 
                         </option>
@@ -167,7 +167,7 @@ dropZone.addEventListener('drop', e => {
     handleFileSelect(input);
 });
 
-// Upload with Progress Bar
+// Upload with Progress Bar - Per Student Upload
 document.getElementById('upload_form').addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -214,9 +214,13 @@ document.getElementById('upload_form').addEventListener('submit', async function
     
     // Create status items for each student-file combination
     const statusItems = [];
-    studentIds.forEach((studentId) => {
-        const cb = Array.from(studentCheckboxes).find(c => c.value === studentId);
-        const studentName = cb ? cb.closest('label').querySelector('span').textContent : studentId;
+    let studentName = '';
+    studentIds.forEach((studentId, studentIdx) => {
+        studentCheckboxes.forEach(cb => {
+            if (cb.value === studentId) {
+                studentName = cb.closest('label').querySelector('span').textContent;
+            }
+        });
         Array.from(files).forEach((file, fileIdx) => {
             const itemId = `${studentId}_${fileIdx}`;
             const statusItem = document.createElement('div');
@@ -224,7 +228,7 @@ document.getElementById('upload_form').addEventListener('submit', async function
             statusItem.className = 'flex items-center gap-2 text-sm p-2 bg-white rounded';
             statusItem.innerHTML = `
                 <span class="file-icon w-6 h-6 flex items-center justify-center text-gray-400">⏳</span>
-                <span class="file-name truncate flex-1 text-xs">${file.name} (${studentName})</span>
+                <span class="file-name truncate flex-1 text-xs">${file.name}</span>
                 <span class="file-size text-xs text-gray-400">${(file.size/1024).toFixed(1)} KB</span>
                 <span class="file-status text-xs px-2 py-1 rounded bg-gray-50">รอ...</span>
             `;
@@ -264,6 +268,11 @@ document.getElementById('upload_form').addEventListener('submit', async function
     try {
         const uploadXhr = new XMLHttpRequest();
         
+        // Show initial state
+        progressBar.style.width = '10%';
+        percentage.textContent = '10%';
+        statusText.textContent = 'กำลังอัปโหลดไฟล์ไปยังเซิร์ฟเวอร์...';
+
         function setProgress(value, text = null) {
             currentPercent = Math.max(currentPercent, Math.min(value, 100));
             const roundedPercent = Math.round(currentPercent);
@@ -384,6 +393,7 @@ document.getElementById('upload_form').addEventListener('submit', async function
 
         startUploadDisplay();
         
+        // When upload completes (real)
         uploadXhr.addEventListener('load', function() {
             if (uploadXhr.status >= 200 && uploadXhr.status < 300) {
                 stopUploadDisplay();
@@ -393,6 +403,7 @@ document.getElementById('upload_form').addEventListener('submit', async function
                 }
                 
                 animateTo(100, 500, function() {
+                    // Update all status items to complete
                     studentIds.forEach((studentId) => {
                         Array.from(files).forEach((file, fIdx) => {
                             const itemId = `${studentId}_${fIdx}`;
@@ -433,11 +444,12 @@ document.getElementById('upload_form').addEventListener('submit', async function
 
                     if (!hasError) {
                         setTimeout(() => {
-                            window.location.href = '<?php echo e(route("school_admin.dashboard")); ?>';
+                            window.location.href = '<?php echo e(route("teacher.dashboard")); ?>';
                         }, 1500);
                     }
                 });
             } else {
+                // Upload failed
                 hasError = true;
                 stopUploadDisplay();
                 if (processingInterval) clearInterval(processingInterval);
@@ -447,6 +459,7 @@ document.getElementById('upload_form').addEventListener('submit', async function
                 uploadBtn.disabled = false;
                 uploadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                 
+                // Update all status items to error
                 studentIds.forEach((studentId) => {
                     Array.from(files).forEach((file, fIdx) => {
                         const itemId = `${studentId}_${fIdx}`;
@@ -479,7 +492,7 @@ document.getElementById('upload_form').addEventListener('submit', async function
             uploadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
         });
         
-        uploadXhr.open('POST', '<?php echo e(route("school_admin.upload.store")); ?>');
+        uploadXhr.open('POST', '<?php echo e(route("teacher.upload.store")); ?>');
         uploadXhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').content);
         uploadXhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
         uploadXhr.timeout = 600000;
@@ -496,7 +509,12 @@ document.getElementById('upload_form').addEventListener('submit', async function
         uploadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
     }
 });
+
+// Load students if classroom already selected
+<?php if($selectedClassroom): ?>
+loadStudents(<?php echo e($selectedClassroom->id); ?>);
+<?php endif; ?>
 </script>
 <?php $__env->stopPush(); ?>
 
-<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/school_admin/upload.blade.php ENDPATH**/ ?>
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH /var/www/html/resources/views/teacher/upload.blade.php ENDPATH**/ ?>

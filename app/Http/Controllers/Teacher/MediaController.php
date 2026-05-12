@@ -115,12 +115,13 @@ class MediaController extends Controller
             ], 200);
         }
         
-        return redirect()->route('teacher.upload.create', ['classroom_id' => $classroom->id])
+        return redirect()->route('teacher.upload.create', ['school' => $request->attributes->get('school')->slug, 'classroom_id' => $classroom->id])
             ->with('success', "อัปโหลดสำเร็จ {$uploadedCount} ไฟล์");
     }
 
-    public function destroy(Request $request, Media $media)
+    public function destroy(Request $request, $mediaId)
     {
+        $media = \App\Models\Media::findOrFail($mediaId);
         $user = $request->user();
 
         // ตรวจสอบว่า media อยู่ใน classroom ที่ครูเป็นเจ้าของ

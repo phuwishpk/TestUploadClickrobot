@@ -27,12 +27,13 @@ class ClassroomController extends Controller
 
         $classroom = $request->user()->classrooms()->create($validated);
 
-        return redirect()->route('teacher.classrooms.show', $classroom)
+        return redirect()->route('teacher.classrooms.show', ['school' => $request->attributes->get('school')->slug, 'classroom' => $classroom->id])
             ->with('success', 'สร้างห้องเรียนสำเร็จ');
     }
 
-    public function show(Request $request, Classroom $classroom)
+    public function show(Request $request, $classroomId)
     {
+        $classroom = Classroom::findOrFail($classroomId);
         $this->authorize('view', $classroom);
 
         $students = $classroom->students()->with('user')->get();
@@ -41,14 +42,16 @@ class ClassroomController extends Controller
         return view('teacher.classrooms.show', compact('classroom', 'students', 'media'));
     }
 
-    public function edit(Classroom $classroom)
+    public function edit(Request $request, $classroomId)
     {
+        $classroom = Classroom::findOrFail($classroomId);
         $this->authorize('update', $classroom);
         return view('teacher.classrooms.edit', compact('classroom'));
     }
 
-    public function update(Request $request, Classroom $classroom)
+    public function update(Request $request, $classroomId)
     {
+        $classroom = Classroom::findOrFail($classroomId);
         $this->authorize('update', $classroom);
 
         $validated = $request->validate([
@@ -57,12 +60,13 @@ class ClassroomController extends Controller
 
         $classroom->update($validated);
 
-        return redirect()->route('teacher.classrooms.show', $classroom)
+        return redirect()->route('teacher.classrooms.show', ['school' => $request->attributes->get('school')->slug, 'classroom' => $classroom->id])
             ->with('success', 'อัปเดตห้องเรียนสำเร็จ');
     }
 
-    public function destroy(Classroom $classroom)
+    public function destroy(Request $request, $classroomId)
     {
+        $classroom = Classroom::findOrFail($classroomId);
         $this->authorize('delete', $classroom);
         $classroom->delete();
 

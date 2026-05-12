@@ -37,12 +37,13 @@ class ParentController extends Controller
             'role' => 'parent',
         ]);
 
-        return redirect()->route('teacher.parents.show', $parent)
+        return redirect()->route('teacher.parents.show', ['school' => $request->attributes->get('school')->slug, 'parent' => $parent->id])
             ->with('success', 'เพิ่มผู้ปกครองสำเร็จ');
     }
 
-    public function show(User $parent)
+    public function show(Request $request, $parentId)
     {
+        $parent = User::findOrFail($parentId);
         if ($parent->role !== 'parent') {
             abort(404);
         }
@@ -52,8 +53,9 @@ class ParentController extends Controller
         return view('teacher.parents.show', compact('parent'));
     }
 
-    public function edit(User $parent)
+    public function edit(Request $request, $parentId)
     {
+        $parent = User::findOrFail($parentId);
         if ($parent->role !== 'parent') {
             abort(404);
         }
@@ -61,8 +63,9 @@ class ParentController extends Controller
         return view('teacher.parents.edit', compact('parent'));
     }
 
-    public function update(Request $request, User $parent)
+    public function update(Request $request, $parentId)
     {
+        $parent = User::findOrFail($parentId);
         if ($parent->role !== 'parent') {
             abort(404);
         }
@@ -74,12 +77,13 @@ class ParentController extends Controller
 
         $parent->update($validated);
 
-        return redirect()->route('teacher.parents.show', $parent)
+        return redirect()->route('teacher.parents.show', ['school' => $request->attributes->get('school')->slug, 'parent' => $parent->id])
             ->with('success', 'อัปเดตข้อมูลผู้ปกครองสำเร็จ');
     }
 
-    public function destroy(User $parent)
+    public function destroy(Request $request, $parentId)
     {
+        $parent = User::findOrFail($parentId);
         if ($parent->role !== 'parent') {
             abort(404);
         }

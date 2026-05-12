@@ -40,21 +40,24 @@ class TeacherController extends Controller
         return redirect()->route('school_admin.teachers.index')->with('success', 'Teacher created successfully');
     }
 
-    public function show(User $teacher)
+    public function show(Request $request, $teacherId)
     {
+        $teacher = User::findOrFail($teacherId);
         abort_unless($teacher->school_id === auth()->user()->school_id && $teacher->role === 'teacher', 403);
         $teacher->load('classrooms');
         return view('school_admin.teachers.show', compact('teacher'));
     }
 
-    public function edit(User $teacher)
+    public function edit(Request $request, $teacherId)
     {
+        $teacher = User::findOrFail($teacherId);
         abort_unless($teacher->school_id === auth()->user()->school_id && $teacher->role === 'teacher', 403);
         return view('school_admin.teachers.edit', compact('teacher'));
     }
 
-    public function update(Request $request, User $teacher)
+    public function update(Request $request, $teacherId)
     {
+        $teacher = User::findOrFail($teacherId);
         abort_unless($teacher->school_id === auth()->user()->school_id && $teacher->role === 'teacher', 403);
 
         $rules = [
@@ -73,8 +76,9 @@ class TeacherController extends Controller
         return redirect()->route('school_admin.teachers.index')->with('success', 'Teacher updated successfully');
     }
 
-    public function destroy(User $teacher)
+    public function destroy(Request $request, $teacherId)
     {
+        $teacher = User::findOrFail($teacherId);
         abort_unless($teacher->school_id === auth()->user()->school_id && $teacher->role === 'teacher', 403);
         $teacher->delete();
         return redirect()->route('school_admin.teachers.index')->with('success', 'Teacher deleted successfully');

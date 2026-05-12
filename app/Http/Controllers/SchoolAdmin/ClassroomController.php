@@ -37,15 +37,17 @@ class ClassroomController extends Controller
         return redirect()->route('school_admin.classrooms.index')->with('success', 'Classroom created successfully');
     }
 
-    public function show(Classroom $classroom)
+    public function show(Request $request, $classroomId)
     {
+        $classroom = Classroom::findOrFail($classroomId);
         abort_unless($classroom->school_id === auth()->user()->school_id, 403);
         $classroom->load('students.parents', 'teacher');
         return view('school_admin.classrooms.show', compact('classroom'));
     }
 
-    public function edit(Classroom $classroom)
+    public function edit(Request $request, $classroomId)
     {
+        $classroom = Classroom::findOrFail($classroomId);
         abort_unless($classroom->school_id === auth()->user()->school_id, 403);
         $teachers = User::where('school_id', auth()->user()->school_id)
             ->where('role', 'teacher')
@@ -53,8 +55,9 @@ class ClassroomController extends Controller
         return view('school_admin.classrooms.edit', compact('classroom', 'teachers'));
     }
 
-    public function update(Request $request, Classroom $classroom)
+    public function update(Request $request, $classroomId)
     {
+        $classroom = Classroom::findOrFail($classroomId);
         abort_unless($classroom->school_id === auth()->user()->school_id, 403);
 
         $validated = $request->validate([
@@ -67,8 +70,9 @@ class ClassroomController extends Controller
         return redirect()->route('school_admin.classrooms.index')->with('success', 'Classroom updated successfully');
     }
 
-    public function destroy(Classroom $classroom)
+    public function destroy(Request $request, $classroomId)
     {
+        $classroom = Classroom::findOrFail($classroomId);
         abort_unless($classroom->school_id === auth()->user()->school_id, 403);
         $classroom->delete();
         return redirect()->route('school_admin.classrooms.index')->with('success', 'Classroom deleted successfully');

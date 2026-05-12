@@ -100,12 +100,13 @@ class StudentController extends Controller
             $message .= ' และสร้างบัญชี: ' . $validated['email'];
         }
 
-        return redirect()->route('school_admin.students.show', $student)
+        return redirect()->route('school_admin.students.show', ['school' => auth()->user()->school->slug, 'student' => $student->id])
             ->with('success', $message);
     }
 
-    public function show(Student $student)
+    public function show(Request $request, $studentId)
     {
+        $student = Student::findOrFail($studentId);
         $this->authorizeSchoolAccess($student);
         $student->load(['classrooms', 'user', 'parents', 'media' => function($q) {
             $q->latest()->limit(20);
@@ -113,16 +114,18 @@ class StudentController extends Controller
         return view('school_admin.students.show', compact('student'));
     }
 
-    public function edit(Student $student)
+    public function edit(Request $request, $studentId)
     {
+        $student = Student::findOrFail($studentId);
         $this->authorizeSchoolAccess($student);
         $classrooms = Classroom::where('school_id', auth()->user()->school_id)->get();
         $selectedClassrooms = $student->classrooms()->pluck('id')->toArray();
         return view('school_admin.students.edit', compact('student', 'classrooms', 'selectedClassrooms'));
     }
 
-    public function update(Request $request, Student $student)
+    public function update(Request $request, $studentId)
     {
+        $student = Student::findOrFail($studentId);
         $this->authorizeSchoolAccess($student);
 
         $validated = $request->validate([
@@ -148,12 +151,13 @@ class StudentController extends Controller
 
         $student->classrooms()->sync($validated['classroom_ids']);
 
-        return redirect()->route('school_admin.students.show', $student)
+        return redirect()->route('school_admin.students.show', ['school' => auth()->user()->school->slug, 'student' => $student->id])
             ->with('success', 'อัปเดตข้อมูลนักเรียนสำเร็จ');
     }
 
-    public function destroy(Student $student)
+    public function destroy(Request $request, $studentId)
     {
+        $student = Student::findOrFail($studentId);
         $this->authorizeSchoolAccess($student);
 
         if ($student->user) {
@@ -166,8 +170,9 @@ class StudentController extends Controller
             ->with('success', 'ลบนักเรียนสำเร็จ');
     }
 
-    public function createAccount(Request $request, Student $student)
+    public function createAccount(Request $request, $studentId)
     {
+        $student = Student::findOrFail($studentId);
         $this->authorizeSchoolAccess($student);
 
         if ($student->user_id) {

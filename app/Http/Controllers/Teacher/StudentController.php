@@ -86,6 +86,8 @@ class StudentController extends Controller
             $r2Service->createStudentFolder($classroom, $student);
         }
 
+        $message = 'เพิ่มนักเรียนสำเร็จ รหัส: ' . $student->code;
+
         if (!empty($validated['create_account']) && !empty($validated['email'])) {
             $user = User::create([
                 'name' => $validated['name'],
@@ -93,16 +95,58 @@ class StudentController extends Controller
                 'password' => Hash::make('12345'),
                 'role' => 'student',
                 'student_code' => $student->code,
+                'school_id' => $request->user()->school_id,
             ]);
             $student->update(['user_id' => $user->id]);
+            $message .= ' และสร้างบัญชี: ' . $validated['email'];
         }
 
-        return redirect()->route('teacher.students.show', $student)
-            ->with('success', 'เพิ่มนักเรียนสำเร็จ รหัส: ' . $student->code);
+        return redirect()->route('teacher.students.show', ['school' => $request->attributes->get('school')->slug, 'student' => $student->id])
+            ->with('success', $message);
     }
 
-    public function show(Student $student)
+    public function createAccount(Request $request, $studentId)
     {
+        $student = Student::findOrFail($studentId);
+        $userClassroomIds = $request->user()->classrooms()->pluck('id')->toArray();
+        $hasAccess = $student->classrooms()->whereIn('classrooms.id', $userClassroomIds)->exists();
+
+        if (!$hasAccess) {
+            abort(403);
+        }
+
+        if ($student->user_id) {
+            return back()->with('error', 'นักเรียนนี้มีบัญชีอยู่แล้ว');
+        }
+
+        $validated = $request->validate([
+            'email' => 'required|email|unique:users,email',
+        ]);
+
+        // DEBUG: Log student_code info
+        \Log::debug('[DEBUG] createAccount student_code', [
+            'student_code' => $student->code,
+            'school_id' => $request->user()->school_id,
+            'existing_users_with_same_code' => User::where('student_code', $student->code)->get(['id', 'email', 'student_code', 'school_id'])->toArray(),
+        ]);
+
+        $user = User::create([
+            'name' => $student->name,
+            'email' => $validated['email'],
+            'password' => Hash::make('12345'),
+            'role' => 'student',
+            'student_code' => $student->code,
+            'school_id' => $request->user()->school_id,
+        ]);
+
+        $student->update(['user_id' => $user->id]);
+
+        return back()->with('success', 'สร้างบัญชีสำเร็จ: ' . $validated['email'] . ' (รหัสผ่าน: 12345)');
+    }
+
+    public function show(Request $request, $studentId)
+    {
+        $student = Student::findOrFail($studentId);
         $this->authorize('view', $student);
         $student->load(['classrooms', 'user', 'parents', 'media' => function($q) {
             $q->latest()->limit(20);
@@ -110,16 +154,18 @@ class StudentController extends Controller
         return view('teacher.students.show', compact('student'));
     }
 
-    public function edit(Student $student)
+    public function edit(Request $request, $studentId)
     {
+        $student = Student::findOrFail($studentId);
         $this->authorize('update', $student);
         $classrooms = auth()->user()->classrooms;
         $selectedClassrooms = $student->classrooms()->pluck('id')->toArray();
         return view('teacher.students.edit', compact('student', 'classrooms', 'selectedClassrooms'));
     }
 
-    public function update(Request $request, Student $student)
+    public function update(Request $request, $studentId)
     {
+        $student = Student::findOrFail($studentId);
         $this->authorize('update', $student);
 
         $validated = $request->validate([
@@ -137,12 +183,13 @@ class StudentController extends Controller
         // อัปเดตความสัมพันธ์หลาย classroom
         $student->classrooms()->sync($validated['classroom_ids']);
 
-        return redirect()->route('teacher.students.show', $student)
+        return redirect()->route('teacher.students.show', ['school' => $request->attributes->get('school')->slug, 'student' => $student->id])
             ->with('success', 'อัปเดตข้อมูลนักเรียนสำเร็จ');
     }
 
-    public function destroy(Student $student)
+    public function destroy(Request $request, $studentId)
     {
+        $student = Student::findOrFail($studentId);
         $this->authorize('delete', $student);
         
         if ($student->user) {

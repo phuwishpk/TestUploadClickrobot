@@ -2,15 +2,16 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\AuthController;
 
 // Public Routes (no school subdomain required)
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('/login', [App\Http\Controllers\AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [App\Http\Controllers\AuthController::class, 'login']);
-Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/test-url', [App\Http\Controllers\TestController::class, 'test']);
 
 // Serve uploaded files
@@ -28,11 +29,11 @@ Route::get('/uploads/{path}', function ($path) {
     ]);
 })->where('path', '.*');
 
-// School Subdomain Routes
-Route::domain('{school}.' . config('app.base_domain', 'localhost'))->group(function () {
+// School-based Routes (using /school/{slug} prefix instead of subdomain)
+Route::prefix('school/{school}')->middleware(['auth', 'school.domain'])->group(function () {
 
     // Teacher Routes
-    Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
+    Route::middleware(['role:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
             Route::get('/dashboard', [App\Http\Controllers\Teacher\DashboardController::class, 'index'])->name('dashboard');
             Route::get('/test-url', [App\Http\Controllers\TestController::class, 'test'])->name('test');
 
@@ -53,6 +54,7 @@ Route::domain('{school}.' . config('app.base_domain', 'localhost'))->group(funct
             Route::get('/students/{student}/edit', [App\Http\Controllers\Teacher\StudentController::class, 'edit'])->name('students.edit');
             Route::put('/students/{student}', [App\Http\Controllers\Teacher\StudentController::class, 'update'])->name('students.update');
             Route::delete('/students/{student}', [App\Http\Controllers\Teacher\StudentController::class, 'destroy'])->name('students.destroy');
+            Route::post('/students/{student}/create-account', [App\Http\Controllers\Teacher\StudentController::class, 'createAccount'])->name('students.create-account');
 
             // Parents
             Route::get('/parents', [App\Http\Controllers\Teacher\ParentController::class, 'index'])->name('parents.index');
@@ -76,21 +78,21 @@ Route::domain('{school}.' . config('app.base_domain', 'localhost'))->group(funct
         });
 
         // Student Routes
-        Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
+        Route::middleware(['role:student'])->prefix('student')->name('student.')->group(function () {
             Route::get('/dashboard', [App\Http\Controllers\Student\DashboardController::class, 'index'])->name('dashboard');
             Route::get('/media', [App\Http\Controllers\Student\MediaController::class, 'index'])->name('media.index');
             Route::get('/media/{media}', [App\Http\Controllers\Student\MediaController::class, 'show'])->name('media.show');
         });
 
         // Parent Routes
-        Route::middleware(['auth', 'role:parent'])->prefix('parent')->name('parent.')->group(function () {
+        Route::middleware(['role:parent'])->prefix('parent')->name('parent.')->group(function () {
             Route::get('/dashboard', [App\Http\Controllers\Parent\DashboardController::class, 'index'])->name('dashboard');
             Route::get('/media', [App\Http\Controllers\Parent\MediaController::class, 'index'])->name('media.index');
             Route::get('/media/{media}', [App\Http\Controllers\Parent\MediaController::class, 'show'])->name('media.show');
         });
 
         // School Admin Routes
-        Route::middleware(['auth', 'role:school_admin'])->prefix('school-admin')->name('school_admin.')->group(function () {
+        Route::middleware(['role:school_admin'])->prefix('school-admin')->name('school_admin.')->group(function () {
             Route::get('/dashboard', [App\Http\Controllers\SchoolAdmin\DashboardController::class, 'index'])->name('dashboard');
             Route::get('/classrooms', [App\Http\Controllers\SchoolAdmin\ClassroomController::class, 'index'])->name('classrooms.index');
             Route::get('/classrooms/create', [App\Http\Controllers\SchoolAdmin\ClassroomController::class, 'create'])->name('classrooms.create');
@@ -119,7 +121,7 @@ Route::domain('{school}.' . config('app.base_domain', 'localhost'))->group(funct
         });
 });
 
-// Admin Routes (main domain - no school subdomain)
+// Admin Routes (main domain - no school prefix)
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     Route::get('/schools', [App\Http\Controllers\Admin\SchoolController::class, 'index'])->name('schools.index');

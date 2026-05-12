@@ -15,39 +15,45 @@ class ResolveSchoolByDomain
     {
         $host = $request->getHost();
 
-        // Extract school slug from subdomain (e.g. bangrak from bangrak.localhost)
-        $slug = $this->extractSlug($host);
+        // Extract school slug from path (e.g., /school/bangrak/teacher/dashboard)
+        $schoolSlug = $request->route('school');
+
+        // Fallback: try subdomain if no path parameter
+        if (!$schoolSlug) {
+            $schoolSlug = $this->extractSlug($host);
+        }
 
         $school = null;
 
-        // If user is logged in, ALWAYS use their school (ignore subdomain)
-        if ($request->user()) {
-            $school = $request->user()->school;
-
-            // If user has no school, fallback to subdomain or default
-            if (!$school && $slug) {
-                $school = School::where('slug', $slug)->first();
-            }
-            if (!$school) {
-                $school = School::where('is_active', true)->first();
-            }
-        } elseif ($slug) {
-            // Subdomain request — school must exist
-            $school = School::where('slug', $slug)->first();
+        // IMPORTANT: School lookup MUST use master connection (not school-specific DB)
+        // because schools table only exists in the master database
+        // Always resolve school from URL slug first (authoritative), not from user's school_id
+        if ($schoolSlug) {
+            // URL has school slug — use it (authoritative source)
+            $school = School::on('mysql')->where('slug', $schoolSlug)->first();
 
             if (!$school) {
-                abort(404, 'School not found: ' . $slug);
+                abort(404, 'School not found: ' . $schoolSlug);
+            }
+        } elseif ($request->user()) {
+            // No school in URL — use user's school_id
+            if ($request->user()->school_id) {
+                $school = School::on('mysql')->find($request->user()->school_id);
+            }
+
+            if (!$school) {
+                $school = School::on('mysql')->where('is_active', true)->first();
             }
         } else {
-            // Main domain without login — use session or default
+            // No school in URL and no user — use session or default
             $schoolId = $request->session()->get('school_id');
 
             if ($schoolId) {
-                $school = School::find($schoolId);
+                $school = School::on('mysql')->find($schoolId);
             }
 
             if (!$school) {
-                $school = School::where('is_active', true)->first();
+                $school = School::on('mysql')->where('is_active', true)->first();
             }
         }
 
@@ -56,21 +62,24 @@ class ResolveSchoolByDomain
             $request->attributes->set('school', $school);
             $request->attributes->set('school_id', $school->id);
 
-            // Remove the {school} domain route parameter so it doesn't appear first
-            $request->route()?->forgetParameter('school');
+            // Store school in session for persistence
+            $request->session()->put('school_id', $school->id);
 
-            // Switch to school-specific database if configured
-            if ($school->database_name) {
-                $this->switchToSchoolDatabase($school->id, $school->database_name);
-            }
+            // NOTE: Database switching is disabled for now
+            // To enable per-school databases, run: php artisan schools:sync-schemas
+            // Then uncomment the code below:
+            //
+            // if ($school->db_host) {
+            //     $isAdmin = $request->user()?->role === 'admin';
+            //     if (!$isAdmin) {
+            //         $this->switchToSchoolDatabase($school);
+            //     }
+            // }
 
             // Switch R2 bucket to school-specific bucket if configured
             if ($school->r2_bucket) {
                 config(['filesystems.disks.r2.bucket' => $school->r2_bucket]);
             }
-
-            // Auto-fill the `school` route parameter so ALL route() calls in views Just Work
-            URL::defaults(['school' => $school->slug]);
         }
 
         return $next($request);
@@ -99,30 +108,27 @@ class ResolveSchoolByDomain
         return null;
     }
 
-    private function switchToSchoolDatabase(int $schoolId, string $dbName): void
+    private function switchToSchoolDatabase(School $school): void
     {
-        $connectionName = "school_{$schoolId}";
+        $connectionName = "school_{$school->id}";
 
-        // Add connection if not exists
-        if (!DB::connection($connectionName)->getConfig('host')) {
-            config([
-                "database.connections.{$connectionName}" => [
-                    'driver' => 'mysql',
-                    'host' => config('database.connections.mysql.host'),
-                    'port' => config('database.connections.mysql.port'),
-                    'database' => $dbName,
-                    'username' => config('database.connections.mysql.username'),
-                    'password' => config('database.connections.mysql.password'),
-                    'charset' => 'utf8mb4',
-                    'collation' => 'utf8mb4_unicode_ci',
-                    'prefix' => '',
-                    'strict' => true,
-                    'engine' => null,
-                ],
-            ]);
-        }
+        config([
+            "database.connections.{$connectionName}" => [
+                'driver' => 'mysql',
+                'host' => $school->db_host,
+                'port' => 3306,
+                'database' => $school->database_name,
+                'username' => 'root',
+                'password' => 'root_secret',
+                'charset' => 'utf8mb4',
+                'collation' => 'utf8mb4_unicode_ci',
+                'prefix' => '',
+                'strict' => true,
+                'engine' => null,
+            ],
+        ]);
 
-        // Set as default connection
+        // Set as default connection for this request
         config(['database.default' => $connectionName]);
     }
 }

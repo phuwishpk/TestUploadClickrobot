@@ -7,6 +7,18 @@
     <a href="{{ route('teacher.students.index') }}" class="text-indigo-600 hover:underline">← กลับไปนักเรียน</a>
 </div>
 
+@if(session('success'))
+    <div class="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">
+        {{ session('success') }}
+    </div>
+@endif
+
+@if(session('error'))
+    <div class="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
+        {{ session('error') }}
+    </div>
+@endif
+
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <div class="lg:col-span-2">
         <div class="bg-white rounded-lg shadow p-6 mb-6">
@@ -24,13 +36,22 @@
             <div class="grid grid-cols-2 gap-4">
                 <div class="p-4 bg-gray-50 rounded">
                     <p class="text-sm text-gray-500">บัญชีผู้ใช้</p>
-                    <p class="font-medium">
-                        @if($student->user)
-                            <span class="text-green-600">{{ $student->user->email }}</span>
-                        @else
-                            <span class="text-gray-400">ไม่มีบัญชี</span>
-                        @endif
-                    </p>
+                    @if($student->user)
+                        <p class="font-medium text-green-600">{{ $student->user->email }}</p>
+                        <p class="text-xs text-gray-400 mt-1">รหัสผ่าน: 12345</p>
+                    @else
+                        <p class="text-gray-400">ไม่มีบัญชี</p>
+                        <form action="{{ route('teacher.students.create-account', $student) }}" method="POST" class="mt-2">
+                            @csrf
+                            <div class="flex gap-2">
+                                <input type="email" name="email" placeholder="อีเมลสำหรับบัญชี" required
+                                    class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded">
+                                <button type="submit" class="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700">
+                                    สร้างบัญชี
+                                </button>
+                            </div>
+                        </form>
+                    @endif
                 </div>
                 <div class="p-4 bg-gray-50 rounded">
                     <p class="text-sm text-gray-500">ไฟล์ที่อัปโหลด</p>

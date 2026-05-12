@@ -15,7 +15,23 @@ class AuthController extends Controller
      */
     public function showLoginForm(Request $request)
     {
-        return view('auth.login');
+        $school = null;
+        $host = $request->getHost();
+        $slug = $this->extractSlug($host);
+
+        if ($slug && $slug !== 'localhost') {
+            $school = School::on('mysql')->where('slug', $slug)->first();
+        }
+
+        return view('auth.login', compact('school'));
+    }
+
+    private function extractSlug(string $host): ?string
+    {
+        if (preg_match('/^([a-z0-9-]+)\.localhost(?::\d+)?$/i', $host, $matches)) {
+            return $matches[1];
+        }
+        return null;
     }
 
     /**
@@ -55,7 +71,12 @@ class AuthController extends Controller
             $request->session()->put('school_id', $user->school_id);
         }
 
-        return $this->redirectToDashboard($user);
+        \Illuminate\Support\Facades\Log::debug('User logged in, role: ' . $user->role . ', school_id: ' . $user->school_id);
+
+        $response = $this->redirectToDashboard($user);
+        \Illuminate\Support\Facades\Log::debug('Redirect response prepared');
+
+        return $response;
     }
 
     /**
@@ -83,20 +104,29 @@ class AuthController extends Controller
      */
     protected function redirectToDashboard(User $user): \Illuminate\Http\RedirectResponse
     {
-        $school = $user->school;
+        $school = null;
+        if ($user->school_id) {
+            $school = School::on('mysql')->find($user->school_id);
+        }
         $role = $user->role;
 
-        // Clear URL defaults to ensure correct subdomain
+        // Clear URL defaults
         \Illuminate\Support\Facades\URL::defaults([]);
 
-        return match($role) {
-            'admin' => redirect()->away($this->getAdminUrl()),
-            'school_admin' => redirect()->away($this->getSchoolUrl($school, 'school-admin/dashboard')),
-            'teacher' => redirect()->away($this->getSchoolUrl($school, 'teacher/dashboard')),
-            'parent' => redirect()->away($this->getSchoolUrl($school, 'parent/dashboard')),
-            'student' => redirect()->away($this->getSchoolUrl($school, 'student/dashboard')),
-            default => redirect()->route('login'),
+        $targetUrl = match($role) {
+            'admin' => $this->getAdminUrl(),
+            'school_admin' => $this->getSchoolUrl($school, 'school-admin/dashboard'),
+            'teacher' => $this->getSchoolUrl($school, 'teacher/dashboard'),
+            'parent' => $this->getSchoolUrl($school, 'parent/dashboard'),
+            'student' => $this->getSchoolUrl($school, 'student/dashboard'),
+            default => "/login",
         };
+
+        // Debug: log the target URL
+        \Illuminate\Support\Facades\Log::debug('Login redirect target URL: ' . $targetUrl);
+
+        // Use redirect()->to() for absolute URLs
+        return redirect()->to($targetUrl, 302);
     }
 
     /**
@@ -111,7 +141,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Build URL with school subdomain
+     * Build URL with school path prefix
      */
     protected function getSchoolUrl($school, string $path): string
     {
@@ -128,6 +158,7 @@ class AuthController extends Controller
         $port = config('app.port', '8080');
         $protocol = request()->secure() ? 'https' : 'http';
 
-        return "{$protocol}://{$school->slug}.{$baseDomain}:{$port}/{$path}";
+        // Use path-based routing: /school/{slug}/{path}
+        return "{$protocol}://{$baseDomain}:{$port}/school/{$school->slug}/{$path}";
     }
 }

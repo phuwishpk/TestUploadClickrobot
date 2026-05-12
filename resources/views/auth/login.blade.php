@@ -5,14 +5,19 @@
 @section('content')
 <div class="min-h-[80vh] flex items-center justify-center">
     <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        {{-- Main login header --}}
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold text-indigo-600 mb-2">School Media Upload</h1>
+            <p class="text-sm text-gray-500">เข้าสู่ระบบ</p>
+        </div>
+
         {{-- School branding when accessed via subdomain --}}
         @if(isset($school) && $school)
-            <div class="text-center mb-6">
-                <h2 class="text-xl font-bold text-indigo-600">{{ $school->name }}</h2>
-                <p class="text-sm text-gray-500">{{ $school->domain }}.{{ config('app.base_domain') }}</p>
+            <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-6 text-center">
+                <p class="text-sm text-indigo-600 mb-1">โรงเรียนของคุณ</p>
+                <h2 class="text-lg font-bold text-indigo-800">{{ $school->name }}</h2>
+                <p class="text-xs text-indigo-500">{{ $school->slug }}.{{ config('app.base_domain') }}</p>
             </div>
-        @else
-            <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">เข้าสู่ระบบ</h1>
         @endif
 
         <form action="{{ route('login') }}" method="POST">

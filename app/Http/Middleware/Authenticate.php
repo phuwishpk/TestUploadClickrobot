@@ -9,6 +9,14 @@ class Authenticate extends Middleware
 {
     protected function redirectTo(Request $request): ?string
     {
-        return $request->expectsJson() ? null : route('login');
+        if ($request->expectsJson()) {
+            return null;
+        }
+
+        // Always redirect to main domain login (no subdomain)
+        $baseDomain = config('app.base_domain', 'localhost');
+        $port = config('app.port', '8080');
+
+        return "http://{$baseDomain}:{$port}/login";
     }
 }

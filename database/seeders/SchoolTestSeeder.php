@@ -14,52 +14,52 @@ class SchoolTestSeeder extends Seeder
 {
     public function run(): void
     {
-        // School 1: Primary School (โรงเรียนประถม)
+        // School 1: Bangrak (BNK)
         $school1 = School::create([
-            'name' => 'Srisakda Primary School',
-            'slug' => 'srisakda_primary',
-            'code' => 'PRI001',
-            'description' => 'Srisakda Primary School - Elementary education',
+            'name' => 'Bangrak School',
+            'slug' => 'bnk',
+            'code' => 'BNK001',
+            'description' => 'Bangrak School - กรุงเทพ',
         ]);
 
-        // School 2: Secondary School (โรงเรียนมัธยม)
+        // School 2: Saraburi (SRB)
         $school2 = School::create([
-            'name' => 'Srisakda Secondary School',
-            'slug' => 'srisakda_secondary',
-            'code' => 'SEC001',
-            'description' => 'Srisakda Secondary School - High school education',
+            'name' => 'Saraburi School',
+            'slug' => 'srb',
+            'code' => 'SRB001',
+            'description' => 'Saraburi School - สระบุรี',
         ]);
 
-        // School 3: Kindergarten (โรงเรียนอนุบาล)
+        // School 3: Nonthaburi (NBR)
         $school3 = School::create([
-            'name' => 'Srisakda Kindergarten',
-            'slug' => 'srisakda_kindergarten',
-            'code' => 'KIN001',
-            'description' => 'Srisakda Kindergarten - Early childhood education',
+            'name' => 'Nonthaburi School',
+            'slug' => 'nbr',
+            'code' => 'NBR001',
+            'description' => 'Nonthaburi School - นนทบุรี',
         ]);
 
         $this->command->info('Created 3 schools');
 
         // Create school admin users
         $admin1 = User::create([
-            'name' => 'School Admin Primary',
-            'email' => 'admin_primary@school.com',
+            'name' => 'School Admin BNK',
+            'email' => 'admin_bnk@school.com',
             'password' => Hash::make('12345'),
             'role' => 'school_admin',
             'school_id' => $school1->id,
         ]);
 
         $admin2 = User::create([
-            'name' => 'School Admin Secondary',
-            'email' => 'admin_secondary@school.com',
+            'name' => 'School Admin SRB',
+            'email' => 'admin_srb@school.com',
             'password' => Hash::make('12345'),
             'role' => 'school_admin',
             'school_id' => $school2->id,
         ]);
 
         $admin3 = User::create([
-            'name' => 'School Admin Kindergarten',
-            'email' => 'admin_kindergarten@school.com',
+            'name' => 'School Admin NBR',
+            'email' => 'admin_nbr@school.com',
             'password' => Hash::make('12345'),
             'role' => 'school_admin',
             'school_id' => $school3->id,
@@ -69,24 +69,24 @@ class SchoolTestSeeder extends Seeder
 
         // Create teachers for each school
         $teacher1 = User::create([
-            'name' => 'Teacher Primary 1',
-            'email' => 'teacher_primary@school.com',
+            'name' => 'Teacher BNK',
+            'email' => 'teacher_bnk@school.com',
             'password' => Hash::make('12345'),
             'role' => 'teacher',
             'school_id' => $school1->id,
         ]);
 
         $teacher2 = User::create([
-            'name' => 'Teacher Secondary 1',
-            'email' => 'teacher_secondary@school.com',
+            'name' => 'Teacher SRB',
+            'email' => 'teacher_srb@school.com',
             'password' => Hash::make('12345'),
             'role' => 'teacher',
             'school_id' => $school2->id,
         ]);
 
         $teacher3 = User::create([
-            'name' => 'Teacher Kindergarten 1',
-            'email' => 'teacher_kindergarten@school.com',
+            'name' => 'Teacher NBR',
+            'email' => 'teacher_nbr@school.com',
             'password' => Hash::make('12345'),
             'role' => 'teacher',
             'school_id' => $school3->id,
@@ -149,10 +149,12 @@ class SchoolTestSeeder extends Seeder
         $this->command->info('');
         $this->command->info('=== Test Accounts ===');
         $this->command->info('Super Admin: superadmin@school.com / 12345');
-        $this->command->info('School Admin Primary: admin_primary@school.com / 12345');
-        $this->command->info('School Admin Secondary: admin_secondary@school.com / 12345');
-        $this->command->info('Teacher Primary: teacher_primary@school.com / 12345');
-        $this->command->info('Teacher Secondary: teacher_secondary@school.com / 12345');
+        $this->command->info('School Admin BNK: admin_bnk@school.com / 12345 (Bangrak)');
+        $this->command->info('School Admin SRB: admin_srb@school.com / 12345 (Saraburi)');
+        $this->command->info('School Admin NBR: admin_nbr@school.com / 12345 (Nonthaburi)');
+        $this->command->info('Teacher BNK: teacher_bnk@school.com / 12345 (Bangrak)');
+        $this->command->info('Teacher SRB: teacher_srb@school.com / 12345 (Saraburi)');
+        $this->command->info('Teacher NBR: teacher_nbr@school.com / 12345 (Nonthaburi)');
     }
 
     private function createStudentsForClassroom(Classroom $classroom, string $prefix, int $count): void

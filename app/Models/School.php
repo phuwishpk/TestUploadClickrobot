@@ -11,6 +11,8 @@ class School extends Model
 {
     use HasFactory;
 
+    protected $connection = 'mysql';
+
     protected $fillable = [
         'name',
         'slug',
@@ -19,6 +21,7 @@ class School extends Model
         'is_active',
         'domain',
         'database_name',
+        'db_host',
         'r2_bucket',
     ];
 
