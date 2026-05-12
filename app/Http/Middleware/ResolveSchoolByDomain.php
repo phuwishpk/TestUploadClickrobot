@@ -15,10 +15,13 @@ class ResolveSchoolByDomain
     {
         $host = $request->getHost();
 
-        // Extract school slug from path (e.g., /school/bangrak/teacher/dashboard)
-        $schoolSlug = $request->route('school');
+        // Extract school slug from path — but only when {school} is a plain string slug.
+        // Admin routes also have a {school} param but it resolves to a School model;
+        // we must not use a model instance as a slug lookup.
+        $routeSchool = $request->route('school');
+        $schoolSlug = is_string($routeSchool) ? $routeSchool : null;
 
-        // Fallback: try subdomain if no path parameter
+        // Fallback: try subdomain
         if (!$schoolSlug) {
             $schoolSlug = $this->extractSlug($host);
         }
@@ -27,12 +30,14 @@ class ResolveSchoolByDomain
 
         // IMPORTANT: School lookup MUST use master connection (not school-specific DB)
         // because schools table only exists in the master database
-        // Always resolve school from URL slug first (authoritative), not from user's school_id
         if ($schoolSlug) {
-            // URL has school slug — use it (authoritative source)
+            // URL has a string school slug — look it up (authoritative source).
+            // Only abort when this middleware is running as 'school.domain' (i.e., the
+            // route explicitly requires a valid school). When running from the global web
+            // group the slug might be stale/session-based, so silently skip.
             $school = School::on('mysql')->where('slug', $schoolSlug)->first();
 
-            if (!$school) {
+            if (!$school && $request->routeIs('teacher.*', 'student.*', 'parent.*', 'school_admin.*')) {
                 abort(404, 'School not found: ' . $schoolSlug);
             }
         } elseif ($request->user()) {
@@ -62,24 +67,20 @@ class ResolveSchoolByDomain
             $request->attributes->set('school', $school);
             $request->attributes->set('school_id', $school->id);
 
+            // Remove the {school} domain parameter so it doesn't corrupt positional
+            // controller injection (the domain param appears first in $route->parameters())
+            $request->route()?->forgetParameter('school');
+
             // Store school in session for persistence
             $request->session()->put('school_id', $school->id);
-
-            // NOTE: Database switching is disabled for now
-            // To enable per-school databases, run: php artisan schools:sync-schemas
-            // Then uncomment the code below:
-            //
-            // if ($school->db_host) {
-            //     $isAdmin = $request->user()?->role === 'admin';
-            //     if (!$isAdmin) {
-            //         $this->switchToSchoolDatabase($school);
-            //     }
-            // }
 
             // Switch R2 bucket to school-specific bucket if configured
             if ($school->r2_bucket) {
                 config(['filesystems.disks.r2.bucket' => $school->r2_bucket]);
             }
+
+            // Set URL default so ALL route() calls in views auto-use the current school slug
+            URL::defaults(['school' => $school->slug]);
         }
 
         return $next($request);

@@ -141,12 +141,12 @@ class AuthController extends Controller
     }
 
     /**
-     * Build URL with school path prefix
+     * Build URL with school path prefix: {base}:{port}/school/{slug}/{path}
      */
     protected function getSchoolUrl($school, string $path): string
     {
         if (!$school || !$school->slug) {
-            $defaultSchool = School::first();
+            $defaultSchool = School::on('mysql')->where('is_active', true)->first();
             if ($defaultSchool) {
                 $school = $defaultSchool;
             } else {
@@ -158,7 +158,6 @@ class AuthController extends Controller
         $port = config('app.port', '8080');
         $protocol = request()->secure() ? 'https' : 'http';
 
-        // Use path-based routing: /school/{slug}/{path}
         return "{$protocol}://{$baseDomain}:{$port}/school/{$school->slug}/{$path}";
     }
 }

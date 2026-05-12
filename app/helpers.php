@@ -3,25 +3,21 @@
 use App\Models\School;
 
 /**
- * Generate dashboard URL based on user role.
- * For subdomain-based roles (teacher/student/parent/school_admin),
- * builds URL with school subdomain.
+ * Generate dashboard URL based on user role using path-based school routing.
  */
 function dashboard_url($role, $schoolId = null): string
 {
-    // Admin uses named route (no subdomain needed)
     if ($role === 'admin') {
         return route('admin.dashboard');
     }
 
-    // For subdomain-based roles, build URL manually
     $school = null;
     if ($schoolId) {
-        $school = School::find($schoolId);
+        $school = School::on('mysql')->find($schoolId);
     }
 
     if (!$school) {
-        $school = School::first();
+        $school = School::on('mysql')->where('is_active', true)->first();
     }
 
     if (!$school || !$school->slug) {
@@ -34,11 +30,11 @@ function dashboard_url($role, $schoolId = null): string
 
     $path = match ($role) {
         'school_admin' => 'school-admin/dashboard',
-        'teacher' => 'teacher/dashboard',
-        'parent' => 'parent/dashboard',
-        'student' => 'student/dashboard',
-        default => '',
+        'teacher'      => 'teacher/dashboard',
+        'parent'       => 'parent/dashboard',
+        'student'      => 'student/dashboard',
+        default        => '',
     };
 
-    return "{$protocol}://{$school->slug}.{$baseDomain}:{$port}/{$path}";
+    return "{$protocol}://{$baseDomain}:{$port}/school/{$school->slug}/{$path}";
 }
